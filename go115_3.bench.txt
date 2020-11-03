@@ -1,3 +1,4 @@
+#mbp
 go test -run=match_nothing -bench . -benchmem
 goos: darwin
 goarch: amd64
