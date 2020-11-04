@@ -1,4 +1,4 @@
-package sort_slice_reflect
+package sort_slice_dps
 
 import (
 	"fmt"
@@ -19,37 +19,56 @@ func (p Person) String() string {
 
 type PersonSlice []Person
 
+var invokeCount = make(map[string]int)
+
+func resetCount() {
+	invokeCount = make(map[string]int)
+}
+
+func (p PersonSlice) cmp(compare CompareFunc, i, j int) int {
+	invokeCount["cmp"]++
+	return compare(p[i], p[j])
+}
+
 var _ SliceInterface = (*PersonSlice)(nil)
 
 func (p PersonSlice) make(n int) SliceInterface {
+	invokeCount["make"]++
 	return make(PersonSlice, n)
 }
 
 func (p PersonSlice) copy(src SliceInterface) {
+	invokeCount["copy"]++
 	copy(p, src.(PersonSlice))
 }
 
 func (p PersonSlice) get(i int) interface{} {
+	invokeCount["get"]++
 	return p[i]
 }
 
 func (p PersonSlice) set(i int, v interface{}) {
+	invokeCount["set"]++
 	p[i] = v.(Person)
 }
 
 func (p PersonSlice) swap(i, j int) {
+	invokeCount["swap"]++
 	p[i], p[j] = p[j], p[i]
 }
 
 func (p PersonSlice) len() int {
+	invokeCount["len"]++
 	return len(p)
 }
 
 func (p PersonSlice) slice(i int) SliceInterface {
+	invokeCount["slice"]++
 	return p[i:]
 }
 
 func (p PersonSlice) slice2(i, j int) SliceInterface {
+	invokeCount["slice2"]++
 	return p[i:j]
 }
 
@@ -73,6 +92,7 @@ func isSorted(a []Person) bool {
 }
 
 var byAge = func(o1, o2 interface{}) int {
+	invokeCount["byAge"]++
 	return o1.(Person).age - o2.(Person).age
 }
 
@@ -89,6 +109,54 @@ func TestByAge(t *testing.T) {
 			log.Panicf("should be sorted: %d", i)
 		}
 	}
+}
+
+const invokeDataSize = 1024
+
+func TestDpsInvokeCount(t *testing.T) {
+	persons := make([]Person, invokeDataSize)
+	prepare(persons)
+
+	{
+		resetCount()
+		persons2 := make(PersonSlice, invokeDataSize)
+		for i, _ := range persons {
+			persons2[i] = persons[i]
+		}
+
+		Sort(persons2, byAge)
+		log.Printf("dps invoke count: %v", invokeCount)
+	}
+
+	{
+		resetCount()
+		persons2 := make(PersonBuiltinSlice, invokeDataSize)
+		for i, _ := range persons {
+			persons2[i] = persons[i]
+		}
+
+		builtinsort.Sort(persons2)
+		log.Printf("builtin invoke count: %v", invokeCount)
+	}
+}
+
+type PersonBuiltinSlice []Person
+
+var _ builtinsort.Interface = (*PersonBuiltinSlice)(nil)
+
+func (p PersonBuiltinSlice) Len() int {
+	invokeCount["Len"]++
+	return len(p)
+}
+
+func (p PersonBuiltinSlice) Less(i, j int) bool {
+	invokeCount["Less"]++
+	return p[i].age < p[j].age
+}
+
+func (p PersonBuiltinSlice) Swap(i, j int) {
+	invokeCount["Swap"]++
+	p[i], p[j] = p[j], p[i]
 }
 
 var benchmarkSizes = []int{256, 1024, 4192, 16768}

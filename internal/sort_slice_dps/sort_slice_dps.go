@@ -1,4 +1,4 @@
-package sort_slice_reflect
+package sort_slice_dps
 
 /**
  * The maximum number of runs in merge sort.
@@ -26,13 +26,10 @@ type SliceInterface interface {
 	len() int
 	slice(i int) SliceInterface
 	slice2(i, j int) SliceInterface
+	cmp(compare CompareFunc, i, j int) int
 }
 
 type CompareFunc = func(o1, o2 interface{}) int
-
-func cmp(compare CompareFunc, a SliceInterface, i, j int) int {
-	return compare(a.get(i), a.get(j))
-}
 
 func Sort(a SliceInterface, compare CompareFunc) {
 	sort(compare, a, 0, a.len()-1, nil, 0, 0)
@@ -40,7 +37,7 @@ func Sort(a SliceInterface, compare CompareFunc) {
 
 func IsSorted(a SliceInterface, compare CompareFunc) bool {
 	for i := a.len() - 1; i > 0; i-- {
-		if cmp(compare, a, i, i-1) < 0 {
+		if a.cmp(compare, i, i-1) < 0 {
 			return false
 		}
 	}
@@ -76,25 +73,25 @@ func sort(compare CompareFunc, a SliceInterface, left int, right int, work Slice
 	// Check if the array is nearly sorted
 	for k := left; k < right; run[count] = k {
 		// Equal items in the beginning of the sequence
-		for k < right && cmp(compare, a, k, k+1) == 0 {
+		for k < right && a.cmp(compare, k, k+1) == 0 {
 			k++
 		}
 		if k == right {
 			break
 		} // Sequence finishes with equal items
-		if cmp(compare, a, k, k+1) < 0 { // ascending
+		if a.cmp(compare, k, k+1) < 0 { // ascending
 			for {
 				k++
-				if k <= right && cmp(compare, a, k-1, k) <= 0 {
+				if k <= right && a.cmp(compare, k-1, k) <= 0 {
 				} else {
 					break
 				}
 			}
 
-		} else if cmp(compare, a, k, k+1) > 0 { // descending
+		} else if a.cmp(compare, k, k+1) > 0 { // descending
 			for {
 				k++
-				if k <= right && cmp(compare, a, k-1, k) >= 0 {
+				if k <= right && a.cmp(compare, k-1, k) >= 0 {
 				} else {
 					break
 				}
@@ -110,7 +107,7 @@ func sort(compare CompareFunc, a SliceInterface, left int, right int, work Slice
 
 		// Merge a transformed descending sequence followed by an
 		// ascending sequence
-		if run[count] > left && cmp(compare, a, run[count], run[count]-1) >= 0 {
+		if run[count] > left && a.cmp(compare, run[count], run[count]-1) >= 0 {
 			count--
 		}
 
@@ -191,7 +188,7 @@ func sort(compare CompareFunc, a SliceInterface, left int, right int, work Slice
 			p := i
 			q := mi
 			for ; i < hi; i++ {
-				if q >= hi || p < mi && cmp(compare, a, p+ao, q+ao) <= 0 {
+				if q >= hi || p < mi && a.cmp(compare, p+ao, q+ao) <= 0 {
 					//b[i + bo] = a[p++ + ao];
 					b.set(i+bo, a.get(p+ao))
 					p++
@@ -268,7 +265,7 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 				}
 
 				left++
-				if cmp(compare, a, left, left-1) >= 0 {
+				if a.cmp(compare, left, left-1) >= 0 {
 				} else {
 					break
 				}
@@ -354,11 +351,11 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 	var e5 = e4 + seventh
 
 	// Sort these elements using insertion sort
-	if cmp(compare, a, e2, e1) < 0 {
+	if a.cmp(compare, e2, e1) < 0 {
 		a.swap(e2, e1)
 	}
 
-	if cmp(compare, a, e3, e2) < 0 {
+	if a.cmp(compare, e3, e2) < 0 {
 		var t = a.get(e3)
 		a.swap(e3, e2)
 		if compare(t, a.get(e1)) < 0 {
@@ -366,7 +363,7 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 			a.set(e1, t)
 		}
 	}
-	if cmp(compare, a, e4, e3) < 0 {
+	if a.cmp(compare, e4, e3) < 0 {
 		var t = a.get(e4)
 		a.swap(e4, e3)
 		if compare(t, a.get(e2)) < 0 {
@@ -378,7 +375,7 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 			}
 		}
 	}
-	if cmp(compare, a, e5, e4) < 0 {
+	if a.cmp(compare, e5, e4) < 0 {
 		var t = a.get(e5)
 		a.swap(e5, e4)
 		if compare(t, a.get(e3)) < 0 {
@@ -399,7 +396,7 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 	var less = left   // The index of the first element of center part
 	var great = right // The index before the first element of right part
 
-	if cmp(compare, a, e1, e2) != 0 && cmp(compare, a, e2, e3) != 0 && cmp(compare, a, e3, e4) != 0 && cmp(compare, a, e4, e5) != 0 {
+	if a.cmp(compare, e1, e2) != 0 && a.cmp(compare, e2, e3) != 0 && a.cmp(compare, e3, e4) != 0 && a.cmp(compare, e4, e5) != 0 {
 		/*
 		 * Use the second and fourth of the five sorted elements as pivots.
 		 * These values are inexpensive approximations of the first and
