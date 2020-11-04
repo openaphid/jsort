@@ -1,4 +1,4 @@
-package sort_slice_dps
+package sort_slice_tim
 
 import (
 	"fmt"
@@ -115,7 +115,7 @@ func (p PersonSliceWithStat) slice2(i, j int) SliceInterface {
 func prepare(a []Person) {
 	for i, _ := range a {
 		a[i] = Person{
-			age:  rand.Int(),
+			age:  len(a) - i, //rand.Int(),
 			name: fmt.Sprintf("n-%d", rand.Int()),
 		}
 	}
@@ -131,56 +131,27 @@ func isSorted(a []Person) bool {
 	return true
 }
 
+var byAge = func(o1, o2 interface{}) int {
+	return o1.(Person).age - o2.(Person).age
+}
+
 var byAgeWithStat = func(o1, o2 interface{}) int {
 	invokeCount["byAge"]++
 	return o1.(Person).age - o2.(Person).age
 }
 
-var byAge = func(o1, o2 interface{}) int {
-	return o1.(Person).age - o2.(Person).age
-}
-
 func TestByAge(t *testing.T) {
-	for i := 1; i <= 1024; i++ {
+	for i := 1; i <= 1024*10; i++ {
 		persons := make(PersonSlice, i)
 		prepare(persons)
 
-		Sort(persons, byAgeWithStat)
+		Sort(persons, byAge)
 
-		sorted := IsSorted(persons, byAgeWithStat)
+		sorted := IsSorted(persons, byAge)
 
 		if !sorted {
 			log.Panicf("should be sorted: %d", i)
 		}
-	}
-}
-
-const invokeDataSize = 1024
-
-func TestDpsInvokeCount(t *testing.T) {
-	persons := make([]Person, invokeDataSize)
-	prepare(persons)
-
-	{
-		resetCount()
-		persons2 := make(PersonSlice, invokeDataSize)
-		for i, _ := range persons {
-			persons2[i] = persons[i]
-		}
-
-		Sort(persons2, byAgeWithStat)
-		log.Printf("dps invoke count: %v", invokeCount)
-	}
-
-	{
-		resetCount()
-		persons2 := make(PersonBuiltinSlice, invokeDataSize)
-		for i, _ := range persons {
-			persons2[i] = persons[i]
-		}
-
-		builtinsort.Sort(persons2)
-		log.Printf("builtin invoke count: %v", invokeCount)
 	}
 }
 
@@ -203,6 +174,35 @@ func (p PersonBuiltinSlice) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
 }
 
+const invokeDataSize = 1024
+
+func TestInvokeCount(t *testing.T) {
+	persons := make([]Person, invokeDataSize)
+	prepare(persons)
+
+	{
+		resetCount()
+		persons2 := make(PersonSliceWithStat, invokeDataSize)
+		for i, _ := range persons {
+			persons2[i] = persons[i]
+		}
+
+		Sort(persons2, byAgeWithStat)
+		log.Printf("tim invoke count: %v", invokeCount)
+	}
+
+	{
+		resetCount()
+		persons2 := make(PersonBuiltinSlice, invokeDataSize)
+		for i, _ := range persons {
+			persons2[i] = persons[i]
+		}
+
+		builtinsort.Sort(persons2)
+		log.Printf("builtin invoke count: %v", invokeCount)
+	}
+}
+
 var benchmarkSizes = []int{256, 1024, 4192, 16768}
 
 func BenchmarkVSSort(t *testing.B) {
@@ -210,7 +210,7 @@ func BenchmarkVSSort(t *testing.B) {
 		var data = make(PersonSlice, size)
 		prepare(data)
 
-		t.Run(fmt.Sprintf("DPS-%d", size), func(t *testing.B) {
+		t.Run(fmt.Sprintf("TimSort-%d", size), func(t *testing.B) {
 			for i := 0; i < t.N; i++ {
 				t.StopTimer()
 				dup := make(PersonSlice, size)
@@ -222,7 +222,7 @@ func BenchmarkVSSort(t *testing.B) {
 			}
 		})
 
-		t.Run(fmt.Sprintf("Builtin-%d", size), func(t *testing.B) {
+		t.Run(fmt.Sprintf("BuiltinSort-%d", size), func(t *testing.B) {
 			for i := 0; i < t.N; i++ {
 				t.StopTimer()
 				dup := make(PersonSlice, size)

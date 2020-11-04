@@ -57,14 +57,12 @@ func TestByAge(t *testing.T) {
 
 var benchmarkSizes = []int{256, 1024, 4192, 16768}
 
-func BenchmarkDpsSortReflect(t *testing.B) {
+func BenchmarkVSSort(t *testing.B) {
 	for _, size := range benchmarkSizes {
-		t.Run(fmt.Sprintf("%d", size), func(t *testing.B) {
-			var data = make([]Person, size)
-			prepare(data)
+		var data = make([]Person, size)
+		prepare(data)
 
-			t.ResetTimer()
-
+		t.Run(fmt.Sprintf("DPSReflect-%d", size), func(t *testing.B) {
 			for i := 0; i < t.N; i++ {
 				t.StopTimer()
 				dup := make([]Person, size)
@@ -73,17 +71,8 @@ func BenchmarkDpsSortReflect(t *testing.B) {
 				Sort(dup, byAge)
 			}
 		})
-	}
-}
 
-func BenchmarkBuiltinSortSlice(t *testing.B) {
-	for _, size := range benchmarkSizes {
-		t.Run(fmt.Sprintf("%d", size), func(t *testing.B) {
-			var data = make([]Person, size)
-			prepare(data)
-
-			t.ResetTimer()
-
+		t.Run(fmt.Sprintf("Builtin-%d", size), func(t *testing.B) {
 			for i := 0; i < t.N; i++ {
 				t.StopTimer()
 				dup := make([]Person, size)
@@ -94,5 +83,6 @@ func BenchmarkBuiltinSortSlice(t *testing.B) {
 				})
 			}
 		})
+
 	}
 }
