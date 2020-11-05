@@ -1,4 +1,4 @@
-package sort_slice_tim
+package sort_slice_tim_go2
 
 func Sort[T any](a []T, compare func(i, j T) int) {
 	sort(a, 0, len(a), compare, nil, 0, 0)

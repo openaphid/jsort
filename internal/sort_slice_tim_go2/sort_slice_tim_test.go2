@@ -1,4 +1,4 @@
-package sort_slice_tim
+package sort_slice_tim_go2
 
 import (
 	"fmt"

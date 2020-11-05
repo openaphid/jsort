@@ -2,7 +2,7 @@
 
 
 //line sort_slice_tim.go2:1
-package sort_slice_tim
+package sort_slice_tim_go2
 
 //line sort_slice_tim.go2:1
 import (

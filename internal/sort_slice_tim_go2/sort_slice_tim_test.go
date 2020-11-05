@@ -2,7 +2,7 @@
 
 
 //line sort_slice_tim_test.go2:1
-package sort_slice_tim
+package sort_slice_tim_go2
 
 //line sort_slice_tim_test.go2:1
 import (
@@ -47,10 +47,10 @@ func TestByAge(t *testing.T) {
 						persons := make([]Person, i)
 						prepare(persons)
 //line sort_slice_tim_test.go2:36
-  instantiate୦୦Sort୦sort_slice_tim୮aPerson(persons, byAge)
+  instantiate୦୦Sort୦sort_slice_tim_go2୮aPerson(persons, byAge)
 
 //line sort_slice_tim_test.go2:40
-  sorted := instantiate୦୦IsSorted୦sort_slice_tim୮aPerson(persons, byAge)
+  sorted := instantiate୦୦IsSorted୦sort_slice_tim_go2୮aPerson(persons, byAge)
 
 		if !sorted {
 			log.Panicf("should be sorted: %d", i)
@@ -72,7 +72,7 @@ func BenchmarGo2kVSSort(t *testing.B) {
 								copy(dup, data)
 								t.StartTimer()
 //line sort_slice_tim_test.go2:60
-    instantiate୦୦Sort୦sort_slice_tim୮aPerson(dup, byAge)
+    instantiate୦୦Sort୦sort_slice_tim_go2୮aPerson(dup, byAge)
 //line sort_slice_tim_test.go2:62
    }
 		})
@@ -126,13 +126,13 @@ func BenchmarkGo2VSSortInts(t *testing.B) {
 	}
 }
 //line sort_slice_tim.go2:3
-func instantiate୦୦Sort୦sort_slice_tim୮aPerson(a []Person, compare func(i, j Person,) int) {
+func instantiate୦୦Sort୦sort_slice_tim_go2୮aPerson(a []Person, compare func(i, j Person,) int) {
 //line sort_slice_tim.go2:3
- instantiate୦୦sort୦sort_slice_tim୮aPerson(a, 0, len(a), compare, nil, 0, 0)
+ instantiate୦୦sort୦sort_slice_tim_go2୮aPerson(a, 0, len(a), compare, nil, 0, 0)
 //line sort_slice_tim.go2:5
 }
 
-func instantiate୦୦IsSorted୦sort_slice_tim୮aPerson(a []Person, compare func(i, j Person,) int) bool {
+func instantiate୦୦IsSorted୦sort_slice_tim_go2୮aPerson(a []Person, compare func(i, j Person,) int) bool {
 	for i := len(a) - 1; i > 0; i-- {
 		if compare(a[i], a[i-1]) < 0 {
 			return false
@@ -148,7 +148,7 @@ func instantiate୦୦Sort୦int(a []int, compare func(i, j int,) int) {
 }
 
 //line sort_slice_tim.go2:177
-func instantiate୦୦sort୦sort_slice_tim୮aPerson(a []Person, lo int, hi int, c func(i, j Person,) int, work []Person, workBase int, workLen int) {
+func instantiate୦୦sort୦sort_slice_tim_go2୮aPerson(a []Person, lo int, hi int, c func(i, j Person,) int, work []Person, workBase int, workLen int) {
 
 //line sort_slice_tim.go2:180
  var nRemaining = hi - lo
@@ -158,19 +158,19 @@ func instantiate୦୦sort୦sort_slice_tim୮aPerson(a []Person, lo int, hi int
 
 //line sort_slice_tim.go2:186
  if nRemaining < MIN_MERGE {
-					var initRunLen = instantiate୦୦countRunAndMakeAscending୦sort_slice_tim୮aPerson(a, lo, hi, c)
+					var initRunLen = instantiate୦୦countRunAndMakeAscending୦sort_slice_tim_go2୮aPerson(a, lo, hi, c)
 //line sort_slice_tim.go2:187
-  instantiate୦୦binarySort୦sort_slice_tim୮aPerson(a, lo, hi, lo+initRunLen, c)
+  instantiate୦୦binarySort୦sort_slice_tim_go2୮aPerson(a, lo, hi, lo+initRunLen, c)
 //line sort_slice_tim.go2:189
   return
 	}
 
 //line sort_slice_tim.go2:197
- var ts = instantiate୦୦newTimSort୦sort_slice_tim୮aPerson(a, c, work, workBase, workLen)
+ var ts = instantiate୦୦newTimSort୦sort_slice_tim_go2୮aPerson(a, c, work, workBase, workLen)
 	var minRun = minRunLength(nRemaining)
 	for {
 
-					var runLen = instantiate୦୦countRunAndMakeAscending୦sort_slice_tim୮aPerson(a, lo, hi, c)
+					var runLen = instantiate୦୦countRunAndMakeAscending୦sort_slice_tim_go2୮aPerson(a, lo, hi, c)
 
 //line sort_slice_tim.go2:204
   if runLen < minRun {
@@ -181,7 +181,7 @@ func instantiate୦୦sort୦sort_slice_tim୮aPerson(a []Person, lo int, hi int
 				force = minRun
 			}
 //line sort_slice_tim.go2:210
-   instantiate୦୦binarySort୦sort_slice_tim୮aPerson(a, lo, lo+force, lo+runLen, c)
+   instantiate୦୦binarySort୦sort_slice_tim_go2୮aPerson(a, lo, lo+force, lo+runLen, c)
 //line sort_slice_tim.go2:212
    runLen = force
 		}
@@ -261,7 +261,7 @@ func instantiate୦୦sort୦int(a []int, lo int, hi int, c func(i, j int,) int,
 }
 
 //line sort_slice_tim.go2:327
-func instantiate୦୦countRunAndMakeAscending୦sort_slice_tim୮aPerson(a []Person, lo int, hi int, c func(i, j Person,) int) int {
+func instantiate୦୦countRunAndMakeAscending୦sort_slice_tim_go2୮aPerson(a []Person, lo int, hi int, c func(i, j Person,) int) int {
 
 	var runHi = lo + 1
 	if runHi == hi {
@@ -275,7 +275,7 @@ func instantiate୦୦countRunAndMakeAscending୦sort_slice_tim୮aPerson(a []Pe
 			runHi++
 		}
 //line sort_slice_tim.go2:339
-  instantiate୦୦reverseRange୦sort_slice_tim୮aPerson(a, lo, runHi)
+  instantiate୦୦reverseRange୦sort_slice_tim_go2୮aPerson(a, lo, runHi)
 //line sort_slice_tim.go2:341
  } else {
 		for runHi < hi && c(a[runHi], a[runHi-1]) >= 0 {
@@ -286,7 +286,7 @@ func instantiate୦୦countRunAndMakeAscending୦sort_slice_tim୮aPerson(a []Pe
 	return runHi - lo
 }
 //line sort_slice_tim.go2:252
-func instantiate୦୦binarySort୦sort_slice_tim୮aPerson(a []Person, lo int, hi int, start int, c func(i, j Person,) int) {
+func instantiate୦୦binarySort୦sort_slice_tim_go2୮aPerson(a []Person, lo int, hi int, start int, c func(i, j Person,) int) {
 
 	if start == lo {
 		start++
@@ -325,8 +325,8 @@ func instantiate୦୦binarySort୦sort_slice_tim୮aPerson(a []Person, lo int, 
 	}
 }
 //line sort_slice_tim.go2:101
-func instantiate୦୦newTimSort୦sort_slice_tim୮aPerson(a []Person, c func(i, j Person,) int, work []Person, workBase int, workLen int) *instantiate୦୦TimSort୦sort_slice_tim୮aPerson {
-	this := &instantiate୦୦TimSort୦sort_slice_tim୮aPerson{
+func instantiate୦୦newTimSort୦sort_slice_tim_go2୮aPerson(a []Person, c func(i, j Person,) int, work []Person, workBase int, workLen int) *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson {
+	this := &instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson{
 		a:         a,
 		c:         c,
 		minGallop: MIN_GALLOP,
@@ -475,7 +475,7 @@ func instantiate୦୦newTimSort୦int(a []int, c func(i, j int,) int, work []in
 }
 
 //line sort_slice_tim.go2:357
-func instantiate୦୦reverseRange୦sort_slice_tim୮aPerson(a []Person, lo int, hi int) {
+func instantiate୦୦reverseRange୦sort_slice_tim_go2୮aPerson(a []Person, lo int, hi int) {
 	hi--
 	for lo < hi {
 		var t = a[lo]
@@ -487,7 +487,7 @@ func instantiate୦୦reverseRange୦sort_slice_tim୮aPerson(a []Person, lo int
 }
 
 //line sort_slice_tim.go2:366
-type instantiate୦୦TimSort୦sort_slice_tim୮aPerson struct {
+type instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson struct {
 //line sort_slice_tim.go2:54
  a []Person
 
@@ -509,14 +509,14 @@ type instantiate୦୦TimSort୦sort_slice_tim୮aPerson struct {
 }
 
 //line sort_slice_tim.go2:401
-func (this *instantiate୦୦TimSort୦sort_slice_tim୮aPerson,) pushRun(runBase int, runLen int) {
+func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) pushRun(runBase int, runLen int) {
 	this.runBase[this.stackSize] = runBase
 	this.runLen[this.stackSize] = runLen
 	this.stackSize++
 }
 
 //line sort_slice_tim.go2:423
-func (this *instantiate୦୦TimSort୦sort_slice_tim୮aPerson,) mergeCollapse() {
+func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeCollapse() {
 	for this.stackSize > 1 {
 		var n = this.stackSize - 2
 		if n > 0 && this.runLen[n-1] <= this.runLen[n]+this.runLen[n+1] || n > 1 && this.runLen[n-2] <= this.runLen[n]+this.runLen[n-1] {
@@ -531,7 +531,7 @@ func (this *instantiate୦୦TimSort୦sort_slice_tim୮aPerson,) mergeCollapse(
 }
 
 //line sort_slice_tim.go2:441
-func (this *instantiate୦୦TimSort୦sort_slice_tim୮aPerson,) mergeForceCollapse() {
+func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeForceCollapse() {
 	for this.stackSize > 1 {
 		var n = this.stackSize - 2
 		if n > 0 && this.runLen[n-1] < this.runLen[n+1] {
@@ -542,7 +542,7 @@ func (this *instantiate୦୦TimSort୦sort_slice_tim୮aPerson,) mergeForceColl
 }
 
 //line sort_slice_tim.go2:458
-func (this *instantiate୦୦TimSort୦sort_slice_tim୮aPerson,) mergeAt(i int) {
+func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeAt(i int) {
 
 //line sort_slice_tim.go2:463
  var base1 = this.runBase[i]
@@ -559,7 +559,7 @@ func (this *instantiate୦୦TimSort୦sort_slice_tim୮aPerson,) mergeAt(i int)
 				this.stackSize--
 
 //line sort_slice_tim.go2:486
- var k = instantiate୦୦gallopRight୦sort_slice_tim୮aPerson(this.a[base2], this.a, base1, len1, 0, this.c)
+ var k = instantiate୦୦gallopRight୦sort_slice_tim_go2୮aPerson(this.a[base2], this.a, base1, len1, 0, this.c)
 
 	base1 += k
 	len1 -= k
@@ -568,7 +568,7 @@ func (this *instantiate୦୦TimSort୦sort_slice_tim୮aPerson,) mergeAt(i int)
 	}
 
 //line sort_slice_tim.go2:498
- len2 = instantiate୦୦gallopLeft୦sort_slice_tim୮aPerson(this.a[base1+len1-1], this.a, base2, len2, len2-1, this.c)
+ len2 = instantiate୦୦gallopLeft୦sort_slice_tim_go2୮aPerson(this.a[base1+len1-1], this.a, base2, len2, len2-1, this.c)
 
 	if len2 == 0 {
 		return
@@ -583,7 +583,7 @@ func (this *instantiate୦୦TimSort୦sort_slice_tim୮aPerson,) mergeAt(i int)
 }
 
 //line sort_slice_tim.go2:682
-func (this *instantiate୦୦TimSort୦sort_slice_tim୮aPerson,) mergeLo(base1 int, len1 int, base2 int, len2 int) {
+func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeLo(base1 int, len1 int, base2 int, len2 int) {
 
 //line sort_slice_tim.go2:686
  var a = this.a
@@ -655,7 +655,7 @@ outer:
 //line sort_slice_tim.go2:761
   for {
 
-			count1 = instantiate୦୦gallopRight୦sort_slice_tim୮aPerson(a[cursor2], tmp, cursor1, len1, 0, c)
+			count1 = instantiate୦୦gallopRight୦sort_slice_tim_go2୮aPerson(a[cursor2], tmp, cursor1, len1, 0, c)
 			if count1 != 0 {
 				copy(a[dest:], tmp[cursor1:cursor1+count1])
 
@@ -675,7 +675,7 @@ outer:
 				break outer
 			}
 
-			count2 = instantiate୦୦gallopLeft୦sort_slice_tim୮aPerson(tmp[cursor1], a, cursor2, len2, 0, c)
+			count2 = instantiate୦୦gallopLeft୦sort_slice_tim_go2୮aPerson(tmp[cursor1], a, cursor2, len2, 0, c)
 			if count2 != 0 {
 				copy(a[dest:], a[cursor2:cursor2+count2])
 
@@ -728,7 +728,7 @@ outer:
 }
 
 //line sort_slice_tim.go2:846
-func (this *instantiate୦୦TimSort୦sort_slice_tim୮aPerson,) mergeHi(base1, len1, base2, len2 int) {
+func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeHi(base1, len1, base2, len2 int) {
 
 //line sort_slice_tim.go2:850
  var a = this.a
@@ -806,7 +806,7 @@ outer:
 //line sort_slice_tim.go2:930
   for {
 
-			count1 = len1 - instantiate୦୦gallopRight୦sort_slice_tim୮aPerson(tmp[cursor2], a, base1, len1, len1-1, c)
+			count1 = len1 - instantiate୦୦gallopRight୦sort_slice_tim_go2୮aPerson(tmp[cursor2], a, base1, len1, len1-1, c)
 			if count1 != 0 {
 				dest -= count1
 				cursor1 -= count1
@@ -826,7 +826,7 @@ outer:
 				break outer
 			}
 
-			count2 = len2 - instantiate୦୦gallopLeft୦sort_slice_tim୮aPerson(a[cursor1], tmp, tmpBase, len2, len2-1, c)
+			count2 = len2 - instantiate୦୦gallopLeft୦sort_slice_tim_go2୮aPerson(a[cursor1], tmp, tmpBase, len2, len2-1, c)
 			if count2 != 0 {
 				dest -= count2
 				cursor2 -= count2
@@ -883,7 +883,7 @@ outer:
 }
 
 //line sort_slice_tim.go2:1016
-func (this *instantiate୦୦TimSort୦sort_slice_tim୮aPerson,) ensureCapacity(minCapacity int) []Person {
+func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) ensureCapacity(minCapacity int) []Person {
 	if this.tmpLen < minCapacity {
 
 //line sort_slice_tim.go2:1020
@@ -1341,7 +1341,7 @@ func (this *instantiate୦୦TimSort୦int,) ensureCapacity(minCapacity int) []i
 	return this.tmp
 }
 //line sort_slice_tim.go2:604
-func instantiate୦୦gallopRight୦sort_slice_tim୮aPerson(key Person, a []Person, base int, len int, hint int, c func(i, j Person,) int) int {
+func instantiate୦୦gallopRight୦sort_slice_tim_go2୮aPerson(key Person, a []Person, base int, len int, hint int, c func(i, j Person,) int) int {
 
 //line sort_slice_tim.go2:607
  var ofs = 1
@@ -1398,7 +1398,7 @@ func instantiate୦୦gallopRight୦sort_slice_tim୮aPerson(key Person, a []Per
 	return ofs
 }
 //line sort_slice_tim.go2:530
-func instantiate୦୦gallopLeft୦sort_slice_tim୮aPerson(key Person, a []Person, base int, len int, hint int, c func(i, j Person,) int) int {
+func instantiate୦୦gallopLeft୦sort_slice_tim_go2୮aPerson(key Person, a []Person, base int, len int, hint int, c func(i, j Person,) int) int {
 
 	var lastOfs = 0
 	var ofs = 1
