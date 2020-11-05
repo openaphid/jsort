@@ -1,5 +1,7 @@
 package sort_slice_dps
 
+import "reflect"
+
 /**
  * The maximum number of runs in merge sort.
  */
@@ -17,27 +19,36 @@ const quicksortThreshold = 286
  */
 const insertionSortThreshold = 47
 
-type SliceInterface interface {
-	make(n int) SliceInterface
-	copy(src SliceInterface)
-	get(i int) interface{}
-	set(i int, v interface{})
-	swap(i, j int)
-	len() int
-	slice(i int) SliceInterface
-	slice2(i, j int) SliceInterface
-	cmp(compare CompareFunc, i, j int) int
-}
-
 type CompareFunc = func(o1, o2 interface{}) int
 
-func Sort(a SliceInterface, compare CompareFunc) {
-	sort(compare, a, 0, a.len()-1, nil, 0, 0)
+func Sort(a interface{}, compare CompareFunc) {
+	rt := reflect.TypeOf(a)
+	rv := reflect.ValueOf(a)
+	elm := rt.Elem()
+
+	n := rv.Len()
+
+	interfaces := make([]interface{}, n)
+	for i := 0; i < n; i++ {
+		interfaces[i] = rv.Index(i).Interface()
+	}
+
+	SortInterfaces(interfaces, compare)
+
+	for i := 0; i < n; i++ {
+		rv.Index(i).Set(reflect.ValueOf(interfaces[i]).Convert(elm))
+	}
 }
 
-func IsSorted(a SliceInterface, compare CompareFunc) bool {
-	for i := a.len() - 1; i > 0; i-- {
-		if a.cmp(compare, i, i-1) < 0 {
+func SortInterfaces(a []interface{}, compare CompareFunc) {
+	sort(compare, a, 0, len(a)-1, nil, 0, 0)
+}
+
+func IsSorted(a interface{}, compare CompareFunc) bool {
+	rv := reflect.ValueOf(a)
+	n := rv.Len()
+	for i := n - 1; i > 0; i-- {
+		if compare(rv.Index(i).Interface(), rv.Index(i-1).Interface()) < 0 {
 			return false
 		}
 	}
@@ -55,7 +66,7 @@ func IsSorted(a SliceInterface, compare CompareFunc) bool {
  * @param workBase origin of usable space in work array
  * @param workLen usable size of work array
  */
-func sort(compare CompareFunc, a SliceInterface, left int, right int, work SliceInterface, workBase int, workLen int) {
+func sort(compare CompareFunc, a []interface{}, left int, right int, work []interface{}, workBase int, workLen int) {
 	// Use Quicksort on small arrays
 	if right-left < quicksortThreshold {
 		sortInternal(compare, a, left, right, true)
@@ -73,25 +84,25 @@ func sort(compare CompareFunc, a SliceInterface, left int, right int, work Slice
 	// Check if the array is nearly sorted
 	for k := left; k < right; run[count] = k {
 		// Equal items in the beginning of the sequence
-		for k < right && a.cmp(compare, k, k+1) == 0 {
+		for k < right && compare(a[k], a[k+1]) == 0 {
 			k++
 		}
 		if k == right {
 			break
 		} // Sequence finishes with equal items
-		if a.cmp(compare, k, k+1) < 0 { // ascending
+		if compare(a[k], a[k+1]) < 0 { // ascending
 			for {
 				k++
-				if k <= right && a.cmp(compare, k-1, k) <= 0 {
+				if k <= right && compare(a[k-1], a[k]) <= 0 {
 				} else {
 					break
 				}
 			}
 
-		} else if a.cmp(compare, k, k+1) > 0 { // descending
+		} else if compare(a[k], a[k+1]) > 0 { // descending
 			for {
 				k++
-				if k <= right && a.cmp(compare, k-1, k) >= 0 {
+				if k <= right && compare(a[k-1], a[k]) >= 0 {
 				} else {
 					break
 				}
@@ -101,13 +112,13 @@ func sort(compare CompareFunc, a SliceInterface, left int, right int, work Slice
 			for hi := k; lo+1 < hi-1; {
 				lo++
 				hi--
-				a.swap(lo, hi)
+				a[lo], a[hi] = a[hi], a[lo]
 			}
 		}
 
 		// Merge a transformed descending sequence followed by an
 		// ascending sequence
-		if run[count] > left && a.cmp(compare, run[count], run[count]-1) >= 0 {
+		if run[count] > left && compare(a[run[count]], a[run[count]-1]) >= 0 {
 			count--
 		}
 
@@ -157,15 +168,15 @@ func sort(compare CompareFunc, a SliceInterface, left int, right int, work Slice
 	}
 
 	// Use or create temporary array b for merging
-	var b SliceInterface    // temp array; alternates with a
+	var b []interface{}     // temp array; alternates with a
 	var ao, bo int          // array offsets from 'left'
 	var blen = right - left // space needed for b
-	if work == nil || workLen < blen || workBase+blen > work.len() {
-		work = a.make(blen)
+	if len(work) == 0 || workLen < blen || workBase+blen > len(work) {
+		work = make([]interface{}, blen)
 		workBase = 0
 	}
 	if odd == 0 {
-		work.slice(workBase).copy(a.slice2(left, left+blen))
+		copy(work[workBase:], a[left:left+blen])
 		//System.arraycopy(a, left, work, workBase, blen);
 		b = a
 		bo = 0
@@ -188,13 +199,13 @@ func sort(compare CompareFunc, a SliceInterface, left int, right int, work Slice
 			p := i
 			q := mi
 			for ; i < hi; i++ {
-				if q >= hi || p < mi && a.cmp(compare, p+ao, q+ao) <= 0 {
+				if q >= hi || p < mi && compare(a[p+ao], a[q+ao]) <= 0 {
 					//b[i + bo] = a[p++ + ao];
-					b.set(i+bo, a.get(p+ao))
+					b[i+bo] = a[p+ao]
 					p++
 				} else {
 					//b[i + bo] = a[q++ + ao];
-					b.set(i+bo, a.get(q+ao))
+					b[i+bo] = a[q+ao]
 					q++
 				}
 			}
@@ -204,7 +215,7 @@ func sort(compare CompareFunc, a SliceInterface, left int, right int, work Slice
 		if (count & 1) != 0 {
 			i := right
 			lo := run[count-1]
-			for ; i-1 >= lo; b.set(i+bo, a.get(i+ao)) {
+			for ; i-1 >= lo; b[i+bo] = a[i+ao] {
 				i--
 			}
 			last++
@@ -227,7 +238,7 @@ func sort(compare CompareFunc, a SliceInterface, left int, right int, work Slice
  * @param right the index of the last element, inclusive, to be sorted
  * @param leftmost indicates if this part is the leftmost in the range
  */
-func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, leftmost bool) {
+func sortInternal(compare CompareFunc, a []interface{}, left int, right int, leftmost bool) {
 	var length = right - left + 1
 
 	// Use insertion sort on tiny arrays
@@ -241,15 +252,15 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 			i := left
 			j := i
 			for i < right {
-				var ai = a.get(i + 1)
-				for compare(ai, a.get(j)) < 0 {
-					a.set(j+1, a.get(j))
+				var ai = a[i+1]
+				for compare(ai, a[j]) < 0 {
+					a[j+1] = a[j]
 					j--
 					if j+1 == left {
 						break
 					}
 				}
-				a.set(j+1, ai)
+				a[j+1] = ai
 
 				i++
 				j = i
@@ -265,7 +276,7 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 				}
 
 				left++
-				if a.cmp(compare, left, left-1) >= 0 {
+				if compare(a[left], a[left-1]) >= 0 {
 				} else {
 					break
 				}
@@ -288,48 +299,48 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 					break
 				}
 
-				var a1 = a.get(k)
-				var a2 = a.get(left)
+				var a1 = a[k]
+				var a2 = a[left]
 
 				if compare(a1, a2) < 0 {
 					a2 = a1
-					a1 = a.get(left)
+					a1 = a[left]
 				}
 
 				for {
 					k--
-					if compare(a1, a.get(k)) < 0 {
+					if compare(a1, a[k]) < 0 {
 					} else {
 						break
 					}
-					a.set(k+2, a.get(k))
+					a[k+2] = a[k]
 				}
 				k++
-				a.set(k+1, a1)
+				a[k+1] = a1
 
 				for {
 					k--
-					if compare(a2, a.get(k)) < 0 {
+					if compare(a2, a[k]) < 0 {
 					} else {
 						break
 					}
-					a.set(k+1, a.get(k))
+					a[k+1] = a[k]
 				}
-				a.set(k+1, a2)
+				a[k+1] = a2
 				left++
 				k = left
 			}
-			var last = a.get(right)
+			var last = a[right]
 
 			for {
 				right--
-				if compare(last, a.get(right)) < 0 {
+				if compare(last, a[right]) < 0 {
 				} else {
 					break
 				}
-				a.set(right+1, a.get(right))
+				a[right+1] = a[right]
 			}
-			a.set(right+1, last)
+			a[right+1] = last
 		}
 		return
 	}
@@ -351,42 +362,42 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 	var e5 = e4 + seventh
 
 	// Sort these elements using insertion sort
-	if a.cmp(compare, e2, e1) < 0 {
-		a.swap(e2, e1)
+	if compare(a[e2], a[e1]) < 0 {
+		a[e2], a[e1] = a[e1], a[e2]
 	}
 
-	if a.cmp(compare, e3, e2) < 0 {
-		var t = a.get(e3)
-		a.swap(e3, e2)
-		if compare(t, a.get(e1)) < 0 {
-			a.set(e2, a.get(e1))
-			a.set(e1, t)
+	if compare(a[e3], a[e2]) < 0 {
+		var t = a[e3]
+		a[e3], a[e2] = a[e2], a[e3]
+		if compare(t, a[e1]) < 0 {
+			a[e2] = a[e1]
+			a[e1] = t
 		}
 	}
-	if a.cmp(compare, e4, e3) < 0 {
-		var t = a.get(e4)
-		a.swap(e4, e3)
-		if compare(t, a.get(e2)) < 0 {
-			a.set(e3, a.get(e2))
-			a.set(e2, t)
-			if compare(t, a.get(e1)) < 0 {
-				a.set(e2, a.get(e1))
-				a.set(e1, t)
+	if compare(a[e4], a[e3]) < 0 {
+		var t = a[e4]
+		a[e4], a[e3] = a[e3], a[e4]
+		if compare(t, a[e2]) < 0 {
+			a[e3] = a[e2]
+			a[e2] = t
+			if compare(t, a[e1]) < 0 {
+				a[e2] = a[e1]
+				a[e1] = t
 			}
 		}
 	}
-	if a.cmp(compare, e5, e4) < 0 {
-		var t = a.get(e5)
-		a.swap(e5, e4)
-		if compare(t, a.get(e3)) < 0 {
-			a.set(e4, a.get(e3))
-			a.set(e3, t)
-			if compare(t, a.get(e2)) < 0 {
-				a.set(e3, a.get(e2))
-				a.set(e2, t)
-				if compare(t, a.get(e1)) < 0 {
-					a.set(e2, a.get(e1))
-					a.set(e1, t)
+	if compare(a[e5], a[e4]) < 0 {
+		var t = a[e5]
+		a[e5], a[e4] = a[e4], a[e5]
+		if compare(t, a[e3]) < 0 {
+			a[e4] = a[e3]
+			a[e3] = t
+			if compare(t, a[e2]) < 0 {
+				a[e3] = a[e2]
+				a[e2] = t
+				if compare(t, a[e1]) < 0 {
+					a[e2] = a[e1]
+					a[e1] = t
 				}
 			}
 		}
@@ -396,14 +407,14 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 	var less = left   // The index of the first element of center part
 	var great = right // The index before the first element of right part
 
-	if a.cmp(compare, e1, e2) != 0 && a.cmp(compare, e2, e3) != 0 && a.cmp(compare, e3, e4) != 0 && a.cmp(compare, e4, e5) != 0 {
+	if compare(a[e1], a[e2]) != 0 && compare(a[e2], a[e3]) != 0 && compare(a[e3], a[e4]) != 0 && compare(a[e4], a[e5]) != 0 {
 		/*
 		 * Use the second and fourth of the five sorted elements as pivots.
 		 * These values are inexpensive approximations of the first and
 		 * second terciles of the array. Note that pivot1 <= pivot2.
 		 */
-		var pivot1 = a.get(e2)
-		var pivot2 = a.get(e4)
+		var pivot1 = a[e2]
+		var pivot2 = a[e4]
 
 		/*
 		 * The first and the last elements to be sorted are moved to the
@@ -411,22 +422,22 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 		 * is complete, the pivots are swapped back into their final
 		 * positions, and excluded from subsequent sorting.
 		 */
-		a.set(e2, a.get(left))
-		a.set(e4, a.get(right))
+		a[e2] = a[left]
+		a[e4] = a[right]
 
 		/*
 		 * Skip elements, which are less or greater than pivot values.
 		 */
 		for {
 			less++
-			if compare(a.get(less), pivot1) < 0 {
+			if compare(a[less], pivot1) < 0 {
 			} else {
 				break
 			}
 		}
 		for {
 			great--
-			if compare(a.get(great), pivot2) > 0 {
+			if compare(a[great], pivot2) > 0 {
 			} else {
 				break
 			}
@@ -458,43 +469,43 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 			} else {
 				break
 			}
-			var ak = a.get(k)
+			var ak = a[k]
 			if compare(ak, pivot1) < 0 { // Move a[k] to left part
-				a.set(k, a.get(less))
+				a[k] = a[less]
 				/*
 				 * Here and below we use "a[i] = b; i++;" instead
 				 * of "a[i++] = b;" due to performance issue.
 				 */
-				a.set(less, ak)
+				a[less] = ak
 				less++
 			} else if compare(ak, pivot2) > 0 { // Move a[k] to right part
-				for compare(a.get(great), pivot2) > 0 {
+				for compare(a[great], pivot2) > 0 {
 					great--
 					if great+1 == k {
 						break Outer
 					}
 				}
-				if compare(a.get(great), pivot1) < 0 { // a[great] <= pivot2
-					a.set(k, a.get(less))
-					a.set(less, a.get(great))
+				if compare(a[great], pivot1) < 0 { // a[great] <= pivot2
+					a[k] = a[less]
+					a[less] = a[great]
 					less++
 				} else { // pivot1 <= a[great] <= pivot2
-					a.set(k, a.get(great))
+					a[k] = a[great]
 				}
 				/*
 				 * Here and below we use "a[i] = b; i--;" instead
 				 * of "a[i--] = b;" due to performance issue.
 				 */
-				a.set(great, ak)
+				a[great] = ak
 				great--
 			}
 		}
 
 		// Swap pivots into their final positions
-		a.set(left, a.get(less-1))
-		a.set(less-1, pivot1)
-		a.set(right, a.get(great+1))
-		a.set(great+1, pivot2)
+		a[left] = a[less-1]
+		a[less-1] = pivot1
+		a[right] = a[great+1]
+		a[great+1] = pivot2
 
 		// Sort left and right parts recursively, excluding known pivots
 		sortInternal(compare, a, left, less-2, leftmost)
@@ -508,11 +519,11 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 			/*
 			 * Skip elements, which are equal to pivot values.
 			 */
-			for compare(a.get(less), pivot1) == 0 {
+			for compare(a[less], pivot1) == 0 {
 				less++
 			}
 
-			for compare(a.get(great), pivot2) == 0 {
+			for compare(a[great], pivot2) == 0 {
 				great--
 			}
 
@@ -542,20 +553,20 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 				} else {
 					break
 				}
-				var ak = a.get(k)
+				var ak = a[k]
 				if ak == pivot1 { // Move a[k] to left part
-					a.set(k, a.get(less))
-					a.set(less, ak)
+					a[k] = a[less]
+					a[less] = ak
 					less++
 				} else if ak == pivot2 { // Move a[k] to right part
-					for compare(a.get(great), pivot2) == 0 {
+					for compare(a[great], pivot2) == 0 {
 						great--
 						if great+1 == k {
 							break outer2
 						}
 					}
-					if compare(a.get(great), pivot1) == 0 { // a[great] < pivot2
-						a.set(k, a.get(less))
+					if compare(a[great], pivot1) == 0 { // a[great] < pivot2
+						a[k] = a[less]
 						/*
 						 * Even though a[great] equals to pivot1, the
 						 * assignment a[less] = pivot1 may be incorrect,
@@ -564,12 +575,12 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 						 * double sorting methods we have to use more
 						 * accurate assignment a[less] = a[great].
 						 */
-						a.set(less, pivot1)
+						a[less] = pivot1
 						less++
 					} else { // pivot1 < a[great] < pivot2
-						a.set(k, a.get(great))
+						a[k] = a[great]
 					}
-					a.set(great, ak)
+					a[great] = ak
 					great--
 				}
 			}
@@ -583,7 +594,7 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 		 * Use the third of the five sorted elements as pivot.
 		 * This value is inexpensive approximation of the median.
 		 */
-		var pivot = a.get(e3)
+		var pivot = a[e3]
 
 		/*
 		 * Partitioning degenerates to the traditional 3-way
@@ -606,21 +617,21 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 		 * Pointer k is the first index of ?-part.
 		 */
 		for k := less; k <= great; k++ {
-			if compare(a.get(k), pivot) == 0 {
+			if compare(a[k], pivot) == 0 {
 				continue
 			}
-			var ak = a.get(k)
+			var ak = a[k]
 			if compare(ak, pivot) < 0 { // Move a[k] to left part
-				a.set(k, a.get(less))
-				a.set(less, ak)
+				a[k] = a[less]
+				a[less] = ak
 				less++
 			} else { // a[k] > pivot - Move a[k] to right part
-				for compare(a.get(great), pivot) > 0 {
+				for compare(a[great], pivot) > 0 {
 					great--
 				}
-				if compare(a.get(great), pivot) < 0 { // a[great] <= pivot
-					a.set(k, a.get(less))
-					a.set(less, a.get(great))
+				if compare(a[great], pivot) < 0 { // a[great] <= pivot
+					a[k] = a[less]
+					a[less] = a[great]
 					less++
 				} else { // a[great] == pivot
 					/*
@@ -631,9 +642,9 @@ func sortInternal(compare CompareFunc, a SliceInterface, left int, right int, le
 					 * and double sorting methods we have to use
 					 * more accurate assignment a[k] = a[great].
 					 */
-					a.set(k, pivot)
+					a[k] = pivot
 				}
-				a.set(great, ak)
+				a[great] = ak
 				great--
 			}
 		}
