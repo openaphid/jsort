@@ -115,20 +115,10 @@ func (p PersonSliceWithStat) slice2(i, j int) SliceInterface {
 func prepare(a []Person) {
 	for i, _ := range a {
 		a[i] = Person{
-			age:  len(a) - i, //rand.Int(),
+			age:  rand.Int(),
 			name: fmt.Sprintf("n-%d", rand.Int()),
 		}
 	}
-}
-
-func isSorted(a []Person) bool {
-	n := len(a)
-	for i := n - 1; i > 0; i-- {
-		if a[i].age-a[i-1].age < 0 {
-			return false
-		}
-	}
-	return true
 }
 
 var byAge = func(o1, o2 interface{}) int {

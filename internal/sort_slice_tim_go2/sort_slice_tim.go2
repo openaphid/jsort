@@ -1,26 +1,12 @@
 package sort_slice_tim
 
-type SliceInterface interface {
-	make(n int) SliceInterface
-	copy(src SliceInterface)
-	get(i int) interface{}
-	set(i int, v interface{})
-	swap(i, j int)
-	len() int
-	slice(i int) SliceInterface
-	slice2(i, j int) SliceInterface
-	cmp(compare CompareFunc, i, j int) int
+func Sort[T any](a []T, compare func(i, j T) int) {
+	sort(a, 0, len(a), compare, nil, 0, 0)
 }
 
-type CompareFunc = func(o1, o2 interface{}) int
-
-func Sort(a SliceInterface, compare CompareFunc) {
-	sort(a, 0, a.len(), compare, nil, 0, 0)
-}
-
-func IsSorted(a SliceInterface, compare CompareFunc) bool {
-	for i := a.len() - 1; i > 0; i-- {
-		if a.cmp(compare, i, i-1) < 0 {
+func IsSorted[T any](a []T, compare func(i, j T) int) bool {
+	for i := len(a) - 1; i > 0; i-- {
+		if compare(a[i], a[i-1]) < 0 {
 			return false
 		}
 	}
@@ -61,16 +47,16 @@ const MIN_GALLOP = 7
  */
 const INITIAL_TMP_STORAGE_LENGTH = 256
 
-type TimSort struct {
+type TimSort[T any] struct {
 	/**
 	 * The array being sorted.
 	 */
-	a SliceInterface
+	a []T
 
 	/**
 	 * The comparator for this sort.
 	 */
-	c CompareFunc
+	c func(i, j T) int
 
 	/**
 	 * This controls when we get *into* galloping mode.  It is initialized
@@ -84,7 +70,7 @@ type TimSort struct {
 	 * provided in constructor, and if so will be used as long as it
 	 * is big enough.
 	 */
-	tmp     SliceInterface
+	tmp     []T
 	tmpBase int // base of tmp array slice
 	tmpLen  int // length of tmp array slice
 
@@ -112,23 +98,23 @@ type TimSort struct {
  * @param workBase origin of usable space in work array
  * @param workLen usable size of work array
  */
-func newTimSort(a SliceInterface, c CompareFunc, work SliceInterface, workBase int, workLen int) *TimSort {
-	this := &TimSort{
+func newTimSort[T any](a []T, c func(i, j T) int, work []T, workBase int, workLen int) *TimSort[T] {
+	this := &TimSort[T]{
+		a: a,
+		c: c,
 		minGallop: MIN_GALLOP,
 	}
-	this.a = a
-	this.c = c
 
 	// Allocate temp storage (which may be increased later if necessary)
-	len := a.len()
+	l := len(a)
 	tlen := 0
-	if len < 2*INITIAL_TMP_STORAGE_LENGTH {
-		tlen = len >> 1
+	if l < 2*INITIAL_TMP_STORAGE_LENGTH {
+		tlen = l >> 1
 	} else {
 		tlen = INITIAL_TMP_STORAGE_LENGTH
 	}
-	if work == nil || workLen < tlen || workBase+tlen > work.len() {
-		this.tmp = a.make(tlen)
+	if len(work) == 0 || workLen < tlen || workBase+tlen > len(work) {
+		this.tmp = make([]T, tlen)
 		this.tmpBase = 0
 		this.tmpLen = tlen
 	} else {
@@ -152,11 +138,11 @@ func newTimSort(a SliceInterface, c CompareFunc, work SliceInterface, workBase i
 	 * http://envisage-project.eu/wp-content/uploads/2015/02/sorting.pdf
 	 */
 	stackLen := 0
-	if len < 120 {
+	if l < 120 {
 		stackLen = 5
-	} else if len < 1542 {
+	} else if l < 1542 {
 		stackLen = 10
-	} else if len < 119151 {
+	} else if l < 119151 {
 		stackLen = 24
 	} else {
 		stackLen = 49
@@ -188,7 +174,7 @@ func newTimSort(a SliceInterface, c CompareFunc, work SliceInterface, workBase i
  * @param workLen usable size of work array
  * @since 1.8
  */
-func sort(a SliceInterface, lo int, hi int, c CompareFunc, work SliceInterface, workBase int, workLen int) {
+func sort[T any](a []T, lo int, hi int, c func(i, j T) int, work []T, workBase int, workLen int) {
 	//assert c != null && a != null && lo >= 0 && lo <= hi && hi <= a.length;
 
 	var nRemaining = hi - lo
@@ -263,14 +249,14 @@ func sort(a SliceInterface, lo int, hi int, c CompareFunc, work SliceInterface, 
  *        not already known to be sorted ({@code lo <= start <= hi})
  * @param c comparator to used for the sort
  */
-func binarySort(a SliceInterface, lo int, hi int, start int, c CompareFunc) {
+func binarySort[T any](a []T, lo int, hi int, start int, c func(i, j T) int) {
 	//assert lo <= start && start <= hi;
 	if start == lo {
 		start++
 	}
 
 	for ; start < hi; start++ {
-		var pivot = a.get(start)
+		var pivot = a[start]
 
 		// Set left (and right) to the index where a[start] (pivot) belongs
 		var left = lo
@@ -283,7 +269,7 @@ func binarySort(a SliceInterface, lo int, hi int, start int, c CompareFunc) {
 		 */
 		for left < right {
 			var mid = (left + right) >> 1
-			if c(pivot, a.get(mid)) < 0 {
+			if c(pivot, a[mid]) < 0 {
 				right = mid
 			} else {
 				left = mid + 1
@@ -302,14 +288,14 @@ func binarySort(a SliceInterface, lo int, hi int, start int, c CompareFunc) {
 		// Switch is just an optimization for arraycopy in default case
 		switch n {
 		case 2:
-			a.set(left+2, a.get(left+1))
+			a[left+2] = a[left+1]
 		case 1:
-			a.set(left+1, a.get(left))
+			a[left+1] = a[left]
 		default:
-			a.slice(left + 1).copy(a.slice2(left, left+n)) // XXX, maybe incorrect
+			copy(a[left+1:], a[left:left+n])
 			//System.arraycopy(a, left, a, left + 1, n);
 		}
-		a.set(left, pivot)
+		a[left] = pivot
 	}
 }
 
@@ -338,7 +324,7 @@ func binarySort(a SliceInterface, lo int, hi int, start int, c CompareFunc) {
  * @return  the length of the run beginning at the specified position in
  *          the specified array
  */
-func countRunAndMakeAscending(a SliceInterface, lo int, hi int, c CompareFunc) int {
+func countRunAndMakeAscending[T any](a []T, lo int, hi int, c func(i, j T) int) int {
 	//assert lo < hi;
 	var runHi = lo + 1
 	if runHi == hi {
@@ -347,13 +333,13 @@ func countRunAndMakeAscending(a SliceInterface, lo int, hi int, c CompareFunc) i
 
 	// Find end of run, and reverse range if descending
 	runHi++
-	if a.cmp(c, runHi-1, lo) < 0 { // Descending
-		for runHi < hi && a.cmp(c, runHi, runHi-1) < 0 {
+	if c(a[runHi-1], a[lo]) < 0 { // Descending
+		for runHi < hi && c(a[runHi], a[runHi-1]) < 0 {
 			runHi++
 		}
 		reverseRange(a, lo, runHi)
 	} else { // Ascending
-		for runHi < hi && a.cmp(c, runHi, runHi-1) >= 0 {
+		for runHi < hi && c(a[runHi], a[runHi-1]) >= 0 {
 			runHi++
 		}
 	}
@@ -368,13 +354,13 @@ func countRunAndMakeAscending(a SliceInterface, lo int, hi int, c CompareFunc) i
  * @param lo the index of the first element in the range to be reversed
  * @param hi the index after the last element in the range to be reversed
  */
-func reverseRange(a SliceInterface, lo int, hi int) {
+func reverseRange[T any](a []T, lo int, hi int) {
 	hi--
 	for lo < hi {
-		var t = a.get(lo)
-		a.set(lo, a.get(hi))
+		var t = a[lo]
+		a[lo] = a[hi]
 		lo++
-		a.set(hi, t)
+		a[hi] = t
 		hi--
 	}
 }
@@ -412,7 +398,7 @@ func minRunLength(n int) int {
  * @param runBase index of the first element in the run
  * @param runLen  the number of elements in the run
  */
-func (this *TimSort) pushRun(runBase int, runLen int) {
+func (this *TimSort[T]) pushRun(runBase int, runLen int) {
 	this.runBase[this.stackSize] = runBase
 	this.runLen[this.stackSize] = runLen
 	this.stackSize++
@@ -434,7 +420,7 @@ func (this *TimSort) pushRun(runBase int, runLen int) {
  * the analysis in "On the Worst-Case Complexity of TimSort" by
  * Nicolas Auger, Vincent Jug, Cyril Nicaud, and Carine Pivoteau.
  */
-func (this *TimSort) mergeCollapse() {
+func (this *TimSort[T]) mergeCollapse() {
 	for this.stackSize > 1 {
 		var n = this.stackSize - 2
 		if n > 0 && this.runLen[n-1] <= this.runLen[n]+this.runLen[n+1] || n > 1 && this.runLen[n-2] <= this.runLen[n]+this.runLen[n-1] {
@@ -452,7 +438,7 @@ func (this *TimSort) mergeCollapse() {
  * Merges all runs on the stack until only one remains.  This method is
  * called once, to complete the sort.
  */
-func (this *TimSort) mergeForceCollapse() {
+func (this *TimSort[T]) mergeForceCollapse() {
 	for this.stackSize > 1 {
 		var n = this.stackSize - 2
 		if n > 0 && this.runLen[n-1] < this.runLen[n+1] {
@@ -469,7 +455,7 @@ func (this *TimSort) mergeForceCollapse() {
  *
  * @param i stack index of the first of the two runs to merge
  */
-func (this *TimSort) mergeAt(i int) {
+func (this *TimSort[T]) mergeAt(i int) {
 	//assert stackSize >= 2;
 	//assert i >= 0;
 	//assert i == stackSize - 2 || i == stackSize - 3;
@@ -497,7 +483,7 @@ func (this *TimSort) mergeAt(i int) {
 	 * Find where the first element of run2 goes in run1. Prior elements
 	 * in run1 can be ignored (because they're already in place).
 	 */
-	var k = gallopRight(this.a.get(base2), this.a, base1, len1, 0, this.c)
+	var k = gallopRight(this.a[base2], this.a, base1, len1, 0, this.c)
 	//assert k >= 0;
 	base1 += k
 	len1 -= k
@@ -509,7 +495,7 @@ func (this *TimSort) mergeAt(i int) {
 	 * Find where the last element of run1 goes in run2. Subsequent elements
 	 * in run2 can be ignored (because they're already in place).
 	 */
-	len2 = gallopLeft(this.a.get(base1+len1-1), this.a, base2, len2, len2-1, this.c)
+	len2 = gallopLeft(this.a[base1+len1-1], this.a, base2, len2, len2-1, this.c)
 	//assert len2 >= 0;
 	if len2 == 0 {
 		return
@@ -541,14 +527,14 @@ func (this *TimSort) mergeAt(i int) {
  *    the first k elements of a should precede key, and the last n - k
  *    should follow it.
  */
-func gallopLeft(key interface{}, a SliceInterface, base int, len int, hint int, c CompareFunc) int {
+func gallopLeft[T any](key T, a []T, base int, len int, hint int, c func(i, j T) int) int {
 	//assert len > 0 && hint >= 0 && hint < len;
 	var lastOfs = 0
 	var ofs = 1
-	if c(key, a.get(base+hint)) > 0 {
+	if c(key, a[base+hint]) > 0 {
 		// Gallop right until a[base+hint+lastOfs] < key <= a[base+hint+ofs]
 		var maxOfs = len - hint
-		for ofs < maxOfs && c(key, a.get(base+hint+ofs)) > 0 {
+		for ofs < maxOfs && c(key, a[base+hint+ofs]) > 0 {
 			lastOfs = ofs
 			ofs = (ofs << 1) + 1
 			if ofs <= 0 { // int overflow
@@ -565,7 +551,7 @@ func gallopLeft(key interface{}, a SliceInterface, base int, len int, hint int, 
 	} else { // key <= a[base + hint]
 		// Gallop left until a[base+hint-ofs] < key <= a[base+hint-lastOfs]
 		var maxOfs = hint + 1
-		for ofs < maxOfs && c(key, a.get(base+hint-ofs)) <= 0 {
+		for ofs < maxOfs && c(key, a[base+hint-ofs]) <= 0 {
 			lastOfs = ofs
 			ofs = (ofs << 1) + 1
 			if ofs <= 0 { // int overflow
@@ -592,7 +578,7 @@ func gallopLeft(key interface{}, a SliceInterface, base int, len int, hint int, 
 	for lastOfs < ofs {
 		var m = lastOfs + ((ofs - lastOfs) >> 1)
 
-		if c(key, a.get(base+m)) > 0 {
+		if c(key, a[base+m]) > 0 {
 			lastOfs = m + 1 // a[base + m] < key
 		} else {
 			ofs = m // key <= a[base + m]
@@ -615,15 +601,15 @@ func gallopLeft(key interface{}, a SliceInterface, base int, len int, hint int, 
  * @param c the comparator used to order the range, and to search
  * @return the int k,  0 <= k <= n such that a[b + k - 1] <= key < a[b + k]
  */
-func gallopRight(key interface{}, a SliceInterface, base int, len int, hint int, c CompareFunc) int {
+func gallopRight[T any](key T, a []T, base int, len int, hint int, c func(i, j T) int) int {
 	//assert len > 0 && hint >= 0 && hint < len;
 
 	var ofs = 1
 	var lastOfs = 0
-	if c(key, a.get(base+hint)) < 0 {
+	if c(key, a[base+hint]) < 0 {
 		// Gallop left until a[b+hint - ofs] <= key < a[b+hint - lastOfs]
 		var maxOfs = hint + 1
-		for ofs < maxOfs && c(key, a.get(base+hint-ofs)) < 0 {
+		for ofs < maxOfs && c(key, a[base+hint-ofs]) < 0 {
 			lastOfs = ofs
 			ofs = (ofs << 1) + 1
 			if ofs <= 0 { // int overflow
@@ -641,7 +627,7 @@ func gallopRight(key interface{}, a SliceInterface, base int, len int, hint int,
 	} else { // a[b + hint] <= key
 		// Gallop right until a[b+hint + lastOfs] <= key < a[b+hint + ofs]
 		var maxOfs = len - hint
-		for ofs < maxOfs && c(key, a.get(base+hint+ofs)) >= 0 {
+		for ofs < maxOfs && c(key, a[base+hint+ofs]) >= 0 {
 			lastOfs = ofs
 			ofs = (ofs << 1) + 1
 			if ofs <= 0 { // int overflow
@@ -667,7 +653,7 @@ func gallopRight(key interface{}, a SliceInterface, base int, len int, hint int,
 	for lastOfs < ofs {
 		var m = lastOfs + ((ofs - lastOfs) >> 1)
 
-		if c(key, a.get(base+m)) < 0 {
+		if c(key, a[base+m]) < 0 {
 			ofs = m // key < a[b + m]
 		} else {
 			lastOfs = m + 1 // a[b + m] <= key
@@ -693,34 +679,34 @@ func gallopRight(key interface{}, a SliceInterface, base int, len int, hint int,
  *        (must be aBase + aLen)
  * @param len2  length of second run to be merged (must be > 0)
  */
-func (this *TimSort) mergeLo(base1 int, len1 int, base2 int, len2 int) {
+func (this *TimSort[T]) mergeLo(base1 int, len1 int, base2 int, len2 int) {
 	//assert len1 > 0 && len2 > 0 && base1 + len1 == base2;
 
 	// Copy first run into temp array
 	var a = this.a // For performance
-	var tmp SliceInterface = this.ensureCapacity(len1)
+	var tmp []T = this.ensureCapacity(len1)
 	var cursor1 = this.tmpBase // Indexes into tmp array
 	var cursor2 = base2        // Indexes int a
 	var dest = base1           // Indexes int a
 
-	tmp.slice(cursor1).copy(a.slice2(base1, base1+len1))
+	copy(tmp[cursor1:], a[base1:base1+len1])
 	//System.arraycopy(a, base1, tmp, cursor1, len1);
 
 	// Move first element of second run and deal with degenerate cases
-	a.set(dest, a.get(cursor2))
+	a[dest] = a[cursor2]
 	dest++
 	cursor2++
 
 	len2--
 	if len2 == 0 {
-		a.slice(dest).copy(tmp.slice2(cursor1, cursor1+len1))
+		copy(a[dest:], tmp[cursor1:cursor1+len1])
 		//System.arraycopy(tmp, cursor1, a, dest, len1);
 		return
 	}
 	if len1 == 1 {
-		a.slice(dest).copy(a.slice2(cursor2, cursor2+len2))
+		copy(a[dest:], a[cursor2:cursor2+len2])
 		//System.arraycopy(a, cursor2, a, dest, len2);
-		a.set(dest+len2, tmp.get(cursor1)) // Last elt of run 1 to end of merge
+		a[dest+len2] = tmp[cursor1] // Last elt of run 1 to end of merge
 		return
 	}
 
@@ -737,8 +723,8 @@ outer:
 		 */
 		for {
 			//assert len1 > 1 && len2 > 0;
-			if c(a.get(cursor2), tmp.get(cursor1)) < 0 {
-				a.set(dest, a.get(cursor2))
+			if c(a[cursor2], tmp[cursor1]) < 0 {
+				a[dest] = a[cursor2]
 				dest++
 				cursor2++
 
@@ -749,7 +735,7 @@ outer:
 					break outer
 				}
 			} else {
-				a.set(dest, tmp.get(cursor1))
+				a[dest] = tmp[cursor1]
 				dest++
 				cursor1++
 
@@ -774,9 +760,9 @@ outer:
 		 */
 		for {
 			//assert len1 > 1 && len2 > 0;
-			count1 = gallopRight(a.get(cursor2), tmp, cursor1, len1, 0, c)
+			count1 = gallopRight(a[cursor2], tmp, cursor1, len1, 0, c)
 			if count1 != 0 {
-				a.slice(dest).copy(tmp.slice2(cursor1, cursor1+count1))
+				copy(a[dest:], tmp[cursor1:cursor1+count1])
 				//System.arraycopy(tmp, cursor1, a, dest, count1);
 				dest += count1
 				cursor1 += count1
@@ -785,7 +771,7 @@ outer:
 					break outer
 				}
 			}
-			a.set(dest, a.get(cursor2))
+			a[dest] = a[cursor2]
 			dest++
 			cursor2++
 
@@ -794,9 +780,9 @@ outer:
 				break outer
 			}
 
-			count2 = gallopLeft(tmp.get(cursor1), a, cursor2, len2, 0, c)
+			count2 = gallopLeft(tmp[cursor1], a, cursor2, len2, 0, c)
 			if count2 != 0 {
-				a.slice(dest).copy(a.slice2(cursor2, cursor2+count2))
+				copy(a[dest:], a[cursor2:cursor2+count2])
 				//System.arraycopy(a, cursor2, a, dest, count2);
 				dest += count2
 				cursor2 += count2
@@ -805,7 +791,7 @@ outer:
 					break outer
 				}
 			}
-			a.set(dest, tmp.get(cursor1))
+			a[dest] = tmp[cursor1]
 			dest++
 			cursor1++
 
@@ -833,15 +819,15 @@ outer:
 
 	if len1 == 1 {
 		//assert len2 > 0;
-		a.slice(dest).copy(a.slice2(cursor2, cursor2+len2))
+		copy(a[dest:], a[cursor2:cursor2+len2])
 		//System.arraycopy(a, cursor2, a, dest, len2);
-		a.set(dest+len2, tmp.get(cursor1)) //  Last elt of run 1 to end of merge
+		a[dest+len2] = tmp[cursor1] //  Last elt of run 1 to end of merge
 	} else if len1 == 0 {
 		panic("Comparison method violates its general contract!")
 	} else {
 		//assert len2 == 0;
 		//assert len1 > 1;
-		a.slice(dest).copy(tmp.slice2(cursor1, cursor1+len1))
+		copy(a[dest:], tmp[cursor1:cursor1+len1])
 		//System.arraycopy(tmp, cursor1, a, dest, len1);
 	}
 }
@@ -857,15 +843,15 @@ outer:
  *        (must be aBase + aLen)
  * @param len2  length of second run to be merged (must be > 0)
  */
-func (this *TimSort) mergeHi(base1, len1, base2, len2 int) {
+func (this *TimSort[T]) mergeHi(base1, len1, base2, len2 int) {
 	//assert len1 > 0 && len2 > 0 && base1 + len1 == base2;
 
 	// Copy second run into temp array
 	var a = this.a // For performance
-	var tmp SliceInterface = this.ensureCapacity(len2)
+	var tmp []T = this.ensureCapacity(len2)
 	var tmpBase = this.tmpBase
 
-	tmp.slice(tmpBase).copy(a.slice2(base2, base2+len2))
+	copy(tmp[tmpBase:], a[base2:base2+len2])
 	//System.arraycopy(a, base2, tmp, tmpBase, len2);
 
 	var cursor1 = base1 + len1 - 1   // Indexes into a
@@ -873,22 +859,22 @@ func (this *TimSort) mergeHi(base1, len1, base2, len2 int) {
 	var dest = base2 + len2 - 1      // Indexes into a
 
 	// Move last element of first run and deal with degenerate cases
-	a.set(dest, a.get(cursor1))
+	a[dest] = a[cursor1]
 	dest--
 	cursor1--
 
 	len1--
 	if len1 == 0 {
-		a.slice(dest - (len2 - 1)).copy(tmp.slice2(tmpBase, tmpBase+len2))
+		copy(a[dest - (len2 - 1):], tmp[tmpBase:tmpBase+len2])
 		//System.arraycopy(tmp, tmpBase, a, dest - (len2 - 1), len2);
 		return
 	}
 	if len2 == 1 {
 		dest -= len1
 		cursor1 -= len1
-		a.slice(dest + 1).copy(a.slice2(cursor1+1, cursor1+1+len1))
+		copy(a[dest+1:], a[cursor1+1:cursor1+1+len1])
 		//System.arraycopy(a, cursor1 + 1, a, dest + 1, len1);
-		a.set(dest, tmp.get(cursor2))
+		a[dest] = tmp[cursor2]
 		return
 	}
 
@@ -905,8 +891,8 @@ outer:
 		 */
 		for {
 			//assert len1 > 0 && len2 > 1;
-			if c(tmp.get(cursor2), a.get(cursor1)) < 0 {
-				a.set(dest, a.get(cursor1))
+			if c(tmp[cursor2], a[cursor1]) < 0 {
+				a[dest] = a[cursor1]
 				dest--
 				cursor1--
 
@@ -918,7 +904,7 @@ outer:
 					break outer
 				}
 			} else {
-				a.set(dest, tmp.get(cursor2))
+				a[dest] = tmp[cursor2]
 				dest--
 				cursor2--
 
@@ -943,18 +929,18 @@ outer:
 		 */
 		for {
 			//assert len1 > 0 && len2 > 1;
-			count1 = len1 - gallopRight(tmp.get(cursor2), a, base1, len1, len1-1, c)
+			count1 = len1 - gallopRight(tmp[cursor2], a, base1, len1, len1-1, c)
 			if count1 != 0 {
 				dest -= count1
 				cursor1 -= count1
 				len1 -= count1
-				a.slice(dest + 1).copy(a.slice2(cursor1+1, cursor1+1+count1))
+				copy(a[dest+1:], a[cursor1+1:cursor1+1+count1])
 				//System.arraycopy(a, cursor1 + 1, a, dest + 1, count1);
 				if len1 == 0 {
 					break outer
 				}
 			}
-			a.set(dest, tmp.get(cursor2))
+			a[dest] = tmp[cursor2]
 			dest--
 			cursor2--
 
@@ -963,18 +949,18 @@ outer:
 				break outer
 			}
 
-			count2 = len2 - gallopLeft(a.get(cursor1), tmp, tmpBase, len2, len2-1, c)
+			count2 = len2 - gallopLeft(a[cursor1], tmp, tmpBase, len2, len2-1, c)
 			if count2 != 0 {
 				dest -= count2
 				cursor2 -= count2
 				len2 -= count2
-				a.slice(dest + 1).copy(tmp.slice2(cursor2+1, cursor2+1+count2))
+				copy(a[dest+1:], tmp[cursor2+1:cursor2+1+count2])
 				//System.arraycopy(tmp, cursor2 + 1, a, dest + 1, count2);
 				if len2 <= 1 { // len2 == 1 || len2 == 0
 					break outer
 				}
 			}
-			a.set(dest, a.get(cursor1))
+			a[dest] = a[cursor1]
 			dest--
 			cursor1--
 
@@ -1005,16 +991,16 @@ outer:
 		//assert len1 > 0;
 		dest -= len1
 		cursor1 -= len1
-		a.slice(dest + 1).copy(a.slice2(cursor1+1, cursor1+1+len1))
+		copy(a[dest+1:], a[cursor1+1:cursor1+1+len1])
 		//System.arraycopy(a, cursor1 + 1, a, dest + 1, len1);
-		a.set(dest, tmp.get(cursor2)) // Move first elt of run2 to front of merge
+		a[dest] = tmp[cursor2] // Move first elt of run2 to front of merge
 	} else if len2 == 0 {
 		panic(
 			"Comparison method violates its general contract!")
 	} else {
 		//assert len1 == 0;
 		//assert len2 > 0;
-		a.slice(dest - (len2 - 1)).copy(tmp.slice2(tmpBase, tmpBase+len2))
+		copy(a[dest - (len2 - 1):], tmp[tmpBase:tmpBase+len2])
 		//System.arraycopy(tmp, tmpBase, a, dest - (len2 - 1), len2);
 	}
 }
@@ -1027,10 +1013,10 @@ outer:
  * @param minCapacity the minimum required capacity of the tmp array
  * @return tmp, whether or not it grew
  */
-func (this *TimSort) ensureCapacity(minCapacity int) SliceInterface {
+func (this *TimSort[T]) ensureCapacity(minCapacity int) []T {
 	if this.tmpLen < minCapacity {
 		// Compute smallest power of 2 > minCapacity
-		//var newSize = -1 >> bits.LeadingZeros(uint(minCapacity))
+		// var newSize = -1 >> bits.LeadingZeros(uint(minCapacity))
 		newSize := minCapacity
 		newSize |= newSize >> 1
 		newSize |= newSize >> 2
@@ -1042,10 +1028,10 @@ func (this *TimSort) ensureCapacity(minCapacity int) SliceInterface {
 		if newSize < 0 { // Not bloody likely!
 			newSize = minCapacity
 		} else {
-			newSize = min(newSize, this.a.len()>>1)
+			newSize = min(newSize, len(this.a)>>1)
 		}
 
-		this.tmp = this.a.make(newSize)
+		this.tmp = make([]T, newSize)
 		this.tmpLen = newSize
 		this.tmpBase = 0
 	}
