@@ -60,7 +60,7 @@ func TestByAge(t *testing.T) {
 
 var benchmarkSizes = []int{256, 1024, 4192, 16768}
 
-func BenchmarkVSSort(t *testing.B) {
+func BenchmarGo2kVSSort(t *testing.B) {
 	for _, size := range benchmarkSizes {
 		var data = make([]Person, size)
 		prepare(data)
@@ -97,7 +97,7 @@ func prepareInts(a []int) {
 	}
 }
 
-func BenchmarkVSSortInts(t *testing.B) {
+func BenchmarkGo2VSSortInts(t *testing.B) {
 	for _, size := range benchmarkSizes {
 		var data = make([]int, size)
 		prepareInts(data)
