@@ -97,5 +97,17 @@ func BenchmarkVSSort(t *testing.B) {
 				})
 			}
 		})
+
+		t.Run(fmt.Sprintf("BuiltinSortStable-%d", size), func(t *testing.B) {
+			for i := 0; i < t.N; i++ {
+				t.StopTimer()
+				dup := make([]Person, size)
+				copy(dup, data)
+				t.StartTimer()
+				builtinsort.SliceStable(dup, func(i, j int) bool {
+					return dup[i].age < dup[j].age
+				})
+			}
+		})
 	}
 }

@@ -60,7 +60,7 @@ func TestByAge(t *testing.T) {
 
 var benchmarkSizes = []int{256, 1024, 4192, 16768}
 
-func BenchmarGo2kVSSort(t *testing.B) {
+func BenchmarkGo2VSSort(t *testing.B) {
 	for _, size := range benchmarkSizes {
 		var data = make([]Person, size)
 		prepare(data)
@@ -88,6 +88,18 @@ func BenchmarGo2kVSSort(t *testing.B) {
 				})
 			}
 		})
+
+		t.Run(fmt.Sprintf("BuiltinSortStable-%d", size), func(t *testing.B) {
+			for i := 0; i < t.N; i++ {
+				t.StopTimer()
+				dup := make([]Person, size)
+				copy(dup, data)
+				t.StartTimer()
+				builtinsort.SliceStable(dup, func(i, j int) bool {
+					return dup[i].age < dup[j].age
+				})
+			}
+		})
 	}
 }
 
@@ -108,9 +120,9 @@ func BenchmarkGo2VSSortInts(t *testing.B) {
 								dup := make([]int, size)
 								copy(dup, data)
 								t.StartTimer()
-//line sort_slice_tim_test.go2:95
+//line sort_slice_tim_test.go2:107
     instantiate୦୦Sort୦int(dup, func(i, j int) int { return i - j })
-//line sort_slice_tim_test.go2:97
+//line sort_slice_tim_test.go2:109
    }
 		})
 
