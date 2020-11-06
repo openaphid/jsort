@@ -1,4 +1,4 @@
-// Code generated from sort_primitive.go using genprimitives.go; DO NOT EDIT.
+// Code generated from sort_primitive.go using sort_primitive_gen.go; DO NOT EDIT.
 
 package sort_uint64
 

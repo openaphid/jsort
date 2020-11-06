@@ -1,4 +1,4 @@
-// Code generated from sort_primitive.go using genprimitives.go; DO NOT EDIT.
+// Code generated from sort_primitive.go using sort_primitive_gen.go; DO NOT EDIT.
 
 package dualpivotsort
 
@@ -10,6 +10,8 @@ import (
 	"github.com/openaphid/dualpivotsort/internal/sort_int32"
 	"github.com/openaphid/dualpivotsort/internal/sort_int64"
 	"github.com/openaphid/dualpivotsort/internal/sort_int8"
+	"github.com/openaphid/dualpivotsort/internal/sort_slice_dps"
+	"github.com/openaphid/dualpivotsort/internal/sort_slice_tim"
 	"github.com/openaphid/dualpivotsort/internal/sort_string"
 	"github.com/openaphid/dualpivotsort/internal/sort_uint"
 	"github.com/openaphid/dualpivotsort/internal/sort_uint16"
@@ -77,3 +79,10 @@ var BytesAreSorted = sort_uint8.IsSorted
 // rune
 var Runes = sort_int32.Sort
 var RunesAreSorted = sort_int32.IsSorted
+
+// Slice
+var Slice = sort_slice_dps.Sort
+var SliceAreSorted = sort_slice_dps.IsSorted
+
+// SliceStable
+var SliceStable = sort_slice_tim.Sort

@@ -1,5 +1,5 @@
 // +build ignore
-//go:generate go run genprimitives.go
+//go:generate go run sort_primitive_gen.go
 
 package dualpivotsort
 
