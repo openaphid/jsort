@@ -105,7 +105,7 @@ $EXPORTS
 		} else {
 			exports = append(exports, fmt.Sprintf("var %s = sort_%s.Sort", strings.Title(alias), typeName))
 			if hasSorted {
-				exports = append(exports, fmt.Sprintf("var %sAreSorted = sort_%s.IsSorted", strings.Title(alias), typeName))
+				exports = append(exports, fmt.Sprintf("var %sIsSorted = sort_%s.IsSorted", strings.Title(alias), typeName))
 			}
 		}
 		exports = append(exports, "")
@@ -121,8 +121,8 @@ $EXPORTS
 	for _, t := range []string{"slice_dps", "slice_tim"} {
 		appendImport(t)
 	}
-	appendExport("Slice", "slice_dps", false, true)
-	appendExport("SliceStable", "slice_tim", false, false)
+	appendExport("Slice", "slice_dps", false, false)
+	appendExport("SliceStable", "slice_tim", false, true)
 
 	var exportCode = exportTemplate
 	exportCode = strings.ReplaceAll(exportCode, "$IMPORTS", strings.Join(imports, "\n"))

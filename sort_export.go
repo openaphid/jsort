@@ -82,7 +82,7 @@ var RunesAreSorted = sort_int32.IsSorted
 
 // Slice
 var Slice = sort_slice_dps.Sort
-var SliceAreSorted = sort_slice_dps.IsSorted
 
 // SliceStable
 var SliceStable = sort_slice_tim.Sort
+var SliceStableIsSorted = sort_slice_tim.IsSorted
