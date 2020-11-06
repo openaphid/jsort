@@ -1,0 +1,326 @@
+goos: darwin
+goarch: amd64
+pkg: github.com/openaphid/dualpivotsort
+BenchmarkDpsInts/256-8   	  323402	      3724 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/256-8   	  299821	      3926 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/256-8   	  298077	      3780 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/256-8   	  323290	      3914 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/256-8   	  306984	      3788 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/1024-8  	   30181	     38559 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/1024-8  	   31801	     36546 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/1024-8  	   30552	     36943 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/1024-8  	   31428	     37986 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/1024-8  	   31766	     37370 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/4192-8  	    5652	    223073 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/4192-8  	    5084	    222819 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/4192-8  	    5136	    221593 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/4192-8  	    5570	    227839 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/4192-8  	    4929	    236081 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/16768-8 	    1412	    851270 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/16768-8 	    1438	    864185 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/16768-8 	    1284	    854065 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/16768-8 	    1402	    852020 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDpsInts/16768-8 	    1329	    855513 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBuiltinInts/256-8         	   61568	     19208 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/256-8         	   62160	     19584 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/256-8         	   61593	     19218 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/256-8         	   62288	     19067 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/256-8         	   61599	     18871 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/1024-8        	    9520	    128648 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/1024-8        	    9043	    127633 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/1024-8        	    9373	    129205 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/1024-8        	    9262	    128489 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/1024-8        	    8524	    129949 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/4192-8        	    1936	    560210 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/4192-8        	    2038	    549498 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/4192-8        	    2022	    556351 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/4192-8        	    2077	    565225 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/4192-8        	    2282	    580535 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/16768-8       	     499	   2239272 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/16768-8       	     518	   2222717 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/16768-8       	     536	   2261416 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/16768-8       	     484	   2323494 ns/op	      32 B/op	       1 allocs/op
+BenchmarkBuiltinInts/16768-8       	     526	   2516274 ns/op	      32 B/op	       1 allocs/op
+PASS
+ok  	github.com/openaphid/dualpivotsort	197.290s
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_float32	0.011s
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_float64	0.010s
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_int	0.011s
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_int16	0.010s
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_int32	0.017s
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_int64	0.015s
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_int8	0.013s
+goos: darwin
+goarch: amd64
+pkg: github.com/openaphid/dualpivotsort/internal/sort_slice_dps
+BenchmarkVSSort/DPS-256-8         	   20208	     56463 ns/op	   12320 B/op	     258 allocs/op
+BenchmarkVSSort/DPS-256-8         	   21307	     56529 ns/op	   12320 B/op	     258 allocs/op
+BenchmarkVSSort/DPS-256-8         	   21312	     56132 ns/op	   12320 B/op	     258 allocs/op
+BenchmarkVSSort/DPS-256-8         	   20713	     56014 ns/op	   12320 B/op	     258 allocs/op
+BenchmarkVSSort/DPS-256-8         	   20979	     55737 ns/op	   12320 B/op	     258 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-256-8         	   29275	     40131 ns/op	   12288 B/op	     257 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-256-8         	   30286	     40413 ns/op	   12288 B/op	     257 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-256-8         	   29826	     40364 ns/op	   12288 B/op	     257 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-256-8         	   29479	     40435 ns/op	   12288 B/op	     257 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-256-8         	   29454	     40622 ns/op	   12288 B/op	     257 allocs/op
+BenchmarkVSSort/Builtin-256-8                   	   27777	     42614 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-256-8                   	   28252	     42657 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-256-8                   	   28234	     42973 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-256-8                   	   27447	     50562 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-256-8                   	   28108	     43094 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/DPS-1024-8                      	    4764	    254550 ns/op	   49184 B/op	    1026 allocs/op
+BenchmarkVSSort/DPS-1024-8                      	    4210	    277792 ns/op	   49184 B/op	    1026 allocs/op
+BenchmarkVSSort/DPS-1024-8                      	    4320	    246117 ns/op	   49184 B/op	    1026 allocs/op
+BenchmarkVSSort/DPS-1024-8                      	    4778	    249758 ns/op	   49184 B/op	    1026 allocs/op
+BenchmarkVSSort/DPS-1024-8                      	    4527	    249556 ns/op	   49184 B/op	    1026 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-1024-8        	    6074	    193976 ns/op	   49152 B/op	    1025 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-1024-8        	    6141	    197222 ns/op	   49152 B/op	    1025 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-1024-8        	    5809	    191706 ns/op	   49152 B/op	    1025 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-1024-8        	    5865	    194922 ns/op	   49152 B/op	    1025 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-1024-8        	    6584	    194536 ns/op	   49152 B/op	    1025 allocs/op
+BenchmarkVSSort/Builtin-1024-8                  	    5731	    207025 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-1024-8                  	    5702	    208870 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-1024-8                  	    6103	    210769 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-1024-8                  	    5235	    205242 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-1024-8                  	    5794	    212723 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/DPS-4192-8                      	    1234	    924220 ns/op	  207904 B/op	    4194 allocs/op
+BenchmarkVSSort/DPS-4192-8                      	    1285	    952979 ns/op	  207904 B/op	    4194 allocs/op
+BenchmarkVSSort/DPS-4192-8                      	    1242	    937821 ns/op	  207904 B/op	    4194 allocs/op
+BenchmarkVSSort/DPS-4192-8                      	    1274	    939571 ns/op	  207905 B/op	    4194 allocs/op
+BenchmarkVSSort/DPS-4192-8                      	    1233	    962360 ns/op	  207904 B/op	    4194 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-4192-8        	    1470	    793438 ns/op	  207872 B/op	    4193 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-4192-8        	    1614	    782311 ns/op	  207872 B/op	    4193 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-4192-8        	    1452	    806325 ns/op	  207872 B/op	    4193 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-4192-8        	    1540	    777381 ns/op	  207872 B/op	    4193 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-4192-8        	    1473	    787100 ns/op	  207872 B/op	    4193 allocs/op
+BenchmarkVSSort/Builtin-4192-8                  	    1428	    808106 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-4192-8                  	    1429	    828652 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-4192-8                  	    1402	    802012 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-4192-8                  	    1436	    802366 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-4192-8                  	    1478	    816358 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/DPS-16768-8                     	     271	   4289431 ns/op	  806944 B/op	   16770 allocs/op
+BenchmarkVSSort/DPS-16768-8                     	     272	   4287506 ns/op	  806945 B/op	   16770 allocs/op
+BenchmarkVSSort/DPS-16768-8                     	     276	   4277770 ns/op	  806945 B/op	   16770 allocs/op
+BenchmarkVSSort/DPS-16768-8                     	     267	   4312216 ns/op	  806944 B/op	   16770 allocs/op
+BenchmarkVSSort/DPS-16768-8                     	     274	   4333582 ns/op	  806945 B/op	   16770 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-16768-8       	     330	   3627324 ns/op	  806914 B/op	   16769 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-16768-8       	     322	   3595201 ns/op	  806912 B/op	   16769 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-16768-8       	     319	   3584603 ns/op	  806912 B/op	   16769 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-16768-8       	     328	   3562438 ns/op	  806913 B/op	   16769 allocs/op
+BenchmarkVSSort/DPS-ManualConvert-16768-8       	     328	   3850890 ns/op	  806912 B/op	   16769 allocs/op
+BenchmarkVSSort/Builtin-16768-8                 	     313	   3726216 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-16768-8                 	     308	   3559085 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-16768-8                 	     315	   3581756 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-16768-8                 	     327	   3697505 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/Builtin-16768-8                 	     336	   3584861 ns/op	     112 B/op	       3 allocs/op
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_slice_dps	128.552s
+goos: darwin
+goarch: amd64
+pkg: github.com/openaphid/dualpivotsort/internal/sort_slice_tim
+BenchmarkVSSort/TimSort-256-8         	   20480	     55892 ns/op	   14672 B/op	     262 allocs/op
+BenchmarkVSSort/TimSort-256-8         	   21547	     55790 ns/op	   14672 B/op	     262 allocs/op
+BenchmarkVSSort/TimSort-256-8         	   21508	     56392 ns/op	   14672 B/op	     262 allocs/op
+BenchmarkVSSort/TimSort-256-8         	   21466	     56854 ns/op	   14672 B/op	     262 allocs/op
+BenchmarkVSSort/TimSort-256-8         	   21085	     56250 ns/op	   14672 B/op	     262 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-256-8         	   28314	     40193 ns/op	   14640 B/op	     261 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-256-8         	   29436	     40096 ns/op	   14640 B/op	     261 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-256-8         	   29636	     40546 ns/op	   14640 B/op	     261 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-256-8         	   28996	     39889 ns/op	   14640 B/op	     261 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-256-8         	   29250	     40638 ns/op	   14640 B/op	     261 allocs/op
+BenchmarkVSSort/BuiltinSort-256-8                   	   28200	     42466 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-256-8                   	   28311	     43054 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-256-8                   	   27913	     42935 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-256-8                   	   27729	     44924 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-256-8                   	   27789	     43179 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-256-8             	    8697	    134050 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-256-8             	    9037	    132712 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-256-8             	    8299	    132160 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-256-8             	    9556	    130883 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-256-8             	    8301	    131217 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/TimSort-1024-8                      	    4230	    270819 ns/op	   61776 B/op	    1031 allocs/op
+BenchmarkVSSort/TimSort-1024-8                      	    4198	    275444 ns/op	   61776 B/op	    1031 allocs/op
+BenchmarkVSSort/TimSort-1024-8                      	    4161	    274422 ns/op	   61776 B/op	    1031 allocs/op
+BenchmarkVSSort/TimSort-1024-8                      	    4935	    273629 ns/op	   61776 B/op	    1031 allocs/op
+BenchmarkVSSort/TimSort-1024-8                      	    4554	    273913 ns/op	   61776 B/op	    1031 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-1024-8        	    4917	    224612 ns/op	   61744 B/op	    1030 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-1024-8        	    4603	    222328 ns/op	   61744 B/op	    1030 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-1024-8        	    5756	    223106 ns/op	   61744 B/op	    1030 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-1024-8        	    5210	    222480 ns/op	   61744 B/op	    1030 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-1024-8        	    5371	    222802 ns/op	   61744 B/op	    1030 allocs/op
+BenchmarkVSSort/BuiltinSort-1024-8                  	    5862	    206216 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-1024-8                  	    5958	    210340 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-1024-8                  	    5276	    204714 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-1024-8                  	    5010	    207927 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-1024-8                  	    6486	    208079 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-1024-8            	    1815	    672220 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-1024-8            	    1639	    685225 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-1024-8            	    1803	    674934 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-1024-8            	    1537	    681105 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-1024-8            	    1795	    684798 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/TimSort-4192-8                      	     938	   1124508 ns/op	  269872 B/op	    4201 allocs/op
+BenchmarkVSSort/TimSort-4192-8                      	    1100	   1095745 ns/op	  269872 B/op	    4201 allocs/op
+BenchmarkVSSort/TimSort-4192-8                      	    1012	   1102050 ns/op	  269873 B/op	    4201 allocs/op
+BenchmarkVSSort/TimSort-4192-8                      	    1098	   1100852 ns/op	  269872 B/op	    4201 allocs/op
+BenchmarkVSSort/TimSort-4192-8                      	    1071	   1112195 ns/op	  269872 B/op	    4201 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-4192-8        	    1274	    916056 ns/op	  269840 B/op	    4200 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-4192-8        	    1200	    912538 ns/op	  269840 B/op	    4200 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-4192-8        	    1238	    902621 ns/op	  269841 B/op	    4200 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-4192-8        	    1328	    926897 ns/op	  269840 B/op	    4200 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-4192-8        	    1256	   1033643 ns/op	  269840 B/op	    4200 allocs/op
+BenchmarkVSSort/BuiltinSort-4192-8                  	    1323	    832483 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-4192-8                  	    1318	    834509 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-4192-8                  	    1389	    800022 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-4192-8                  	    1459	    799449 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-4192-8                  	    1443	    804249 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-4192-8            	     331	   3526789 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-4192-8            	     315	   3668834 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-4192-8            	     338	   3521687 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-4192-8            	     328	   3529487 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-4192-8            	     326	   3505245 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/TimSort-16768-8                     	     244	   4815770 ns/op	 1065520 B/op	   16779 allocs/op
+BenchmarkVSSort/TimSort-16768-8                     	     244	   4832135 ns/op	 1065520 B/op	   16779 allocs/op
+BenchmarkVSSort/TimSort-16768-8                     	     244	   4887002 ns/op	 1065520 B/op	   16779 allocs/op
+BenchmarkVSSort/TimSort-16768-8                     	     223	   6696235 ns/op	 1065520 B/op	   16779 allocs/op
+BenchmarkVSSort/TimSort-16768-8                     	     188	   6453228 ns/op	 1065520 B/op	   16779 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-16768-8       	     213	   5267698 ns/op	 1065488 B/op	   16778 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-16768-8       	     230	   5146422 ns/op	 1065489 B/op	   16778 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-16768-8       	     225	   5022366 ns/op	 1065488 B/op	   16778 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-16768-8       	     240	   4995105 ns/op	 1065489 B/op	   16778 allocs/op
+BenchmarkVSSort/TimSort-ManualConvert-16768-8       	     250	   4940043 ns/op	 1065489 B/op	   16778 allocs/op
+BenchmarkVSSort/BuiltinSort-16768-8                 	     315	   4032253 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-16768-8                 	     302	   3806647 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-16768-8                 	     324	   3625678 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-16768-8                 	     330	   3598517 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSort-16768-8                 	     327	   3624764 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-16768-8           	      61	  19624140 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-16768-8           	      60	  18644001 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-16768-8           	      64	  19015596 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-16768-8           	      61	  19259455 ns/op	     112 B/op	       3 allocs/op
+BenchmarkVSSort/BuiltinSortStable-16768-8           	      66	  18826764 ns/op	     112 B/op	       3 allocs/op
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_slice_tim	162.076s
+goos: darwin
+goarch: amd64
+pkg: github.com/openaphid/dualpivotsort/internal/sort_slice_tim_go2
+BenchmarkGo2VSSort/TimSort-256-8         	   47605	     24761 ns/op	    3376 B/op	       4 allocs/op
+BenchmarkGo2VSSort/TimSort-256-8         	   47881	     25202 ns/op	    3376 B/op	       4 allocs/op
+BenchmarkGo2VSSort/TimSort-256-8         	   46286	     24960 ns/op	    3376 B/op	       4 allocs/op
+BenchmarkGo2VSSort/TimSort-256-8         	   48220	     24946 ns/op	    3376 B/op	       4 allocs/op
+BenchmarkGo2VSSort/TimSort-256-8         	   47020	     25292 ns/op	    3376 B/op	       4 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-256-8     	   27750	     43206 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-256-8     	   27979	     43169 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-256-8     	   27838	     43146 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-256-8     	   28202	     43022 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-256-8     	   28232	     43385 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-256-8         	    8742	    132119 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-256-8         	    8863	    134449 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-256-8         	    9034	    132421 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-256-8         	    8356	    132203 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-256-8         	    9169	    132149 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/TimSort-1024-8                  	    7747	    162072 ns/op	   18736 B/op	       5 allocs/op
+BenchmarkGo2VSSort/TimSort-1024-8                  	    6872	    158322 ns/op	   18736 B/op	       5 allocs/op
+BenchmarkGo2VSSort/TimSort-1024-8                  	    8323	    160797 ns/op	   18736 B/op	       5 allocs/op
+BenchmarkGo2VSSort/TimSort-1024-8                  	    7376	    176600 ns/op	   18736 B/op	       5 allocs/op
+BenchmarkGo2VSSort/TimSort-1024-8                  	    5533	    186392 ns/op	   18736 B/op	       5 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-1024-8              	    6242	    206456 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-1024-8              	    6262	    205133 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-1024-8              	    6086	    209523 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-1024-8              	    5002	    210493 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-1024-8              	    4573	    234440 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-1024-8        	    1758	    707260 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-1024-8        	    1713	    690992 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-1024-8        	    1736	    694551 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-1024-8        	    1773	    677587 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-1024-8        	    1618	    684708 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/TimSort-4192-8                  	    1616	    712229 ns/op	   92688 B/op	       7 allocs/op
+BenchmarkGo2VSSort/TimSort-4192-8                  	    1664	    700508 ns/op	   92688 B/op	       7 allocs/op
+BenchmarkGo2VSSort/TimSort-4192-8                  	    1712	    698985 ns/op	   92688 B/op	       7 allocs/op
+BenchmarkGo2VSSort/TimSort-4192-8                  	    1736	    699048 ns/op	   92688 B/op	       7 allocs/op
+BenchmarkGo2VSSort/TimSort-4192-8                  	    1580	    692026 ns/op	   92688 B/op	       7 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-4192-8              	    1480	    800073 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-4192-8              	    1497	    810659 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-4192-8              	    1459	    810022 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-4192-8              	    1484	    802577 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-4192-8              	    1404	    813366 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-4192-8        	     331	   3546755 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-4192-8        	     322	   3547456 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-4192-8        	     331	   3512501 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-4192-8        	     331	   3522561 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-4192-8        	     334	   3608168 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/TimSort-16768-8                 	     370	   3164302 ns/op	  387600 B/op	       9 allocs/op
+BenchmarkGo2VSSort/TimSort-16768-8                 	     366	   3164228 ns/op	  387600 B/op	       9 allocs/op
+BenchmarkGo2VSSort/TimSort-16768-8                 	     369	   3210179 ns/op	  387601 B/op	       9 allocs/op
+BenchmarkGo2VSSort/TimSort-16768-8                 	     368	   3231521 ns/op	  387600 B/op	       9 allocs/op
+BenchmarkGo2VSSort/TimSort-16768-8                 	     380	   3214504 ns/op	  387600 B/op	       9 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-16768-8             	     328	   3588841 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-16768-8             	     326	   3532216 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-16768-8             	     330	   3586094 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-16768-8             	     328	   3615393 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSort-16768-8             	     325	   3562971 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-16768-8       	      62	  18823565 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-16768-8       	      66	  18707959 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-16768-8       	      60	  19506490 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-16768-8       	      64	  19182851 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSort/BuiltinSortStable-16768-8       	      58	  19128292 ns/op	     112 B/op	       3 allocs/op
+BenchmarkGo2VSSortInts/TimSort-256-8               	   70326	     16982 ns/op	    1328 B/op	       4 allocs/op
+BenchmarkGo2VSSortInts/TimSort-256-8               	   69436	     17392 ns/op	    1328 B/op	       4 allocs/op
+BenchmarkGo2VSSortInts/TimSort-256-8               	   72278	     17040 ns/op	    1328 B/op	       4 allocs/op
+BenchmarkGo2VSSortInts/TimSort-256-8               	   71982	     17034 ns/op	    1328 B/op	       4 allocs/op
+BenchmarkGo2VSSortInts/TimSort-256-8               	   72200	     17082 ns/op	    1328 B/op	       4 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-256-8           	   62018	     19268 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-256-8           	   62607	     19394 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-256-8           	   60348	     19190 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-256-8           	   61772	     19215 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-256-8           	   62599	     19334 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/TimSort-1024-8              	    9327	    132312 ns/op	    6448 B/op	       5 allocs/op
+BenchmarkGo2VSSortInts/TimSort-1024-8              	    8395	    130389 ns/op	    6448 B/op	       5 allocs/op
+BenchmarkGo2VSSortInts/TimSort-1024-8              	    9295	    134091 ns/op	    6448 B/op	       5 allocs/op
+BenchmarkGo2VSSortInts/TimSort-1024-8              	    8394	    129615 ns/op	    6448 B/op	       5 allocs/op
+BenchmarkGo2VSSortInts/TimSort-1024-8              	    9363	    131665 ns/op	    6448 B/op	       5 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-1024-8          	    8774	    140219 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-1024-8          	    8283	    135024 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-1024-8          	    8227	    138712 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-1024-8          	    9735	    131896 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-1024-8          	    8514	    131620 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/TimSort-4192-8              	    2090	    583534 ns/op	   31248 B/op	       7 allocs/op
+BenchmarkGo2VSSortInts/TimSort-4192-8              	    1977	    600296 ns/op	   31248 B/op	       7 allocs/op
+BenchmarkGo2VSSortInts/TimSort-4192-8              	    1760	    591252 ns/op	   31248 B/op	       7 allocs/op
+BenchmarkGo2VSSortInts/TimSort-4192-8              	    1982	    608738 ns/op	   31248 B/op	       7 allocs/op
+BenchmarkGo2VSSortInts/TimSort-4192-8              	    2052	    590986 ns/op	   31248 B/op	       7 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-4192-8          	    2319	    551493 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-4192-8          	    2025	    568577 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-4192-8          	    1866	    557495 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-4192-8          	    1947	    549413 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-4192-8          	    1868	    560538 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/TimSort-16768-8             	     476	   2393230 ns/op	  129552 B/op	       9 allocs/op
+BenchmarkGo2VSSortInts/TimSort-16768-8             	     493	   2391294 ns/op	  129552 B/op	       9 allocs/op
+BenchmarkGo2VSSortInts/TimSort-16768-8             	     501	   2402374 ns/op	  129552 B/op	       9 allocs/op
+BenchmarkGo2VSSortInts/TimSort-16768-8             	     469	   2356383 ns/op	  129553 B/op	       9 allocs/op
+BenchmarkGo2VSSortInts/TimSort-16768-8             	     504	   2394051 ns/op	  129552 B/op	       9 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-16768-8         	     528	   2261972 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-16768-8         	     516	   2267419 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-16768-8         	     529	   2240941 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-16768-8         	     534	   2327646 ns/op	      32 B/op	       1 allocs/op
+BenchmarkGo2VSSortInts/BuiltinSort-16768-8         	     522	   2241970 ns/op	      32 B/op	       1 allocs/op
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_slice_tim_go2	225.286s
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_string	0.011s
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_uint	0.009s
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_uint16	0.011s
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_uint32	0.010s
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_uint64	0.011s
+PASS
+ok  	github.com/openaphid/dualpivotsort/internal/sort_uint8	0.013s

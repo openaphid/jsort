@@ -1,4 +1,4 @@
 test:
-	go test -v
+	go test ./... -v
 bench:
-	go test -run=match_nothing -bench . -benchmem
+	go test ./... -run=match_nothing -bench . -count 5 -benchmem | tee benchmark.txt
