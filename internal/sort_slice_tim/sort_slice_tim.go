@@ -1020,8 +1020,7 @@ outer:
 		//System.arraycopy(a, cursor1 + 1, a, dest + 1, len1);
 		a[dest] = tmp[cursor2] // Move first elt of run2 to front of merge
 	} else if len2 == 0 {
-		panic(
-			"Comparison method violates its general contract!")
+		panic("Comparison method violates its general contract!")
 	} else {
 		//assert len1 == 0;
 		//assert len2 > 0;
