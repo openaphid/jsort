@@ -286,11 +286,14 @@ func binarySort[T any](a []T, lo int, hi int, start int, c func(i, j T) int) {
 		 */
 		var n = start - left // The number of elements to move
 		// Switch is just an optimization for arraycopy in default case
-		switch n {
-		case 2:
-			a[left+2] = a[left+1]
-		case 1:
-			a[left+1] = a[left]
+		switch {
+		case n <= 2:
+			if n == 2 {
+				a[left+2] = a[left+1]
+			}
+			if n != 0 {
+				a[left+1] = a[left]
+			}
 		default:
 			copy(a[left+1:], a[left:left+n])
 			//System.arraycopy(a, left, a, left + 1, n);

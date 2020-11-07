@@ -1,7 +1,8 @@
-package sort_slice_tim
+package sort_slice_tim_interface
 
 import (
 	"fmt"
+	"github.com/openaphid/dualpivotsort/internal/sort_slice_tim"
 	"github.com/openaphid/dualpivotsort/internal/testdata"
 	"log"
 	builtinsort "sort"
@@ -12,18 +13,30 @@ type Person = testdata.Person
 
 var prepare = testdata.Prepare
 
-var byAge = func(o1, o2 interface{}) int {
-	return o1.(Person).Age - o2.(Person).Age
+type PersonCompareInterface []Person
+
+func (p PersonCompareInterface) Len() int {
+	return len(p)
 }
+
+func (p PersonCompareInterface) Compare(i, j int) int {
+	return p[i].Age - p[j].Age
+}
+
+func (p PersonCompareInterface) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
+
+var _ CompareInterface = (*PersonCompareInterface)(nil)
 
 func TestByAge(t *testing.T) {
 	for i := 1; i <= 1024*10; i++ {
-		persons := make([]Person, i)
+		persons := make(PersonCompareInterface, i)
 		prepare(persons)
 
-		Sort(persons, byAge)
+		Sort(persons)
 
-		sorted := IsSorted(persons, byAge)
+		sorted := IsSorted(persons)
 
 		if !sorted {
 			log.Panicf("should be sorted: %d", i)
@@ -31,23 +44,12 @@ func TestByAge(t *testing.T) {
 	}
 }
 
-func TestInts(t *testing.T) {
-	a := []int{0, 2, 3, 1}
-	Sort(a, func(i, j interface{}) int {
-		return i.(int) - j.(int)
-	})
-
-	if !builtinsort.IntsAreSorted(a) {
-		log.Panic("should be sorted: ", a)
-	}
-}
-
 func TestShuffledSeq(t *testing.T) {
-	for i := 1; i <= 1024*5; i++ {
-		persons := make([]Person, i)
+	for i := 3; i <= 1024*5; i++ {
+		persons := make(PersonCompareInterface, i)
 		testdata.PrepareShuffledSeq(persons)
 
-		Sort(persons, byAge)
+		Sort(persons)
 
 		for j := range persons {
 			if persons[j].Age != j {
@@ -57,12 +59,22 @@ func TestShuffledSeq(t *testing.T) {
 	}
 }
 
-var benchmarkSizes = []int{256, 1024, 4192, 16768, 67072}
+var benchmarkSizes = testdata.GenBenchmarkSizes(256, 4, 5)
 
 func BenchmarkVSSort(t *testing.B) {
 	for _, size := range benchmarkSizes {
 		var data = make([]Person, size)
 		prepare(data)
+
+		t.Run(fmt.Sprintf("TimSortInterface-%d", size), func(t *testing.B) {
+			for i := 0; i < t.N; i++ {
+				t.StopTimer()
+				dup := make(PersonCompareInterface, size)
+				copy(dup, data)
+				t.StartTimer()
+				Sort(dup)
+			}
+		})
 
 		t.Run(fmt.Sprintf("TimSort-%d", size), func(t *testing.B) {
 			for i := 0; i < t.N; i++ {
@@ -70,31 +82,9 @@ func BenchmarkVSSort(t *testing.B) {
 				dup := make([]Person, size)
 				copy(dup, data)
 				t.StartTimer()
-				Sort(dup, func(o1, o2 interface{}) int {
-					return o1.(Person).Age - o2.(Person).Age
+				sort_slice_tim.Sort(dup, func(i, j interface{}) int {
+					return i.(Person).Age - j.(Person).Age
 				})
-			}
-		})
-
-		t.Run(fmt.Sprintf("TimSort-ManualConvert-%d", size), func(t *testing.B) {
-			for i := 0; i < t.N; i++ {
-				t.StopTimer()
-				dup := make([]Person, size)
-				copy(dup, data)
-				t.StartTimer()
-
-				convert := make([]interface{}, size)
-				for i, _ := range convert {
-					convert[i] = dup[i]
-				}
-
-				SortInterfaces(convert, func(o1, o2 interface{}) int {
-					return o1.(Person).Age - o2.(Person).Age
-				})
-
-				for i, _ := range dup {
-					dup[i] = convert[i].(Person)
-				}
 			}
 		})
 

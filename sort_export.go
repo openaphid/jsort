@@ -12,6 +12,7 @@ import (
 	"github.com/openaphid/dualpivotsort/internal/sort_int8"
 	"github.com/openaphid/dualpivotsort/internal/sort_slice_dps"
 	"github.com/openaphid/dualpivotsort/internal/sort_slice_tim"
+	"github.com/openaphid/dualpivotsort/internal/sort_slice_tim_interface"
 	"github.com/openaphid/dualpivotsort/internal/sort_string"
 	"github.com/openaphid/dualpivotsort/internal/sort_uint"
 	"github.com/openaphid/dualpivotsort/internal/sort_uint16"
@@ -82,7 +83,13 @@ var RunesAreSorted = sort_int32.IsSorted
 
 // Slice
 var Slice = sort_slice_dps.Sort
+var SliceIsSorted = sort_slice_dps.IsSorted
 
 // SliceStable
 var SliceStable = sort_slice_tim.Sort
-var SliceStableIsSorted = sort_slice_tim.IsSorted
+
+// SliceInterface
+var SliceInterface = sort_slice_tim_interface.Sort
+var SliceInterfaceIsSorted = sort_slice_tim_interface.IsSorted
+
+type CompareInterface = sort_slice_tim_interface.CompareInterface

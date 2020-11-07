@@ -275,7 +275,7 @@ func instantiate୦୦sort୦int(a []int, lo int, hi int, c func(i, j int,) int,
 
 }
 
-//line sort_slice_tim.go2:327
+//line sort_slice_tim.go2:330
 func instantiate୦୦countRunAndMakeAscending୦sort_slice_tim_go2୮aPerson(a []Person, lo int, hi int, c func(i, j Person,) int) int {
 
 	var runHi = lo + 1
@@ -283,15 +283,15 @@ func instantiate୦୦countRunAndMakeAscending୦sort_slice_tim_go2୮aPerson(a 
 		return 1
 	}
 
-//line sort_slice_tim.go2:335
+//line sort_slice_tim.go2:338
  runHi++
 	if c(a[runHi-1], a[lo]) < 0 {
 		for runHi < hi && c(a[runHi], a[runHi-1]) < 0 {
 			runHi++
 		}
-//line sort_slice_tim.go2:339
+//line sort_slice_tim.go2:342
   instantiate୦୦reverseRange୦sort_slice_tim_go2୮aPerson(a, lo, runHi)
-//line sort_slice_tim.go2:341
+//line sort_slice_tim.go2:344
  } else {
 		for runHi < hi && c(a[runHi], a[runHi-1]) >= 0 {
 			runHi++
@@ -327,11 +327,14 @@ func instantiate୦୦binarySort୦sort_slice_tim_go2୮aPerson(a []Person, lo i
 //line sort_slice_tim.go2:287
   var n = start - left
 
-		switch n {
-		case 2:
-			a[left+2] = a[left+1]
-		case 1:
-			a[left+1] = a[left]
+		switch {
+		case n <= 2:
+			if n == 2 {
+				a[left+2] = a[left+1]
+			}
+			if n != 0 {
+				a[left+1] = a[left]
+			}
 		default:
 			copy(a[left+1:], a[left:left+n])
 
@@ -382,7 +385,7 @@ func instantiate୦୦newTimSort୦sort_slice_tim_go2୮aPerson(a []Person, c fu
 	return this
 }
 
-//line sort_slice_tim.go2:327
+//line sort_slice_tim.go2:330
 func instantiate୦୦countRunAndMakeAscending୦int(a []int, lo int, hi int, c func(i, j int,) int) int {
 
 	var runHi = lo + 1
@@ -390,15 +393,15 @@ func instantiate୦୦countRunAndMakeAscending୦int(a []int, lo int, hi int, c 
 		return 1
 	}
 
-//line sort_slice_tim.go2:335
+//line sort_slice_tim.go2:338
  runHi++
 	if c(a[runHi-1], a[lo]) < 0 {
 		for runHi < hi && c(a[runHi], a[runHi-1]) < 0 {
 			runHi++
 		}
-//line sort_slice_tim.go2:339
+//line sort_slice_tim.go2:342
   instantiate୦୦reverseRange୦int(a, lo, runHi)
-//line sort_slice_tim.go2:341
+//line sort_slice_tim.go2:344
  } else {
 		for runHi < hi && c(a[runHi], a[runHi-1]) >= 0 {
 			runHi++
@@ -434,11 +437,14 @@ func instantiate୦୦binarySort୦int(a []int, lo int, hi int, start int, c fun
 //line sort_slice_tim.go2:287
   var n = start - left
 
-		switch n {
-		case 2:
-			a[left+2] = a[left+1]
-		case 1:
-			a[left+1] = a[left]
+		switch {
+		case n <= 2:
+			if n == 2 {
+				a[left+2] = a[left+1]
+			}
+			if n != 0 {
+				a[left+1] = a[left]
+			}
 		default:
 			copy(a[left+1:], a[left:left+n])
 
@@ -489,7 +495,7 @@ func instantiate୦୦newTimSort୦int(a []int, c func(i, j int,) int, work []in
 	return this
 }
 
-//line sort_slice_tim.go2:357
+//line sort_slice_tim.go2:360
 func instantiate୦୦reverseRange୦sort_slice_tim_go2୮aPerson(a []Person, lo int, hi int) {
 	hi--
 	for lo < hi {
@@ -501,7 +507,7 @@ func instantiate୦୦reverseRange୦sort_slice_tim_go2୮aPerson(a []Person, lo
 	}
 }
 
-//line sort_slice_tim.go2:366
+//line sort_slice_tim.go2:369
 type instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson struct {
 //line sort_slice_tim.go2:54
  a []Person
@@ -523,14 +529,14 @@ type instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson struct {
 	runLen  []int
 }
 
-//line sort_slice_tim.go2:401
+//line sort_slice_tim.go2:404
 func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) pushRun(runBase int, runLen int) {
 	this.runBase[this.stackSize] = runBase
 	this.runLen[this.stackSize] = runLen
 	this.stackSize++
 }
 
-//line sort_slice_tim.go2:423
+//line sort_slice_tim.go2:426
 func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeCollapse() {
 	for this.stackSize > 1 {
 		var n = this.stackSize - 2
@@ -545,7 +551,7 @@ func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeColla
 	}
 }
 
-//line sort_slice_tim.go2:441
+//line sort_slice_tim.go2:444
 func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeForceCollapse() {
 	for this.stackSize > 1 {
 		var n = this.stackSize - 2
@@ -556,16 +562,16 @@ func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeForce
 	}
 }
 
-//line sort_slice_tim.go2:458
+//line sort_slice_tim.go2:461
 func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeAt(i int) {
 
-//line sort_slice_tim.go2:463
+//line sort_slice_tim.go2:466
  var base1 = this.runBase[i]
 				var len1 = this.runLen[i]
 				var base2 = this.runBase[i+1]
 				var len2 = this.runLen[i+1]
 
-//line sort_slice_tim.go2:475
+//line sort_slice_tim.go2:478
  this.runLen[i] = len1 + len2
 	if i == this.stackSize-3 {
 		this.runBase[i+1] = this.runBase[i+2]
@@ -573,7 +579,7 @@ func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeAt(i 
 	}
 				this.stackSize--
 
-//line sort_slice_tim.go2:486
+//line sort_slice_tim.go2:489
  var k = instantiate୦୦gallopRight୦sort_slice_tim_go2୮aPerson(this.a[base2], this.a, base1, len1, 0, this.c)
 
 	base1 += k
@@ -582,14 +588,14 @@ func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeAt(i 
 		return
 	}
 
-//line sort_slice_tim.go2:498
+//line sort_slice_tim.go2:501
  len2 = instantiate୦୦gallopLeft୦sort_slice_tim_go2୮aPerson(this.a[base1+len1-1], this.a, base2, len2, len2-1, this.c)
 
 	if len2 == 0 {
 		return
 	}
 
-//line sort_slice_tim.go2:505
+//line sort_slice_tim.go2:508
  if len1 <= len2 {
 		this.mergeLo(base1, len1, base2, len2)
 	} else {
@@ -597,10 +603,10 @@ func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeAt(i 
 	}
 }
 
-//line sort_slice_tim.go2:682
+//line sort_slice_tim.go2:685
 func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeLo(base1 int, len1 int, base2 int, len2 int) {
 
-//line sort_slice_tim.go2:686
+//line sort_slice_tim.go2:689
  var a = this.a
 				var tmp []Person = this.ensureCapacity(len1)
 				var cursor1 = this.tmpBase
@@ -609,7 +615,7 @@ func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeLo(ba
 
 				copy(tmp[cursor1:], a[base1:base1+len1])
 
-//line sort_slice_tim.go2:696
+//line sort_slice_tim.go2:699
  a[dest] = a[cursor2]
 	dest++
 	cursor2++
@@ -634,7 +640,7 @@ outer:
 					var count1 = 0
 					var count2 = 0
 
-//line sort_slice_tim.go2:724
+//line sort_slice_tim.go2:727
   for {
 
 			if c(a[cursor2], tmp[cursor1]) < 0 {
@@ -667,7 +673,7 @@ outer:
 			}
 		}
 
-//line sort_slice_tim.go2:761
+//line sort_slice_tim.go2:764
   for {
 
 			count1 = instantiate୦୦gallopRight୦sort_slice_tim_go2୮aPerson(a[cursor2], tmp, cursor1, len1, 0, c)
@@ -736,28 +742,28 @@ outer:
 		panic("Comparison method violates its general contract!")
 	} else {
 
-//line sort_slice_tim.go2:830
+//line sort_slice_tim.go2:833
   copy(a[dest:], tmp[cursor1:cursor1+len1])
 
 	}
 }
 
-//line sort_slice_tim.go2:846
+//line sort_slice_tim.go2:849
 func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) mergeHi(base1, len1, base2, len2 int) {
 
-//line sort_slice_tim.go2:850
+//line sort_slice_tim.go2:853
  var a = this.a
 				var tmp []Person = this.ensureCapacity(len2)
 				var tmpBase = this.tmpBase
 
 				copy(tmp[tmpBase:], a[base2:base2+len2])
 
-//line sort_slice_tim.go2:857
+//line sort_slice_tim.go2:860
  var cursor1 = base1 + len1 - 1
 				var cursor2 = tmpBase + len2 - 1
 				var dest = base2 + len2 - 1
 
-//line sort_slice_tim.go2:862
+//line sort_slice_tim.go2:865
  a[dest] = a[cursor1]
 	dest--
 	cursor1--
@@ -784,7 +790,7 @@ outer:
 					var count1 = 0
 					var count2 = 0
 
-//line sort_slice_tim.go2:892
+//line sort_slice_tim.go2:895
   for {
 
 			if c(tmp[cursor2], a[cursor1]) < 0 {
@@ -818,7 +824,7 @@ outer:
 			}
 		}
 
-//line sort_slice_tim.go2:930
+//line sort_slice_tim.go2:933
   for {
 
 			count1 = len1 - instantiate୦୦gallopRight୦sort_slice_tim_go2୮aPerson(tmp[cursor2], a, base1, len1, len1-1, c)
@@ -872,7 +878,7 @@ outer:
 		minGallop += 2
 	}
 
-//line sort_slice_tim.go2:984
+//line sort_slice_tim.go2:987
  if minGallop < 1 {
 		this.minGallop = 1
 	} else {
@@ -891,17 +897,17 @@ outer:
 			"Comparison method violates its general contract!")
 	} else {
 
-//line sort_slice_tim.go2:1003
+//line sort_slice_tim.go2:1006
   copy(a[dest-(len2-1):], tmp[tmpBase:tmpBase+len2])
 
 	}
 }
 
-//line sort_slice_tim.go2:1016
+//line sort_slice_tim.go2:1019
 func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) ensureCapacity(minCapacity int) []Person {
 	if this.tmpLen < minCapacity {
 
-//line sort_slice_tim.go2:1020
+//line sort_slice_tim.go2:1023
   newSize := minCapacity
 		newSize |= newSize >> 1
 		newSize |= newSize >> 2
@@ -922,7 +928,7 @@ func (this *instantiate୦୦TimSort୦sort_slice_tim_go2୮aPerson,) ensureCapa
 	}
 	return this.tmp
 }
-//line sort_slice_tim.go2:357
+//line sort_slice_tim.go2:360
 func instantiate୦୦reverseRange୦int(a []int, lo int, hi int) {
 	hi--
 	for lo < hi {
@@ -934,7 +940,7 @@ func instantiate୦୦reverseRange୦int(a []int, lo int, hi int) {
 	}
 }
 
-//line sort_slice_tim.go2:366
+//line sort_slice_tim.go2:369
 type instantiate୦୦TimSort୦int struct {
 //line sort_slice_tim.go2:54
  a []int
@@ -956,14 +962,14 @@ type instantiate୦୦TimSort୦int struct {
 	runLen  []int
 }
 
-//line sort_slice_tim.go2:401
+//line sort_slice_tim.go2:404
 func (this *instantiate୦୦TimSort୦int,) pushRun(runBase int, runLen int) {
 	this.runBase[this.stackSize] = runBase
 	this.runLen[this.stackSize] = runLen
 	this.stackSize++
 }
 
-//line sort_slice_tim.go2:423
+//line sort_slice_tim.go2:426
 func (this *instantiate୦୦TimSort୦int,) mergeCollapse() {
 	for this.stackSize > 1 {
 		var n = this.stackSize - 2
@@ -978,7 +984,7 @@ func (this *instantiate୦୦TimSort୦int,) mergeCollapse() {
 	}
 }
 
-//line sort_slice_tim.go2:441
+//line sort_slice_tim.go2:444
 func (this *instantiate୦୦TimSort୦int,) mergeForceCollapse() {
 	for this.stackSize > 1 {
 		var n = this.stackSize - 2
@@ -989,16 +995,16 @@ func (this *instantiate୦୦TimSort୦int,) mergeForceCollapse() {
 	}
 }
 
-//line sort_slice_tim.go2:458
+//line sort_slice_tim.go2:461
 func (this *instantiate୦୦TimSort୦int,) mergeAt(i int) {
 
-//line sort_slice_tim.go2:463
+//line sort_slice_tim.go2:466
  var base1 = this.runBase[i]
 				var len1 = this.runLen[i]
 				var base2 = this.runBase[i+1]
 				var len2 = this.runLen[i+1]
 
-//line sort_slice_tim.go2:475
+//line sort_slice_tim.go2:478
  this.runLen[i] = len1 + len2
 	if i == this.stackSize-3 {
 		this.runBase[i+1] = this.runBase[i+2]
@@ -1006,7 +1012,7 @@ func (this *instantiate୦୦TimSort୦int,) mergeAt(i int) {
 	}
 				this.stackSize--
 
-//line sort_slice_tim.go2:486
+//line sort_slice_tim.go2:489
  var k = instantiate୦୦gallopRight୦int(this.a[base2], this.a, base1, len1, 0, this.c)
 
 	base1 += k
@@ -1015,14 +1021,14 @@ func (this *instantiate୦୦TimSort୦int,) mergeAt(i int) {
 		return
 	}
 
-//line sort_slice_tim.go2:498
+//line sort_slice_tim.go2:501
  len2 = instantiate୦୦gallopLeft୦int(this.a[base1+len1-1], this.a, base2, len2, len2-1, this.c)
 
 	if len2 == 0 {
 		return
 	}
 
-//line sort_slice_tim.go2:505
+//line sort_slice_tim.go2:508
  if len1 <= len2 {
 		this.mergeLo(base1, len1, base2, len2)
 	} else {
@@ -1030,10 +1036,10 @@ func (this *instantiate୦୦TimSort୦int,) mergeAt(i int) {
 	}
 }
 
-//line sort_slice_tim.go2:682
+//line sort_slice_tim.go2:685
 func (this *instantiate୦୦TimSort୦int,) mergeLo(base1 int, len1 int, base2 int, len2 int) {
 
-//line sort_slice_tim.go2:686
+//line sort_slice_tim.go2:689
  var a = this.a
 				var tmp []int = this.ensureCapacity(len1)
 				var cursor1 = this.tmpBase
@@ -1042,7 +1048,7 @@ func (this *instantiate୦୦TimSort୦int,) mergeLo(base1 int, len1 int, base2 
 
 				copy(tmp[cursor1:], a[base1:base1+len1])
 
-//line sort_slice_tim.go2:696
+//line sort_slice_tim.go2:699
  a[dest] = a[cursor2]
 	dest++
 	cursor2++
@@ -1067,7 +1073,7 @@ outer:
 					var count1 = 0
 					var count2 = 0
 
-//line sort_slice_tim.go2:724
+//line sort_slice_tim.go2:727
   for {
 
 			if c(a[cursor2], tmp[cursor1]) < 0 {
@@ -1100,7 +1106,7 @@ outer:
 			}
 		}
 
-//line sort_slice_tim.go2:761
+//line sort_slice_tim.go2:764
   for {
 
 			count1 = instantiate୦୦gallopRight୦int(a[cursor2], tmp, cursor1, len1, 0, c)
@@ -1169,28 +1175,28 @@ outer:
 		panic("Comparison method violates its general contract!")
 	} else {
 
-//line sort_slice_tim.go2:830
+//line sort_slice_tim.go2:833
   copy(a[dest:], tmp[cursor1:cursor1+len1])
 
 	}
 }
 
-//line sort_slice_tim.go2:846
+//line sort_slice_tim.go2:849
 func (this *instantiate୦୦TimSort୦int,) mergeHi(base1, len1, base2, len2 int) {
 
-//line sort_slice_tim.go2:850
+//line sort_slice_tim.go2:853
  var a = this.a
 				var tmp []int = this.ensureCapacity(len2)
 				var tmpBase = this.tmpBase
 
 				copy(tmp[tmpBase:], a[base2:base2+len2])
 
-//line sort_slice_tim.go2:857
+//line sort_slice_tim.go2:860
  var cursor1 = base1 + len1 - 1
 				var cursor2 = tmpBase + len2 - 1
 				var dest = base2 + len2 - 1
 
-//line sort_slice_tim.go2:862
+//line sort_slice_tim.go2:865
  a[dest] = a[cursor1]
 	dest--
 	cursor1--
@@ -1217,7 +1223,7 @@ outer:
 					var count1 = 0
 					var count2 = 0
 
-//line sort_slice_tim.go2:892
+//line sort_slice_tim.go2:895
   for {
 
 			if c(tmp[cursor2], a[cursor1]) < 0 {
@@ -1251,7 +1257,7 @@ outer:
 			}
 		}
 
-//line sort_slice_tim.go2:930
+//line sort_slice_tim.go2:933
   for {
 
 			count1 = len1 - instantiate୦୦gallopRight୦int(tmp[cursor2], a, base1, len1, len1-1, c)
@@ -1305,7 +1311,7 @@ outer:
 		minGallop += 2
 	}
 
-//line sort_slice_tim.go2:984
+//line sort_slice_tim.go2:987
  if minGallop < 1 {
 		this.minGallop = 1
 	} else {
@@ -1324,17 +1330,17 @@ outer:
 			"Comparison method violates its general contract!")
 	} else {
 
-//line sort_slice_tim.go2:1003
+//line sort_slice_tim.go2:1006
   copy(a[dest-(len2-1):], tmp[tmpBase:tmpBase+len2])
 
 	}
 }
 
-//line sort_slice_tim.go2:1016
+//line sort_slice_tim.go2:1019
 func (this *instantiate୦୦TimSort୦int,) ensureCapacity(minCapacity int) []int {
 	if this.tmpLen < minCapacity {
 
-//line sort_slice_tim.go2:1020
+//line sort_slice_tim.go2:1023
   newSize := minCapacity
 		newSize |= newSize >> 1
 		newSize |= newSize >> 2
@@ -1355,10 +1361,10 @@ func (this *instantiate୦୦TimSort୦int,) ensureCapacity(minCapacity int) []i
 	}
 	return this.tmp
 }
-//line sort_slice_tim.go2:604
+//line sort_slice_tim.go2:607
 func instantiate୦୦gallopRight୦sort_slice_tim_go2୮aPerson(key Person, a []Person, base int, len int, hint int, c func(i, j Person,) int) int {
 
-//line sort_slice_tim.go2:607
+//line sort_slice_tim.go2:610
  var ofs = 1
 	var lastOfs = 0
 	if c(key, a[base+hint]) < 0 {
@@ -1375,7 +1381,7 @@ func instantiate୦୦gallopRight୦sort_slice_tim_go2୮aPerson(key Person, a [
 			ofs = maxOfs
 		}
 
-//line sort_slice_tim.go2:624
+//line sort_slice_tim.go2:627
   var tmp = lastOfs
 		lastOfs = hint - ofs
 		ofs = hint - tmp
@@ -1393,12 +1399,12 @@ func instantiate୦୦gallopRight୦sort_slice_tim_go2୮aPerson(key Person, a [
 			ofs = maxOfs
 		}
 
-//line sort_slice_tim.go2:642
+//line sort_slice_tim.go2:645
   lastOfs += hint
 		ofs += hint
 	}
 
-//line sort_slice_tim.go2:652
+//line sort_slice_tim.go2:655
  lastOfs++
 	for lastOfs < ofs {
 		var m = lastOfs + ((ofs - lastOfs) >> 1)
@@ -1412,7 +1418,7 @@ func instantiate୦୦gallopRight୦sort_slice_tim_go2୮aPerson(key Person, a [
 
 	return ofs
 }
-//line sort_slice_tim.go2:530
+//line sort_slice_tim.go2:533
 func instantiate୦୦gallopLeft୦sort_slice_tim_go2୮aPerson(key Person, a []Person, base int, len int, hint int, c func(i, j Person,) int) int {
 
 	var lastOfs = 0
@@ -1431,7 +1437,7 @@ func instantiate୦୦gallopLeft୦sort_slice_tim_go2୮aPerson(key Person, a []
 			ofs = maxOfs
 		}
 
-//line sort_slice_tim.go2:549
+//line sort_slice_tim.go2:552
   lastOfs += hint
 		ofs += hint
 	} else {
@@ -1448,13 +1454,13 @@ func instantiate୦୦gallopLeft୦sort_slice_tim_go2୮aPerson(key Person, a []
 			ofs = maxOfs
 		}
 
-//line sort_slice_tim.go2:566
+//line sort_slice_tim.go2:569
   var tmp = lastOfs
 		lastOfs = hint - ofs
 		ofs = hint - tmp
 	}
 
-//line sort_slice_tim.go2:577
+//line sort_slice_tim.go2:580
  lastOfs++
 	for lastOfs < ofs {
 		var m = lastOfs + ((ofs - lastOfs) >> 1)
@@ -1469,10 +1475,10 @@ func instantiate୦୦gallopLeft୦sort_slice_tim_go2୮aPerson(key Person, a []
 	return ofs
 }
 
-//line sort_slice_tim.go2:604
+//line sort_slice_tim.go2:607
 func instantiate୦୦gallopRight୦int(key int, a []int, base int, len int, hint int, c func(i, j int,) int) int {
 
-//line sort_slice_tim.go2:607
+//line sort_slice_tim.go2:610
  var ofs = 1
 	var lastOfs = 0
 	if c(key, a[base+hint]) < 0 {
@@ -1489,7 +1495,7 @@ func instantiate୦୦gallopRight୦int(key int, a []int, base int, len int, hin
 			ofs = maxOfs
 		}
 
-//line sort_slice_tim.go2:624
+//line sort_slice_tim.go2:627
   var tmp = lastOfs
 		lastOfs = hint - ofs
 		ofs = hint - tmp
@@ -1507,12 +1513,12 @@ func instantiate୦୦gallopRight୦int(key int, a []int, base int, len int, hin
 			ofs = maxOfs
 		}
 
-//line sort_slice_tim.go2:642
+//line sort_slice_tim.go2:645
   lastOfs += hint
 		ofs += hint
 	}
 
-//line sort_slice_tim.go2:652
+//line sort_slice_tim.go2:655
  lastOfs++
 	for lastOfs < ofs {
 		var m = lastOfs + ((ofs - lastOfs) >> 1)
@@ -1526,7 +1532,7 @@ func instantiate୦୦gallopRight୦int(key int, a []int, base int, len int, hin
 
 	return ofs
 }
-//line sort_slice_tim.go2:530
+//line sort_slice_tim.go2:533
 func instantiate୦୦gallopLeft୦int(key int, a []int, base int, len int, hint int, c func(i, j int,) int) int {
 
 	var lastOfs = 0
@@ -1545,7 +1551,7 @@ func instantiate୦୦gallopLeft୦int(key int, a []int, base int, len int, hint
 			ofs = maxOfs
 		}
 
-//line sort_slice_tim.go2:549
+//line sort_slice_tim.go2:552
   lastOfs += hint
 		ofs += hint
 	} else {
@@ -1562,13 +1568,13 @@ func instantiate୦୦gallopLeft୦int(key int, a []int, base int, len int, hint
 			ofs = maxOfs
 		}
 
-//line sort_slice_tim.go2:566
+//line sort_slice_tim.go2:569
   var tmp = lastOfs
 		lastOfs = hint - ofs
 		ofs = hint - tmp
 	}
 
-//line sort_slice_tim.go2:577
+//line sort_slice_tim.go2:580
  lastOfs++
 	for lastOfs < ofs {
 		var m = lastOfs + ((ofs - lastOfs) >> 1)
@@ -1583,17 +1589,17 @@ func instantiate୦୦gallopLeft୦int(key int, a []int, base int, len int, hint
 	return ofs
 }
 
-//line sort_slice_tim.go2:589
+//line sort_slice_tim.go2:592
 type _ builtinsort.Float64Slice
 
-//line sort_slice_tim.go2:589
+//line sort_slice_tim.go2:592
 var _ = fmt.Errorf
-//line sort_slice_tim.go2:589
+//line sort_slice_tim.go2:592
 var _ = log.Fatal
-//line sort_slice_tim.go2:589
+//line sort_slice_tim.go2:592
 var _ = rand.ExpFloat64
-//line sort_slice_tim.go2:589
+//line sort_slice_tim.go2:592
 var _ = testing.AllocsPerRun
 
-//line sort_slice_tim.go2:589
+//line sort_slice_tim.go2:592
 const _ = time.ANSIC

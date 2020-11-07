@@ -1,37 +1,41 @@
-package sort_slice_tim
+package sort_slice_tim_interface
 
-import "reflect"
+type CompareInterface interface {
+	Len() int
+	Compare(i, j int) int
+	Swap(i, j int)
+}
 
-type CompareFunc = func(i, j interface{}) int
+type index = int
 
-func Sort(a interface{}, compare CompareFunc) {
-	rt := reflect.TypeOf(a)
-	rv := reflect.ValueOf(a)
-	elm := rt.Elem()
-
-	n := rv.Len()
-
-	interfaces := make([]interface{}, n)
-	for i := 0; i < n; i++ {
-		interfaces[i] = rv.Index(i).Interface()
+func Sort(data CompareInterface) {
+	indices := make([]index, data.Len())
+	for i, _ := range indices {
+		indices[i] = i
 	}
 
-	SortInterfaces(interfaces, compare)
+	sort(indices, 0, data.Len(), data, nil, 0, 0)
 
-	for i := 0; i < n; i++ {
-		rv.Index(i).Set(reflect.ValueOf(interfaces[i]).Convert(elm))
+	for i, j := range indices {
+		if i == j {
+			continue
+		}
+
+		for indices[j] < 0 {
+			j = -indices[j]
+		}
+
+		if i != j {
+			data.Swap(i, j)
+			indices[i] = -j
+		}
 	}
 }
 
-func SortInterfaces(a []interface{}, compare CompareFunc) {
-	sort(a, 0, len(a), compare, nil, 0, 0)
-}
-
-func IsSorted(a interface{}, compare CompareFunc) bool {
-	rv := reflect.ValueOf(a)
-	n := rv.Len()
+func IsSorted(data CompareInterface) bool {
+	n := data.Len()
 	for i := n - 1; i > 0; i-- {
-		if compare(rv.Index(i).Interface(), rv.Index(i-1).Interface()) < 0 {
+		if data.Compare(i, i-1) < 0 {
 			return false
 		}
 	}
@@ -76,12 +80,12 @@ type TimSort struct {
 	/**
 	 * The array being sorted.
 	 */
-	a []interface{}
+	a []index
 
 	/**
 	 * The comparator for this sort.
 	 */
-	c CompareFunc
+	c CompareInterface
 
 	/**
 	 * This controls when we get *into* galloping mode.  It is initialized
@@ -95,7 +99,7 @@ type TimSort struct {
 	 * provided in constructor, and if so will be used as long as it
 	 * is big enough.
 	 */
-	tmp     []interface{}
+	tmp     []index
 	tmpBase int // base of tmp array slice
 	tmpLen  int // length of tmp array slice
 
@@ -123,7 +127,7 @@ type TimSort struct {
  * @param workBase origin of usable space in work array
  * @param workLen usable size of work array
  */
-func newTimSort(a []interface{}, c CompareFunc, work []interface{}, workBase int, workLen int) *TimSort {
+func newTimSort(a []index, c CompareInterface, work []index, workBase int, workLen int) *TimSort {
 	this := &TimSort{
 		a:         a,
 		c:         c,
@@ -139,7 +143,7 @@ func newTimSort(a []interface{}, c CompareFunc, work []interface{}, workBase int
 		tlen = INITIAL_TMP_STORAGE_LENGTH
 	}
 	if len(work) == 0 || workLen < tlen || workBase+tlen > len(work) {
-		this.tmp = make([]interface{}, tlen)
+		this.tmp = make([]index, tlen)
 		this.tmpBase = 0
 		this.tmpLen = tlen
 	} else {
@@ -199,7 +203,7 @@ func newTimSort(a []interface{}, c CompareFunc, work []interface{}, workBase int
  * @param workLen usable size of work array
  * @since 1.8
  */
-func sort(a []interface{}, lo int, hi int, c CompareFunc, work []interface{}, workBase int, workLen int) {
+func sort(a []index, lo int, hi int, c CompareInterface, work []index, workBase int, workLen int) {
 	//assert c != null && a != null && lo >= 0 && lo <= hi && hi <= a.length;
 
 	var nRemaining = hi - lo
@@ -274,7 +278,7 @@ func sort(a []interface{}, lo int, hi int, c CompareFunc, work []interface{}, wo
  *        not already known to be sorted ({@code lo <= start <= hi})
  * @param c comparator to used for the sort
  */
-func binarySort(a []interface{}, lo int, hi int, start int, c CompareFunc) {
+func binarySort(a []index, lo int, hi int, start int, c CompareInterface) {
 	//assert lo <= start && start <= hi;
 	if start == lo {
 		start++
@@ -294,7 +298,7 @@ func binarySort(a []interface{}, lo int, hi int, start int, c CompareFunc) {
 		 */
 		for left < right {
 			var mid = (left + right) >> 1
-			if c(pivot, a[mid]) < 0 {
+			if c.Compare(pivot, a[mid]) < 0 {
 				right = mid
 			} else {
 				left = mid + 1
@@ -352,7 +356,7 @@ func binarySort(a []interface{}, lo int, hi int, start int, c CompareFunc) {
  * @return  the length of the run beginning at the specified position in
  *          the specified array
  */
-func countRunAndMakeAscending(a []interface{}, lo int, hi int, c CompareFunc) int {
+func countRunAndMakeAscending(a []index, lo int, hi int, c CompareInterface) int {
 	//assert lo < hi;
 	var runHi = lo + 1
 	if runHi == hi {
@@ -361,13 +365,13 @@ func countRunAndMakeAscending(a []interface{}, lo int, hi int, c CompareFunc) in
 
 	// Find end of run, and reverse range if descending
 	runHi++
-	if c(a[runHi-1], a[lo]) < 0 { // Descending
-		for runHi < hi && c(a[runHi], a[runHi-1]) < 0 {
+	if c.Compare(a[runHi-1], a[lo]) < 0 { // Descending
+		for runHi < hi && c.Compare(a[runHi], a[runHi-1]) < 0 {
 			runHi++
 		}
 		reverseRange(a, lo, runHi)
 	} else { // Ascending
-		for runHi < hi && c(a[runHi], a[runHi-1]) >= 0 {
+		for runHi < hi && c.Compare(a[runHi], a[runHi-1]) >= 0 {
 			runHi++
 		}
 	}
@@ -382,7 +386,7 @@ func countRunAndMakeAscending(a []interface{}, lo int, hi int, c CompareFunc) in
  * @param lo the index of the first element in the range to be reversed
  * @param hi the index after the last element in the range to be reversed
  */
-func reverseRange(a []interface{}, lo int, hi int) {
+func reverseRange(a []index, lo int, hi int) {
 	hi--
 	for lo < hi {
 		var t = a[lo]
@@ -555,14 +559,14 @@ func (this *TimSort) mergeAt(i int) {
  *    the first k elements of a should precede key, and the last n - k
  *    should follow it.
  */
-func gallopLeft(key interface{}, a []interface{}, base int, len int, hint int, c CompareFunc) int {
+func gallopLeft(key index, a []index, base int, len int, hint int, c CompareInterface) int {
 	//assert len > 0 && hint >= 0 && hint < len;
 	var lastOfs = 0
 	var ofs = 1
-	if c(key, a[base+hint]) > 0 {
+	if c.Compare(key, a[base+hint]) > 0 {
 		// Gallop right until a[base+hint+lastOfs] < key <= a[base+hint+ofs]
 		var maxOfs = len - hint
-		for ofs < maxOfs && c(key, a[base+hint+ofs]) > 0 {
+		for ofs < maxOfs && c.Compare(key, a[base+hint+ofs]) > 0 {
 			lastOfs = ofs
 			ofs = (ofs << 1) + 1
 			if ofs <= 0 { // int overflow
@@ -579,7 +583,7 @@ func gallopLeft(key interface{}, a []interface{}, base int, len int, hint int, c
 	} else { // key <= a[base + hint]
 		// Gallop left until a[base+hint-ofs] < key <= a[base+hint-lastOfs]
 		var maxOfs = hint + 1
-		for ofs < maxOfs && c(key, a[base+hint-ofs]) <= 0 {
+		for ofs < maxOfs && c.Compare(key, a[base+hint-ofs]) <= 0 {
 			lastOfs = ofs
 			ofs = (ofs << 1) + 1
 			if ofs <= 0 { // int overflow
@@ -606,7 +610,7 @@ func gallopLeft(key interface{}, a []interface{}, base int, len int, hint int, c
 	for lastOfs < ofs {
 		var m = lastOfs + ((ofs - lastOfs) >> 1)
 
-		if c(key, a[base+m]) > 0 {
+		if c.Compare(key, a[base+m]) > 0 {
 			lastOfs = m + 1 // a[base + m] < key
 		} else {
 			ofs = m // key <= a[base + m]
@@ -629,15 +633,15 @@ func gallopLeft(key interface{}, a []interface{}, base int, len int, hint int, c
  * @param c the comparator used to order the range, and to search
  * @return the int k,  0 <= k <= n such that a[b + k - 1] <= key < a[b + k]
  */
-func gallopRight(key interface{}, a []interface{}, base int, len int, hint int, c CompareFunc) int {
+func gallopRight(key index, a []index, base int, len int, hint int, c CompareInterface) int {
 	//assert len > 0 && hint >= 0 && hint < len;
 
 	var ofs = 1
 	var lastOfs = 0
-	if c(key, a[base+hint]) < 0 {
+	if c.Compare(key, a[base+hint]) < 0 {
 		// Gallop left until a[b+hint - ofs] <= key < a[b+hint - lastOfs]
 		var maxOfs = hint + 1
-		for ofs < maxOfs && c(key, a[base+hint-ofs]) < 0 {
+		for ofs < maxOfs && c.Compare(key, a[base+hint-ofs]) < 0 {
 			lastOfs = ofs
 			ofs = (ofs << 1) + 1
 			if ofs <= 0 { // int overflow
@@ -655,7 +659,7 @@ func gallopRight(key interface{}, a []interface{}, base int, len int, hint int, 
 	} else { // a[b + hint] <= key
 		// Gallop right until a[b+hint + lastOfs] <= key < a[b+hint + ofs]
 		var maxOfs = len - hint
-		for ofs < maxOfs && c(key, a[base+hint+ofs]) >= 0 {
+		for ofs < maxOfs && c.Compare(key, a[base+hint+ofs]) >= 0 {
 			lastOfs = ofs
 			ofs = (ofs << 1) + 1
 			if ofs <= 0 { // int overflow
@@ -681,7 +685,7 @@ func gallopRight(key interface{}, a []interface{}, base int, len int, hint int, 
 	for lastOfs < ofs {
 		var m = lastOfs + ((ofs - lastOfs) >> 1)
 
-		if c(key, a[base+m]) < 0 {
+		if c.Compare(key, a[base+m]) < 0 {
 			ofs = m // key < a[b + m]
 		} else {
 			lastOfs = m + 1 // a[b + m] <= key
@@ -712,7 +716,7 @@ func (this *TimSort) mergeLo(base1 int, len1 int, base2 int, len2 int) {
 
 	// Copy first run into temp array
 	var a = this.a // For performance
-	var tmp []interface{} = this.ensureCapacity(len1)
+	var tmp []index = this.ensureCapacity(len1)
 	var cursor1 = this.tmpBase // Indexes into tmp array
 	var cursor2 = base2        // Indexes int a
 	var dest = base1           // Indexes int a
@@ -751,7 +755,7 @@ outer:
 		 */
 		for {
 			//assert len1 > 1 && len2 > 0;
-			if c(a[cursor2], tmp[cursor1]) < 0 {
+			if c.Compare(a[cursor2], tmp[cursor1]) < 0 {
 				a[dest] = a[cursor2]
 				dest++
 				cursor2++
@@ -876,7 +880,7 @@ func (this *TimSort) mergeHi(base1, len1, base2, len2 int) {
 
 	// Copy second run into temp array
 	var a = this.a // For performance
-	var tmp []interface{} = this.ensureCapacity(len2)
+	var tmp []index = this.ensureCapacity(len2)
 	var tmpBase = this.tmpBase
 
 	copy(tmp[tmpBase:], a[base2:base2+len2])
@@ -919,7 +923,7 @@ outer:
 		 */
 		for {
 			//assert len1 > 0 && len2 > 1;
-			if c(tmp[cursor2], a[cursor1]) < 0 {
+			if c.Compare(tmp[cursor2], a[cursor1]) < 0 {
 				a[dest] = a[cursor1]
 				dest--
 				cursor1--
@@ -1040,7 +1044,7 @@ outer:
  * @param minCapacity the minimum required capacity of the tmp array
  * @return tmp, whether or not it grew
  */
-func (this *TimSort) ensureCapacity(minCapacity int) []interface{} {
+func (this *TimSort) ensureCapacity(minCapacity int) []index {
 	if this.tmpLen < minCapacity {
 		// Compute smallest power of 2 > minCapacity
 		// var newSize = -1 >> bits.LeadingZeros(uint(minCapacity))
@@ -1058,7 +1062,7 @@ func (this *TimSort) ensureCapacity(minCapacity int) []interface{} {
 			newSize = min(newSize, len(this.a)>>1)
 		}
 
-		this.tmp = make([]interface{}, newSize)
+		this.tmp = make([]index, newSize)
 		this.tmpLen = newSize
 		this.tmpBase = 0
 	}

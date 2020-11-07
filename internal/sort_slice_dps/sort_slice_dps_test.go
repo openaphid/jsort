@@ -31,7 +31,7 @@ func TestByAge(t *testing.T) {
 	}
 }
 
-var benchmarkSizes = []int{256, 1024, 4192, 16768}
+var benchmarkSizes = testdata.GenBenchmarkSizes(256, 4, 5)
 
 func BenchmarkVSSort(t *testing.B) {
 	for _, size := range benchmarkSizes {

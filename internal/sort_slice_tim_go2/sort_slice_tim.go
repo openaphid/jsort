@@ -28,7 +28,7 @@ const MIN_GALLOP = 7
 //line sort_slice_tim.go2:48
 const INITIAL_TMP_STORAGE_LENGTH = 256
 
-//line sort_slice_tim.go2:385
+//line sort_slice_tim.go2:388
 func minRunLength(n int) int {
 
 	var r = 0
@@ -39,7 +39,7 @@ func minRunLength(n int) int {
 	return n + r
 }
 
-//line sort_slice_tim.go2:1041
+//line sort_slice_tim.go2:1044
 func min(i, j int) int {
 	if i < j {
 		return i
@@ -48,17 +48,17 @@ func min(i, j int) int {
 	return j
 }
 
-//line sort_slice_tim.go2:1047
+//line sort_slice_tim.go2:1050
 type Importable୦ int
 
-//line sort_slice_tim.go2:1047
+//line sort_slice_tim.go2:1050
 var _ = fmt.Errorf
-//line sort_slice_tim.go2:1047
+//line sort_slice_tim.go2:1050
 var _ = log.Fatal
-//line sort_slice_tim.go2:1047
+//line sort_slice_tim.go2:1050
 var _ = rand.ExpFloat64
-//line sort_slice_tim.go2:1047
+//line sort_slice_tim.go2:1050
 var _ = testing.AllocsPerRun
 
-//line sort_slice_tim.go2:1047
+//line sort_slice_tim.go2:1050
 const _ = time.ANSIC

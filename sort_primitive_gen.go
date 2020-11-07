@@ -95,34 +95,40 @@ $EXPORTS
 		imports = append(imports, fmt.Sprintf(`"github.com/openaphid/dualpivotsort/internal/sort_%s"`, typeName))
 	}
 
-	var appendExport = func(alias, typeName string, plural bool, hasSorted bool) {
+	var appendSortExport = func(alias, sortName string, plural bool, hasSorted bool) {
 		exports = append(exports, fmt.Sprintf("// %s", alias))
 		if plural {
-			exports = append(exports, fmt.Sprintf("var %ss = sort_%s.Sort", strings.Title(alias), typeName))
+			exports = append(exports, fmt.Sprintf("var %ss = sort_%s.Sort", strings.Title(alias), sortName))
 			if hasSorted {
-				exports = append(exports, fmt.Sprintf("var %ssAreSorted = sort_%s.IsSorted", strings.Title(alias), typeName))
+				exports = append(exports, fmt.Sprintf("var %ssAreSorted = sort_%s.IsSorted", strings.Title(alias), sortName))
 			}
 		} else {
-			exports = append(exports, fmt.Sprintf("var %s = sort_%s.Sort", strings.Title(alias), typeName))
+			exports = append(exports, fmt.Sprintf("var %s = sort_%s.Sort", strings.Title(alias), sortName))
 			if hasSorted {
-				exports = append(exports, fmt.Sprintf("var %sIsSorted = sort_%s.IsSorted", strings.Title(alias), typeName))
+				exports = append(exports, fmt.Sprintf("var %sIsSorted = sort_%s.IsSorted", strings.Title(alias), sortName))
 			}
 		}
 		exports = append(exports, "")
 	}
 
+	var appendTypeExport = func(pkg, typeName string) {
+		exports = append(exports, fmt.Sprintf("type %s = %s.%s", strings.Title(typeName), pkg, typeName))
+	}
+
 	for _, t := range allPrimitives {
 		appendImport(t)
-		appendExport(t, t, true, true)
+		appendSortExport(t, t, true, true)
 	}
-	appendExport("byte", "uint8", true, true)
-	appendExport("rune", "int32", true, true)
+	appendSortExport("byte", "uint8", true, true)
+	appendSortExport("rune", "int32", true, true)
 
-	for _, t := range []string{"slice_dps", "slice_tim"} {
+	for _, t := range []string{"slice_dps", "slice_tim", "slice_tim_interface"} {
 		appendImport(t)
 	}
-	appendExport("Slice", "slice_dps", false, false)
-	appendExport("SliceStable", "slice_tim", false, true)
+	appendSortExport("Slice", "slice_dps", false, true)
+	appendSortExport("SliceStable", "slice_tim", false, false)
+	appendSortExport("SliceInterface", "slice_tim_interface", false, true)
+	appendTypeExport("sort_slice_tim_interface", "CompareInterface")
 
 	var exportCode = exportTemplate
 	exportCode = strings.ReplaceAll(exportCode, "$IMPORTS", strings.Join(imports, "\n"))

@@ -2,13 +2,18 @@ package dualpivotsort
 
 import (
 	"fmt"
+	"github.com/openaphid/dualpivotsort/internal/testdata"
 	"math/rand"
 	"sort"
 	"testing"
 	"time"
 )
 
-var benchmarkSizes = []int{256, 1024, 4192, 16768}
+type Person = testdata.Person
+
+var prepare = testdata.Prepare
+
+var benchmarkSizes = testdata.GenBenchmarkSizes(256, 4, 5)
 
 func prepareInts(src []int) {
 	rand.Seed(time.Now().Unix())
@@ -23,6 +28,38 @@ func copyInts(src []int) []int {
 
 	return dup
 }
+
+type IntCompareInterface []int
+
+func (a IntCompareInterface) Len() int {
+	return len(a)
+}
+
+func (a IntCompareInterface) Compare(i, j int) int {
+	return a[i] - a[j]
+}
+
+func (a IntCompareInterface) Swap(i, j int) {
+	a[i], a[j] = a[j], a[i]
+}
+
+var _ CompareInterface = (*IntCompareInterface)(nil)
+
+type PersonCompareInterface []Person
+
+func (p PersonCompareInterface) Len() int {
+	return len(p)
+}
+
+func (p PersonCompareInterface) Compare(i, j int) int {
+	return p[i].Age - p[j].Age
+}
+
+func (p PersonCompareInterface) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
+
+var _ CompareInterface = (*PersonCompareInterface)(nil)
 
 func BenchmarkInts(t *testing.B) {
 	for _, size := range benchmarkSizes {
@@ -62,6 +99,16 @@ func BenchmarkInts(t *testing.B) {
 				SliceStable(dup, func(o1, o2 interface{}) int {
 					return o1.(int) - o2.(int)
 				})
+			}
+		})
+
+		t.Run(fmt.Sprintf("TimSortSliceInterface-%d", size), func(t *testing.B) {
+			for i := 0; i < t.N; i++ {
+				t.StopTimer()
+				dup := copyInts(data)
+
+				t.StartTimer()
+				SliceInterface(IntCompareInterface(dup))
 			}
 		})
 
@@ -111,24 +158,6 @@ func BenchmarkInts(t *testing.B) {
 	}
 }
 
-type Person struct {
-	age  int
-	name string
-}
-
-func (p Person) String() string {
-	return fmt.Sprintf("Person(%d, %s)", p.Age, p.name)
-}
-
-func prepare(a []Person) {
-	for i, _ := range a {
-		a[i] = Person{
-			age:  rand.Int(),
-			name: fmt.Sprintf("n-%d", rand.Int()),
-		}
-	}
-}
-
 func copyPersonSlice(src []Person) []Person {
 	dup := make([]Person, len(src))
 	copy(dup, src)
@@ -164,6 +193,16 @@ func BenchmarkStructSlice(t *testing.B) {
 				SliceStable(dup, func(o1, o2 interface{}) int {
 					return o1.(Person).Age - o2.(Person).Age
 				})
+			}
+		})
+
+		t.Run(fmt.Sprintf("TimSortSliceInterface-%d", size), func(t *testing.B) {
+			for i := 0; i < t.N; i++ {
+				t.StopTimer()
+				dup := copyPersonSlice(data)
+
+				t.StartTimer()
+				SliceInterface(PersonCompareInterface(dup))
 			}
 		})
 

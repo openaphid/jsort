@@ -26,6 +26,16 @@ func Prepare(a []Person) {
 			name: fmt.Sprintf("n-%d", i),
 		}
 	}
+}
+
+func PrepareShuffledSeq(a []Person) {
+	rand.Seed(time.Now().Unix())
+	for i, _ := range a {
+		a[i] = Person{
+			Age:  i,
+			name: fmt.Sprintf("n-%d", i),
+		}
+	}
 
 	for i, _ := range a {
 		j := rand.Intn(len(a))
@@ -55,4 +65,17 @@ func LoadData() []Person {
 	}
 
 	return ret
+}
+
+func GenBenchmarkSizes(init, multiplier, length int) []int {
+	var sizes = []int{}
+
+	s := init
+
+	for i := 0; i < length; i++ {
+		sizes = append(sizes, s)
+		s *= multiplier
+	}
+
+	return sizes
 }
