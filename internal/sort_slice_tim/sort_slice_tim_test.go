@@ -2,32 +2,18 @@ package sort_slice_tim
 
 import (
 	"fmt"
+	"github.com/openaphid/dualpivotsort/internal/testdata"
 	"log"
-	"math/rand"
 	builtinsort "sort"
 	"testing"
 )
 
-type Person struct {
-	age  int
-	name string
-}
+type Person = testdata.Person
 
-func (p Person) String() string {
-	return fmt.Sprintf("Person(%d, %s)", p.age, p.name)
-}
-
-func prepare(a []Person) {
-	for i, _ := range a {
-		a[i] = Person{
-			age:  rand.Int(),
-			name: fmt.Sprintf("n-%d", rand.Int()),
-		}
-	}
-}
+var prepare = testdata.Prepare
 
 var byAge = func(o1, o2 interface{}) int {
-	return o1.(Person).age - o2.(Person).age
+	return o1.(Person).Age - o2.(Person).Age
 }
 
 func TestByAge(t *testing.T) {
@@ -59,7 +45,7 @@ func BenchmarkVSSort(t *testing.B) {
 				copy(dup, data)
 				t.StartTimer()
 				Sort(dup, func(o1, o2 interface{}) int {
-					return o1.(Person).age - o2.(Person).age
+					return o1.(Person).Age - o2.(Person).Age
 				})
 			}
 		})
@@ -77,7 +63,7 @@ func BenchmarkVSSort(t *testing.B) {
 				}
 
 				SortInterfaces(convert, func(o1, o2 interface{}) int {
-					return o1.(Person).age - o2.(Person).age
+					return o1.(Person).Age - o2.(Person).Age
 				})
 
 				for i, _ := range dup {
@@ -93,7 +79,7 @@ func BenchmarkVSSort(t *testing.B) {
 				copy(dup, data)
 				t.StartTimer()
 				builtinsort.Slice(dup, func(i, j int) bool {
-					return dup[i].age < dup[j].age
+					return dup[i].Age < dup[j].Age
 				})
 			}
 		})
@@ -105,7 +91,7 @@ func BenchmarkVSSort(t *testing.B) {
 				copy(dup, data)
 				t.StartTimer()
 				builtinsort.SliceStable(dup, func(i, j int) bool {
-					return dup[i].age < dup[j].age
+					return dup[i].Age < dup[j].Age
 				})
 			}
 		})

@@ -117,7 +117,7 @@ type Person struct {
 }
 
 func (p Person) String() string {
-	return fmt.Sprintf("Person(%d, %s)", p.age, p.name)
+	return fmt.Sprintf("Person(%d, %s)", p.Age, p.name)
 }
 
 func prepare(a []Person) {
@@ -150,7 +150,7 @@ func BenchmarkStructSlice(t *testing.B) {
 
 				t.StartTimer()
 				Slice(dup, func(o1, o2 interface{}) int {
-					return o1.(Person).age - o2.(Person).age
+					return o1.(Person).Age - o2.(Person).Age
 				})
 			}
 		})
@@ -162,7 +162,7 @@ func BenchmarkStructSlice(t *testing.B) {
 
 				t.StartTimer()
 				SliceStable(dup, func(o1, o2 interface{}) int {
-					return o1.(Person).age - o2.(Person).age
+					return o1.(Person).Age - o2.(Person).Age
 				})
 			}
 		})
@@ -174,7 +174,7 @@ func BenchmarkStructSlice(t *testing.B) {
 
 				t.StartTimer()
 				sort.Slice(dup, func(i, j int) bool {
-					return dup[i].age < dup[j].age
+					return dup[i].Age < dup[j].Age
 				})
 			}
 		})
@@ -186,7 +186,7 @@ func BenchmarkStructSlice(t *testing.B) {
 
 				t.StartTimer()
 				sort.SliceStable(dup, func(i, j int) bool {
-					return dup[i].age < dup[j].age
+					return dup[i].Age < dup[j].Age
 				})
 			}
 		})
