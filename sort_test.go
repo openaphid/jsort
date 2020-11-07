@@ -1,8 +1,8 @@
-package dualpivotsort
+package jsort
 
 import (
 	"fmt"
-	"github.com/openaphid/dualpivotsort/internal/testdata"
+	"github.com/openaphid/jsort/internal/testdata"
 	"math/rand"
 	"sort"
 	"testing"

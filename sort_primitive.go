@@ -1,7 +1,7 @@
 // +build ignore
 //go:generate go run sort_primitive_gen.go
 
-package dualpivotsort
+package jsort
 
 /**
  * The maximum number of runs in merge sort.

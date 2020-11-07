@@ -1,3 +1,3 @@
-module github.com/openaphid/dualpivotsort
+module github.com/openaphid/jsort
 
 go 1.15

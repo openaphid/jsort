@@ -1,6 +1,6 @@
 goos: darwin
 goarch: amd64
-pkg: github.com/openaphid/dualpivotsort
+pkg: github.com/openaphid/jsort
 BenchmarkInts/DpsSpecializedInts-256-8         	  293125	      3931 ns/op	       0 B/op	       0 allocs/op
 BenchmarkInts/DpsSpecializedInts-256-8         	  296613	      3906 ns/op	       0 B/op	       0 allocs/op
 BenchmarkInts/DpsSpecializedInts-256-8         	  297217	      3937 ns/op	       0 B/op	       0 allocs/op
@@ -327,4 +327,4 @@ BenchmarkStructSlice/BuiltinSortSliceStable-65536-8     	      12	  94887269 ns/
 BenchmarkStructSlice/BuiltinSortSliceStable-65536-8     	      12	  96096645 ns/op	     112 B/op	       3 allocs/op
 BenchmarkStructSlice/BuiltinSortSliceStable-65536-8     	      10	 115346960 ns/op	     112 B/op	       3 allocs/op
 PASS
-ok  	github.com/openaphid/dualpivotsort	845.733s
+ok  	github.com/openaphid/jsort	845.733s

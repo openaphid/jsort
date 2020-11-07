@@ -1,4 +1,4 @@
-package dualpivotsort
+package jsort
 
 type primitive = int
 

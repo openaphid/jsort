@@ -2,8 +2,8 @@ package sort_slice_tim_interface
 
 import (
 	"fmt"
-	"github.com/openaphid/dualpivotsort/internal/sort_slice_tim"
-	"github.com/openaphid/dualpivotsort/internal/testdata"
+	"github.com/openaphid/jsort/internal/sort_slice_tim"
+	"github.com/openaphid/jsort/internal/testdata"
 	"log"
 	builtinsort "sort"
 	"testing"

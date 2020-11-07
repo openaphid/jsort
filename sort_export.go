@@ -1,24 +1,24 @@
 // Code generated from sort_primitive.go using sort_primitive_gen.go; DO NOT EDIT.
 
-package dualpivotsort
+package jsort
 
 import (
-	"github.com/openaphid/dualpivotsort/internal/sort_float32"
-	"github.com/openaphid/dualpivotsort/internal/sort_float64"
-	"github.com/openaphid/dualpivotsort/internal/sort_int"
-	"github.com/openaphid/dualpivotsort/internal/sort_int16"
-	"github.com/openaphid/dualpivotsort/internal/sort_int32"
-	"github.com/openaphid/dualpivotsort/internal/sort_int64"
-	"github.com/openaphid/dualpivotsort/internal/sort_int8"
-	"github.com/openaphid/dualpivotsort/internal/sort_slice_dps"
-	"github.com/openaphid/dualpivotsort/internal/sort_slice_tim"
-	"github.com/openaphid/dualpivotsort/internal/sort_slice_tim_interface"
-	"github.com/openaphid/dualpivotsort/internal/sort_string"
-	"github.com/openaphid/dualpivotsort/internal/sort_uint"
-	"github.com/openaphid/dualpivotsort/internal/sort_uint16"
-	"github.com/openaphid/dualpivotsort/internal/sort_uint32"
-	"github.com/openaphid/dualpivotsort/internal/sort_uint64"
-	"github.com/openaphid/dualpivotsort/internal/sort_uint8"
+	"github.com/openaphid/jsort/internal/sort_float32"
+	"github.com/openaphid/jsort/internal/sort_float64"
+	"github.com/openaphid/jsort/internal/sort_int"
+	"github.com/openaphid/jsort/internal/sort_int16"
+	"github.com/openaphid/jsort/internal/sort_int32"
+	"github.com/openaphid/jsort/internal/sort_int64"
+	"github.com/openaphid/jsort/internal/sort_int8"
+	"github.com/openaphid/jsort/internal/sort_slice_dps"
+	"github.com/openaphid/jsort/internal/sort_slice_tim"
+	"github.com/openaphid/jsort/internal/sort_slice_tim_interface"
+	"github.com/openaphid/jsort/internal/sort_string"
+	"github.com/openaphid/jsort/internal/sort_uint"
+	"github.com/openaphid/jsort/internal/sort_uint16"
+	"github.com/openaphid/jsort/internal/sort_uint32"
+	"github.com/openaphid/jsort/internal/sort_uint64"
+	"github.com/openaphid/jsort/internal/sort_uint8"
 )
 
 // int

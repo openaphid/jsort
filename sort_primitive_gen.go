@@ -36,7 +36,7 @@ func main() {
 		var specialized = header + codeTemplate
 		specialized = strings.ReplaceAll(specialized, "// +build ignore\n", "")
 		specialized = strings.ReplaceAll(specialized, "//go:generate go run sort_primitive_gen.go\n", "")
-		specialized = strings.ReplaceAll(specialized, "package dualpivotsort", fmt.Sprintf("package sort_%s", t))
+		specialized = strings.ReplaceAll(specialized, "package jsort", fmt.Sprintf("package sort_%s", t))
 		specialized = strings.ReplaceAll(specialized, "type primitive = int64", fmt.Sprintf("type primitive = %s", t))
 
 		output, err := format.Source([]byte(specialized))
@@ -63,7 +63,7 @@ func main() {
 		specialized = header + testCodeTemplate
 		specialized = strings.ReplaceAll(specialized, "// +build ignore\n", "")
 		specialized = strings.ReplaceAll(specialized, "//go:generate go run sort_primitive_gen.go\n", "")
-		specialized = strings.ReplaceAll(specialized, "package dualpivotsort", fmt.Sprintf("package sort_%s", t))
+		specialized = strings.ReplaceAll(specialized, "package jsort", fmt.Sprintf("package sort_%s", t))
 		specialized = strings.ReplaceAll(specialized, "type primitive = int64", fmt.Sprintf("type primitive = %s", t))
 		specialized = strings.ReplaceAll(specialized, "TestDpsPrimitive", fmt.Sprintf("TestDps%ss", strings.Title(t)))
 
@@ -79,7 +79,7 @@ func main() {
 	}
 
 	const exportTemplate = header + `
-package dualpivotsort
+package jsort
 
 import (
     $IMPORTS
@@ -92,7 +92,7 @@ $EXPORTS
 	var exports []string
 
 	var appendImport = func(typeName string) {
-		imports = append(imports, fmt.Sprintf(`"github.com/openaphid/dualpivotsort/internal/sort_%s"`, typeName))
+		imports = append(imports, fmt.Sprintf(`"github.com/openaphid/jsort/internal/sort_%s"`, typeName))
 	}
 
 	var appendSortExport = func(alias, sortName string, plural bool, hasSorted bool) {

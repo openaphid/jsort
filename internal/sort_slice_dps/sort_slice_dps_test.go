@@ -2,7 +2,7 @@ package sort_slice_dps
 
 import (
 	"fmt"
-	"github.com/openaphid/dualpivotsort/internal/testdata"
+	"github.com/openaphid/jsort/internal/testdata"
 	"log"
 	builtinsort "sort"
 	"testing"

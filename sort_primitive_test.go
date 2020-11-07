@@ -1,7 +1,7 @@
 // +build ignore
 //go:generate go run genprimitives.go
 
-package dualpivotsort
+package jsort
 
 import (
 	"math/rand"
