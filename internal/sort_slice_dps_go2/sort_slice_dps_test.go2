@@ -2,15 +2,31 @@ package sort_slice_dps
 
 import (
 	"fmt"
-	"github.com/openaphid/dualpivotsort/internal/testdata"
 	"log"
+	"math/rand"
 	builtinsort "sort"
 	"testing"
+	"time"
 )
 
-type Person = testdata.Person
+type Person struct {
+	Age  int
+	name string
+}
 
-var prepare = testdata.Prepare
+func (p Person) String() string {
+	return fmt.Sprintf("Person(%d, %s)", p.Age, p.name)
+}
+
+func prepare(a []Person) {
+	rand.Seed(time.Now().Unix())
+	for i, _ := range a {
+		a[i] = Person{
+			Age:  rand.Intn(len(a)),
+			name: fmt.Sprintf("n-%d", i),
+		}
+	}
+}
 
 var byAge = func(o1, o2 Person) int {
 	return o1.Age - o2.Age

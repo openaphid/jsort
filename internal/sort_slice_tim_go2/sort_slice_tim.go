@@ -15,6 +15,8 @@ import (
 //line sort_slice_tim.go2:1
  "testing"
 //line sort_slice_tim.go2:1
+ "time"
+//line sort_slice_tim.go2:1
 )
 
 //line sort_slice_tim.go2:33
@@ -57,3 +59,6 @@ var _ = log.Fatal
 var _ = rand.ExpFloat64
 //line sort_slice_tim.go2:1047
 var _ = testing.AllocsPerRun
+
+//line sort_slice_tim.go2:1047
+const _ = time.ANSIC
