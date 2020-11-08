@@ -11,19 +11,47 @@ import (
 
 type Person struct {
 	Age  int
-	name string
+	Name string
 }
 
 func (p Person) String() string {
-	return fmt.Sprintf("Person(%d, %s)", p.Age, p.name)
+	return fmt.Sprintf("Person(%d, %s)", p.Age, p.Name)
 }
 
-func Prepare(a []Person) {
+func PrepareRandomAges(a []Person) {
 	rand.Seed(time.Now().Unix())
 	for i, _ := range a {
 		a[i] = Person{
 			Age:  rand.Intn(len(a)),
-			name: fmt.Sprintf("n-%d", i),
+			Name: fmt.Sprintf("n-%d", i),
+		}
+	}
+}
+
+func PrepareRandomNames(a []Person) {
+	rand.Seed(time.Now().Unix())
+	for i, _ := range a {
+		a[i] = Person{
+			Age:  i,
+			Name: fmt.Sprintf("n-%d", rand.Intn(len(a))),
+		}
+	}
+}
+
+func PrepareXorAges(a []Person) {
+	for i, _ := range a {
+		a[i] = Person{
+			Age:  i ^ 0x2cc,
+			Name: fmt.Sprintf("n-%d", i),
+		}
+	}
+}
+
+func PrepareXorNames(a []Person) {
+	for i, _ := range a {
+		a[i] = Person{
+			Age:  i,
+			Name: fmt.Sprintf("n-%d", i^0x2cc),
 		}
 	}
 }
@@ -33,7 +61,7 @@ func PrepareShuffledSeq(a []Person) {
 	for i, _ := range a {
 		a[i] = Person{
 			Age:  i,
-			name: fmt.Sprintf("n-%d", i),
+			Name: fmt.Sprintf("n-%d", i),
 		}
 	}
 
@@ -60,7 +88,7 @@ func LoadData() []Person {
 		age, _ := strconv.Atoi(token)
 		ret = append(ret, Person{
 			Age:  age,
-			name: fmt.Sprintf("n-%d", len(ret)),
+			Name: fmt.Sprintf("n-%d", len(ret)),
 		})
 	}
 

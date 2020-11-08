@@ -10,7 +10,7 @@ import (
 
 type Person = testdata.Person
 
-var prepare = testdata.Prepare
+var prepare = testdata.PrepareRandomAges
 
 var byAge = func(o1, o2 interface{}) int {
 	return o1.(Person).Age - o2.(Person).Age

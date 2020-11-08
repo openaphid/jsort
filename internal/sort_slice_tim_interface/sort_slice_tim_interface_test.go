@@ -11,7 +11,7 @@ import (
 
 type Person = testdata.Person
 
-var prepare = testdata.Prepare
+var prepare = testdata.PrepareRandomAges
 
 type PersonCompareInterface []Person
 
