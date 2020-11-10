@@ -9,12 +9,13 @@ type CompareInterface interface {
 type index = int
 
 func Sort(data CompareInterface) {
-	indices := make([]index, data.Len())
+	n := data.Len()
+	indices := make([]index, n)
 	for i, _ := range indices {
 		indices[i] = i
 	}
 
-	sort(indices, 0, data.Len(), data, nil, 0, 0)
+	sort(indices, 0, n, data, nil, 0, 0)
 
 	for i, j := range indices {
 		if i == j {

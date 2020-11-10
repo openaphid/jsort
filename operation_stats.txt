@@ -1,0 +1,22 @@
+TimSort(Random-256):      1733 Comp	       251 Swap(?)	         1 Len
+Builtin(Random-256):       2524 Less	      3307 Swap	         1 Len
+TimSort(Random-1024):      8943 Comp	      1018 Swap(?)	         1 Len
+Builtin(Random-1024):      12895 Less	     20544 Swap	         1 Len
+TimSort(Random-4096):     44034 Comp	      4089 Swap(?)	         1 Len
+Builtin(Random-4096):      61831 Less	    117917 Swap	         1 Len
+TimSort(Random-16384):    209006 Comp	     16366 Swap(?)	         1 Len
+Builtin(Random-16384):     289968 Less	    649292 Swap	         1 Len
+TimSort(Random-65536):    967106 Comp	     65519 Swap(?)	         1 Len
+Builtin(Random-65536):    1325013 Less	   3444379 Swap	         1 Len
+TimSort(Xor-256):       878 Comp	       128 Swap(?)	         1 Len
+Builtin(Xor-256):       1868 Less	      2416 Swap	         1 Len
+TimSort(Xor-1024):      3556 Comp	       512 Swap(?)	         1 Len
+Builtin(Xor-1024):       7404 Less	     11174 Swap	         1 Len
+TimSort(Xor-4096):     14258 Comp	      2048 Swap(?)	         1 Len
+Builtin(Xor-4096):      30561 Less	     47112 Swap	         1 Len
+TimSort(Xor-16384):     57072 Comp	      8192 Swap(?)	         1 Len
+Builtin(Xor-16384):     122683 Less	    189074 Swap	         1 Len
+TimSort(Xor-65536):    228334 Comp	     32768 Swap(?)	         1 Len
+Builtin(Xor-65536):     491485 Less	    758712 Swap	         1 Len
+PASS
+ok  	github.com/openaphid/jsort	0.290s
