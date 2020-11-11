@@ -97,7 +97,7 @@ func BenchmarkInts(t *testing.B) {
 				}
 			})
 
-			t.Run(fmt.Sprintf("DpsSlice-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("DpsSliceTypeAssertion-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyInts(data)
@@ -109,7 +109,7 @@ func BenchmarkInts(t *testing.B) {
 				}
 			})
 
-			t.Run(fmt.Sprintf("TimSortSlice-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("TimSortSliceTypeAssertion-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyInts(data)
@@ -127,7 +127,7 @@ func BenchmarkInts(t *testing.B) {
 					dup := copyInts(data)
 
 					t.StartTimer()
-					Sort(sort.IntSlice(dup))
+					sort_slice_tim_interface.Sort(sort.IntSlice(dup))
 				}
 			})
 
