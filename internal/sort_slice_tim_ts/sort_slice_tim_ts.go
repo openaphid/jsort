@@ -1,9 +1,10 @@
-package sort_slice_tim
+package sort_slice_tim_ts
 
 import "reflect"
 
 type CompareFunc = func(i, j interface{}) int
 
+// Sort uses the type assertion and interface{} approach, which is a bit slow and requires more memory
 func Sort(a interface{}, compare CompareFunc) {
 	rt := reflect.TypeOf(a)
 	rv := reflect.ValueOf(a)
@@ -24,7 +25,7 @@ func Sort(a interface{}, compare CompareFunc) {
 }
 
 func SortInterfaces(a []interface{}, compare CompareFunc) {
-	sort(a, 0, len(a), compare, nil, 0, 0)
+	sortInternal(a, 0, len(a), compare, nil, 0, 0)
 }
 
 func IsSorted(a interface{}, compare CompareFunc) bool {
@@ -199,7 +200,7 @@ func newTimSort(a []interface{}, c CompareFunc, work []interface{}, workBase int
  * @param workLen usable size of work array
  * @since 1.8
  */
-func sort(a []interface{}, lo int, hi int, c CompareFunc, work []interface{}, workBase int, workLen int) {
+func sortInternal(a []interface{}, lo int, hi int, c CompareFunc, work []interface{}, workBase int, workLen int) {
 	//assert c != null && a != null && lo >= 0 && lo <= hi && hi <= a.length;
 
 	var nRemaining = hi - lo

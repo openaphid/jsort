@@ -10,8 +10,6 @@ import (
 	"github.com/openaphid/jsort/internal/sort_int32"
 	"github.com/openaphid/jsort/internal/sort_int64"
 	"github.com/openaphid/jsort/internal/sort_int8"
-	"github.com/openaphid/jsort/internal/sort_slice_dps"
-	"github.com/openaphid/jsort/internal/sort_slice_tim"
 	"github.com/openaphid/jsort/internal/sort_slice_tim_interface"
 	"github.com/openaphid/jsort/internal/sort_string"
 	"github.com/openaphid/jsort/internal/sort_uint"
@@ -81,15 +79,9 @@ var BytesAreSorted = sort_uint8.IsSorted
 var Runes = sort_int32.Sort
 var RunesAreSorted = sort_int32.IsSorted
 
-// Slice
-var Slice = sort_slice_dps.Sort
-var SliceIsSorted = sort_slice_dps.IsSorted
-
-// SliceStable
-var SliceStable = sort_slice_tim.Sort
-
-// SliceInterface
-var SliceInterface = sort_slice_tim_interface.Sort
-var SliceInterfaceIsSorted = sort_slice_tim_interface.IsSorted
-
-type CompareInterface = sort_slice_tim_interface.CompareInterface
+// The following APIs are compatible with the ones in the built-in `sort` package
+var Sort = sort_slice_tim_interface.Sort
+var Stable = sort_slice_tim_interface.Sort
+var Slice = sort_slice_tim_interface.Slice
+var SliceStable = sort_slice_tim_interface.Slice
+var SliceIsSorted = sort_slice_tim_interface.SliceIsSorted

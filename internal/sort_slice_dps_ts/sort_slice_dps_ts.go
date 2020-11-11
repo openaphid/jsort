@@ -1,4 +1,6 @@
-package sort_slice_dps
+package sort_slice_dps_ts
+
+import "reflect"
 
 /**
  * The maximum number of runs in merge sort.
@@ -17,14 +19,36 @@ const quicksortThreshold = 286
  */
 const insertionSortThreshold = 47
 
-func Sort[T any](a []T, compare func(o1, o2 T) int) {
+type CompareFunc = func(o1, o2 interface{}) int
+
+func Sort(a interface{}, compare CompareFunc) {
+	rt := reflect.TypeOf(a)
+	rv := reflect.ValueOf(a)
+	elm := rt.Elem()
+
+	n := rv.Len()
+
+	interfaces := make([]interface{}, n)
+	for i := 0; i < n; i++ {
+		interfaces[i] = rv.Index(i).Interface()
+	}
+
+	SortInterfaces(interfaces, compare)
+
+	for i := 0; i < n; i++ {
+		rv.Index(i).Set(reflect.ValueOf(interfaces[i]).Convert(elm))
+	}
+}
+
+func SortInterfaces(a []interface{}, compare CompareFunc) {
 	sort(compare, a, 0, len(a)-1, nil, 0, 0)
 }
 
-func IsSorted[T any](a []T, compare func(o1, o2 T) int) bool {
-	n := len(a)
+func IsSorted(a interface{}, compare CompareFunc) bool {
+	rv := reflect.ValueOf(a)
+	n := rv.Len()
 	for i := n - 1; i > 0; i-- {
-		if compare(a[i], a[i-1]) < 0 {
+		if compare(rv.Index(i).Interface(), rv.Index(i-1).Interface()) < 0 {
 			return false
 		}
 	}
@@ -42,7 +66,7 @@ func IsSorted[T any](a []T, compare func(o1, o2 T) int) bool {
  * @param workBase origin of usable space in work array
  * @param workLen usable size of work array
  */
-func sort[T any](compare func(o1, o2 T) int, a []T, left int, right int, work []T, workBase int, workLen int) {
+func sort(compare CompareFunc, a []interface{}, left int, right int, work []interface{}, workBase int, workLen int) {
 	// Use Quicksort on small arrays
 	if right-left < quicksortThreshold {
 		sortInternal(compare, a, left, right, true)
@@ -144,11 +168,11 @@ func sort[T any](compare func(o1, o2 T) int, a []T, left int, right int, work []
 	}
 
 	// Use or create temporary array b for merging
-	var b []T     // temp array; alternates with a
+	var b []interface{}     // temp array; alternates with a
 	var ao, bo int          // array offsets from 'left'
 	var blen = right - left // space needed for b
 	if len(work) == 0 || workLen < blen || workBase+blen > len(work) {
-		work = make([]T, blen)
+		work = make([]interface{}, blen)
 		workBase = 0
 	}
 	if odd == 0 {
@@ -214,7 +238,7 @@ func sort[T any](compare func(o1, o2 T) int, a []T, left int, right int, work []
  * @param right the index of the last element, inclusive, to be sorted
  * @param leftmost indicates if this part is the leftmost in the range
  */
-func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int, leftmost bool) {
+func sortInternal(compare CompareFunc, a []interface{}, left int, right int, leftmost bool) {
 	var length = right - left + 1
 
 	// Use insertion sort on tiny arrays

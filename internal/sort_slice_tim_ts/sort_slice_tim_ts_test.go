@@ -1,10 +1,10 @@
-package sort_slice_dps
+package sort_slice_tim_ts
 
 import (
 	"fmt"
 	"github.com/openaphid/jsort/internal/testdata"
 	"log"
-	builtinsort "sort"
+	"sort"
 	"testing"
 )
 
@@ -31,27 +31,52 @@ func TestByAge(t *testing.T) {
 	}
 }
 
-var benchmarkSizes = testdata.GenBenchmarkSizes(256, 4, 5)
+func TestInts(t *testing.T) {
+	a := []int{0, 2, 3, 1}
+	Sort(a, func(i, j interface{}) int {
+		return i.(int) - j.(int)
+	})
+
+	if !sort.IntsAreSorted(a) {
+		log.Panic("should be sorted: ", a)
+	}
+}
+
+func TestShuffledSeq(t *testing.T) {
+	for i := 1; i <= 1024*5; i++ {
+		persons := make([]Person, i)
+		testdata.PrepareShuffledSeq(persons)
+
+		Sort(persons, byAge)
+
+		for j := range persons {
+			if persons[j].Age != j {
+				t.Fatalf("Age(%d) should be %d for test #%d", persons[j].Age, j, i)
+			}
+		}
+	}
+}
+
+var benchmarkSizes = []int{256, 1024, 4192, 16768, 67072}
 
 func BenchmarkVSSort(t *testing.B) {
 	for _, size := range benchmarkSizes {
 		var data = make([]Person, size)
 		prepare(data)
 
-		t.Run(fmt.Sprintf("DPS-%d", size), func(t *testing.B) {
+		t.Run(fmt.Sprintf("TimSort-%d", size), func(t *testing.B) {
 			for i := 0; i < t.N; i++ {
 				t.StopTimer()
 				dup := make([]Person, size)
 				copy(dup, data)
 				t.StartTimer()
-
 				Sort(dup, func(o1, o2 interface{}) int {
 					return o1.(Person).Age - o2.(Person).Age
 				})
 			}
 		})
 
-		t.Run(fmt.Sprintf("DPS-ManualConvert-%d", size), func(t *testing.B) {
+		t.Run(fmt.Sprintf("TimSort-ManualConvert-%d", size), func(t *testing.B) {
 			for i := 0; i < t.N; i++ {
 				t.StopTimer()
 				dup := make([]Person, size)
@@ -73,14 +98,25 @@ func BenchmarkVSSort(t *testing.B) {
 			}
 		})
 
-		t.Run(fmt.Sprintf("Builtin-%d", size), func(t *testing.B) {
+		t.Run(fmt.Sprintf("BuiltinSort-%d", size), func(t *testing.B) {
 			for i := 0; i < t.N; i++ {
 				t.StopTimer()
 				dup := make([]Person, size)
 				copy(dup, data)
 				t.StartTimer()
+				sort.Slice(dup, func(i, j int) bool {
+					return dup[i].Age < dup[j].Age
+				})
+			}
+		})
 
-				builtinsort.Slice(dup, func(i, j int) bool {
+		t.Run(fmt.Sprintf("BuiltinSortStable-%d", size), func(t *testing.B) {
+			for i := 0; i < t.N; i++ {
+				t.StopTimer()
+				dup := make([]Person, size)
+				copy(dup, data)
+				t.StartTimer()
+				sort.SliceStable(dup, func(i, j int) bool {
 					return dup[i].Age < dup[j].Age
 				})
 			}

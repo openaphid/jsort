@@ -2,7 +2,7 @@ package sort_slice_tim_interface
 
 import (
 	"fmt"
-	"github.com/openaphid/jsort/internal/sort_slice_tim"
+	"github.com/openaphid/jsort/internal/sort_slice_tim_ts"
 	"github.com/openaphid/jsort/internal/testdata"
 	"log"
 	builtinsort "sort"
@@ -19,15 +19,15 @@ func (p PersonCompareInterface) Len() int {
 	return len(p)
 }
 
-func (p PersonCompareInterface) Compare(i, j int) int {
-	return p[i].Age - p[j].Age
+func (p PersonCompareInterface) Less(i, j int) bool {
+	return p[i].Age < p[j].Age
 }
 
 func (p PersonCompareInterface) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
 }
 
-var _ CompareInterface = (*PersonCompareInterface)(nil)
+var _ builtinsort.Interface = (*PersonCompareInterface)(nil)
 
 func TestByAge(t *testing.T) {
 	for i := 1; i <= 1024*10; i++ {
@@ -36,7 +36,7 @@ func TestByAge(t *testing.T) {
 
 		Sort(persons)
 
-		sorted := IsSorted(persons)
+		sorted := SliceIsSorted(persons)
 
 		if !sorted {
 			log.Panicf("should be sorted: %d", i)
@@ -82,7 +82,7 @@ func BenchmarkVSSort(t *testing.B) {
 				dup := make([]Person, size)
 				copy(dup, data)
 				t.StartTimer()
-				sort_slice_tim.Sort(dup, func(i, j interface{}) int {
+				sort_slice_tim_ts.Sort(dup, func(i, j interface{}) int {
 					return i.(Person).Age - j.(Person).Age
 				})
 			}

@@ -91,44 +91,50 @@ $EXPORTS
 	var imports []string
 	var exports []string
 
-	var appendImport = func(typeName string) {
-		imports = append(imports, fmt.Sprintf(`"github.com/openaphid/jsort/internal/sort_%s"`, typeName))
+	var appendImport = func(pkg string) {
+		imports = append(imports, fmt.Sprintf(`"github.com/openaphid/jsort/internal/%s"`, pkg))
 	}
 
-	var appendSortExport = func(alias, sortName string, plural bool, hasSorted bool) {
-		exports = append(exports, fmt.Sprintf("// %s", alias))
-		if plural {
-			exports = append(exports, fmt.Sprintf("var %ss = sort_%s.Sort", strings.Title(alias), sortName))
-			if hasSorted {
-				exports = append(exports, fmt.Sprintf("var %ssAreSorted = sort_%s.IsSorted", strings.Title(alias), sortName))
-			}
-		} else {
-			exports = append(exports, fmt.Sprintf("var %s = sort_%s.Sort", strings.Title(alias), sortName))
-			if hasSorted {
-				exports = append(exports, fmt.Sprintf("var %sIsSorted = sort_%s.IsSorted", strings.Title(alias), sortName))
-			}
-		}
-		exports = append(exports, "")
+	var appendLine = func(line string) {
+		exports = append(exports, line)
 	}
 
-	var appendTypeExport = func(pkg, typeName string) {
-		exports = append(exports, fmt.Sprintf("type %s = %s.%s", strings.Title(typeName), pkg, typeName))
+	var appendSortExport = func(alias, pkg string) {
+		appendLine(fmt.Sprintf("// %s", alias))
+		appendLine(fmt.Sprintf("var %ss = %s.Sort", strings.Title(alias), pkg))
+		appendLine(fmt.Sprintf("var %ssAreSorted = %s.IsSorted", strings.Title(alias), pkg))
+
+		appendLine("")
 	}
+
+	var appendTypeExport = func(alias, pkg, typeName string) {
+		appendLine(fmt.Sprintf("type %s = %s.%s", strings.Title(alias), pkg, typeName))
+	}
+
+	_ = appendTypeExport
+
+	var appendFuncExport = func(alias, pkg, typeName string) {
+		appendLine(fmt.Sprintf("var %s = %s.%s", strings.Title(alias), pkg, typeName))
+	}
+
+	_ = appendFuncExport
 
 	for _, t := range allPrimitives {
-		appendImport(t)
-		appendSortExport(t, t, true, true)
+		pkg := fmt.Sprintf("sort_%s", t)
+		appendImport(pkg)
+		appendSortExport(t, pkg)
 	}
-	appendSortExport("byte", "uint8", true, true)
-	appendSortExport("rune", "int32", true, true)
+	appendSortExport("byte", "sort_uint8")
+	appendSortExport("rune", "sort_int32")
 
-	for _, t := range []string{"slice_dps", "slice_tim", "slice_tim_interface"} {
-		appendImport(t)
-	}
-	appendSortExport("Slice", "slice_dps", false, true)
-	appendSortExport("SliceStable", "slice_tim", false, false)
-	appendSortExport("SliceInterface", "slice_tim_interface", false, true)
-	appendTypeExport("sort_slice_tim_interface", "CompareInterface")
+	// `sort_slice_dps_ts`, `sort_slice_tim_ts`, `sort_slice_dps_go2`, and `sort_slice_tim_go2` are not exported
+	appendImport("sort_slice_tim_interface")
+	appendLine("// The following APIs are compatible with the ones in the built-in `sort` package")
+	appendFuncExport("Sort", "sort_slice_tim_interface", "Sort")
+	appendFuncExport("Stable", "sort_slice_tim_interface", "Sort")
+	appendFuncExport("Slice", "sort_slice_tim_interface", "Slice")
+	appendFuncExport("SliceStable", "sort_slice_tim_interface", "Slice")
+	appendFuncExport("SliceIsSorted", "sort_slice_tim_interface", "SliceIsSorted")
 
 	var exportCode = exportTemplate
 	exportCode = strings.ReplaceAll(exportCode, "$IMPORTS", strings.Join(imports, "\n"))

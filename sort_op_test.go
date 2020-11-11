@@ -30,11 +30,6 @@ func (s statInterface) Len() int {
 	return len(s.data)
 }
 
-func (s statInterface) Compare(i, j int) int {
-	s.stats["Compare"] += 1
-	return s.data[i].Age - s.data[j].Age
-}
-
 func (s statInterface) Swap(i, j int) {
 	s.stats["Swap"] += 1
 	s.data[i], s.data[j] = s.data[j], s.data[i]
@@ -46,8 +41,6 @@ func (s statInterface) Less(i, j int) bool {
 }
 
 var (
-	_ CompareInterface = (*statInterface)(nil)
-
 	_ sort.Interface = (*statInterface)(nil)
 )
 
@@ -77,11 +70,11 @@ func TestOperationStats(t *testing.T) {
 			stat := newOpStat(c.size)
 			copy(stat.data, data)
 
-			SliceInterface(statInterface(*stat))
+			Sort(statInterface(*stat))
 
 			fmt.Printf("TimSort(%s-%d):%10d %s\t%10d %s\t%10d %s\n",
 				name, c.size,
-				stat.stats["Compare"], "Comp",
+				stat.stats["Less"], "Less",
 				// The number of Swap is misleading here as it only counts the swap operation in the final sort after indices are fully sorted
 				stat.stats["Swap"], "Swap(?)",
 				stat.stats["Len"], "Len")

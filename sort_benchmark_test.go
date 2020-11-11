@@ -2,6 +2,9 @@ package jsort
 
 import (
 	"fmt"
+	"github.com/openaphid/jsort/internal/sort_slice_dps_ts"
+	"github.com/openaphid/jsort/internal/sort_slice_tim_interface"
+	"github.com/openaphid/jsort/internal/sort_slice_tim_ts"
 	"github.com/openaphid/jsort/internal/testdata"
 	"math/rand"
 	"sort"
@@ -36,37 +39,21 @@ func copyInts(src []int) []int {
 	return dup
 }
 
-type IntCompareInterface []int
-
-func (a IntCompareInterface) Len() int {
-	return len(a)
-}
-
-func (a IntCompareInterface) Compare(i, j int) int {
-	return a[i] - a[j]
-}
-
-func (a IntCompareInterface) Swap(i, j int) {
-	a[i], a[j] = a[j], a[i]
-}
-
-var _ CompareInterface = (*IntCompareInterface)(nil)
-
 type AgeCompareInterface []Person
 
 func (p AgeCompareInterface) Len() int {
 	return len(p)
 }
 
-func (p AgeCompareInterface) Compare(i, j int) int {
-	return p[i].Age - p[j].Age
+func (p AgeCompareInterface) Less(i, j int) bool {
+	return p[i].Age < p[j].Age
 }
 
 func (p AgeCompareInterface) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
 }
 
-var _ CompareInterface = (*AgeCompareInterface)(nil)
+var _ sort.Interface = (*AgeCompareInterface)(nil)
 
 type NameCompareInterface []Person
 
@@ -74,15 +61,15 @@ func (p NameCompareInterface) Len() int {
 	return len(p)
 }
 
-func (p NameCompareInterface) Compare(i, j int) int {
-	return strings.Compare(p[i].Name, p[j].Name)
+func (p NameCompareInterface) Less(i, j int) bool {
+	return p[i].Name < p[j].Name
 }
 
 func (p NameCompareInterface) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
 }
 
-var _ CompareInterface = (*NameCompareInterface)(nil)
+var _ sort.Interface = (*NameCompareInterface)(nil)
 
 func BenchmarkInts(t *testing.B) {
 	dataCases := []struct {
@@ -116,7 +103,7 @@ func BenchmarkInts(t *testing.B) {
 					dup := copyInts(data)
 
 					t.StartTimer()
-					Slice(dup, func(o1, o2 interface{}) int {
+					sort_slice_dps_ts.Sort(dup, func(o1, o2 interface{}) int {
 						return o1.(int) - o2.(int)
 					})
 				}
@@ -128,7 +115,7 @@ func BenchmarkInts(t *testing.B) {
 					dup := copyInts(data)
 
 					t.StartTimer()
-					SliceStable(dup, func(o1, o2 interface{}) int {
+					sort_slice_tim_ts.Sort(dup, func(o1, o2 interface{}) int {
 						return o1.(int) - o2.(int)
 					})
 				}
@@ -140,7 +127,7 @@ func BenchmarkInts(t *testing.B) {
 					dup := copyInts(data)
 
 					t.StartTimer()
-					SliceInterface(IntCompareInterface(dup))
+					Sort(sort.IntSlice(dup))
 				}
 			})
 
@@ -220,7 +207,7 @@ func BenchmarkStructSliceAge(t *testing.B) {
 					dup := copyPersonSlice(data)
 
 					t.StartTimer()
-					Slice(dup, func(o1, o2 interface{}) int {
+					sort_slice_dps_ts.Sort(dup, func(o1, o2 interface{}) int {
 						return o1.(Person).Age - o2.(Person).Age
 					})
 				}
@@ -232,7 +219,7 @@ func BenchmarkStructSliceAge(t *testing.B) {
 					dup := copyPersonSlice(data)
 
 					t.StartTimer()
-					SliceStable(dup, func(o1, o2 interface{}) int {
+					sort_slice_tim_ts.Sort(dup, func(o1, o2 interface{}) int {
 						return o1.(Person).Age - o2.(Person).Age
 					})
 				}
@@ -244,7 +231,7 @@ func BenchmarkStructSliceAge(t *testing.B) {
 					dup := copyPersonSlice(data)
 
 					t.StartTimer()
-					SliceInterface(AgeCompareInterface(dup))
+					sort_slice_tim_interface.Sort(AgeCompareInterface(dup))
 				}
 			})
 
@@ -297,7 +284,7 @@ func BenchmarkStructSliceName(t *testing.B) {
 					dup := copyPersonSlice(data)
 
 					t.StartTimer()
-					Slice(dup, func(o1, o2 interface{}) int {
+					sort_slice_dps_ts.Sort(dup, func(o1, o2 interface{}) int {
 						return strings.Compare(o1.(Person).Name, o2.(Person).Name)
 					})
 				}
@@ -309,7 +296,7 @@ func BenchmarkStructSliceName(t *testing.B) {
 					dup := copyPersonSlice(data)
 
 					t.StartTimer()
-					SliceStable(dup, func(o1, o2 interface{}) int {
+					sort_slice_tim_ts.Sort(dup, func(o1, o2 interface{}) int {
 						return strings.Compare(o1.(Person).Name, o2.(Person).Name)
 					})
 				}
@@ -321,7 +308,7 @@ func BenchmarkStructSliceName(t *testing.B) {
 					dup := copyPersonSlice(data)
 
 					t.StartTimer()
-					SliceInterface(NameCompareInterface(dup))
+					sort_slice_tim_interface.Sort(NameCompareInterface(dup))
 				}
 			})
 
