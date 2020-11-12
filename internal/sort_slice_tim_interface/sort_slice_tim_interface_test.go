@@ -36,7 +36,7 @@ func TestByAge(t *testing.T) {
 
 		Sort(persons)
 
-		sorted := SliceIsSorted(persons)
+		sorted := IsSorted(persons)
 
 		if !sorted {
 			log.Panicf("should be sorted: %d", i)

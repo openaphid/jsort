@@ -101,8 +101,8 @@ $EXPORTS
 
 	var appendSortExport = func(alias, pkg string) {
 		appendLine(fmt.Sprintf("// %s", alias))
-		appendLine(fmt.Sprintf("var %ss = %s.Sort", strings.Title(alias), pkg))
-		appendLine(fmt.Sprintf("var %ssAreSorted = %s.IsSorted", strings.Title(alias), pkg))
+		appendLine(fmt.Sprintf("var %ss func([]%s) = %s.Sort", strings.Title(alias), alias, pkg))
+		appendLine(fmt.Sprintf("var %ssAreSorted func([]%s) bool = %s.IsSorted", strings.Title(alias), alias, pkg))
 
 		appendLine("")
 	}
@@ -113,8 +113,8 @@ $EXPORTS
 
 	_ = appendTypeExport
 
-	var appendFuncExport = func(alias, pkg, typeName string) {
-		appendLine(fmt.Sprintf("var %s = %s.%s", strings.Title(alias), pkg, typeName))
+	var appendFuncExport = func(alias, explicitType, pkg, typeName string) {
+		appendLine(fmt.Sprintf("var %s %s = %s.%s", strings.Title(alias), explicitType, pkg, typeName))
 	}
 
 	_ = appendFuncExport
@@ -129,13 +129,15 @@ $EXPORTS
 
 	// `sort_slice_dps_ts`, `sort_slice_tim_ts`, `sort_slice_dps_go2`, and `sort_slice_tim_go2` are not exported
 	appendImport("sort_slice_tim_interface")
+	imports = append(imports, `"sort"`)
 	appendLine("// The following APIs are compatible with the ones in the built-in `sort` package")
 	appendLine("// One difference is that all sort functions are stable by using timsort")
-	appendFuncExport("Sort", "sort_slice_tim_interface", "Sort")
-	appendFuncExport("Stable", "sort_slice_tim_interface", "Sort")
-	appendFuncExport("Slice", "sort_slice_tim_interface", "Slice")
-	appendFuncExport("SliceStable", "sort_slice_tim_interface", "Slice")
-	appendFuncExport("SliceIsSorted", "sort_slice_tim_interface", "SliceIsSorted")
+	appendFuncExport("Sort", "func(data sort.Interface)", "sort_slice_tim_interface", "Sort")
+	appendFuncExport("Stable", "func(data sort.Interface)", "sort_slice_tim_interface", "Sort")
+	appendFuncExport("IsSorted", "func(data sort.Interface) bool", "sort_slice_tim_interface", "IsSorted")
+	appendFuncExport("Slice", "func(slice interface{}, less func(i, j int) bool)", "sort_slice_tim_interface", "Slice")
+	appendFuncExport("SliceStable", "func(slice interface{}, less func(i, j int) bool)", "sort_slice_tim_interface", "Slice")
+	appendFuncExport("SliceIsSorted", "func(slice interface{}, less func(i, j int) bool) bool", "sort_slice_tim_interface", "SliceIsSorted")
 
 	var exportCode = exportTemplate
 	exportCode = strings.ReplaceAll(exportCode, "$IMPORTS", strings.Join(imports, "\n"))

@@ -43,10 +43,21 @@ func Slice(data interface{}, less func(i, j int) bool) {
 	})
 }
 
-func SliceIsSorted(data sort.Interface) bool {
+func IsSorted(data sort.Interface) bool {
 	n := data.Len()
 	for i := n - 1; i > 0; i-- {
 		if data.Less(i, i-1) {
+			return false
+		}
+	}
+	return true
+}
+
+func SliceIsSorted(data interface{}, less func(i, j int) bool) bool {
+	rv := reflect.ValueOf(data)
+	n := rv.Len()
+	for i := n - 1; i > 0; i-- {
+		if less(i, i-1) {
 			return false
 		}
 	}
