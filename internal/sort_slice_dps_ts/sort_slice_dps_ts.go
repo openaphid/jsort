@@ -355,7 +355,7 @@ func sortInternal(compare CompareFunc, a []interface{}, left int, right int, lef
 	 * these elements was empirically determined to work well on
 	 * a wide variety of inputs.
 	 */
-	var e3 = (left + right) >> 1 // The midpoint TODO check
+	var e3 = int(uint(left+right) >> 1) // The midpoint
 	var e2 = e3 - seventh
 	var e1 = e2 - seventh
 	var e4 = e3 + seventh

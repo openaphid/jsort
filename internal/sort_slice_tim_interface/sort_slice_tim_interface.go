@@ -123,7 +123,7 @@ type TimSort struct {
 	 * to MIN_GALLOP.  The mergeLo and mergeHi methods nudge it higher for
 	 * random data, and lower for highly structured data.
 	 */
-	minGallop int // = MIN_GALLOP; TODO move to init
+	minGallop int // = MIN_GALLOP
 
 	/**
 	 * Temp storage for merges. A workspace array may optionally be
