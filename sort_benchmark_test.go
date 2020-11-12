@@ -185,7 +185,7 @@ func copyPersonSlice(src []Person) []Person {
 	return dup
 }
 
-func BenchmarkStructSliceAge(t *testing.B) {
+func BenchmarkStructSliceByAge(t *testing.B) {
 	dataCases := []struct {
 		name        string
 		prepareFunc func([]Person)
@@ -201,7 +201,7 @@ func BenchmarkStructSliceAge(t *testing.B) {
 			c.prepareFunc(data)
 			name := c.name
 
-			t.Run(fmt.Sprintf("DpsSlice-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("DpsSliceTypeAssertion-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
@@ -213,7 +213,7 @@ func BenchmarkStructSliceAge(t *testing.B) {
 				}
 			})
 
-			t.Run(fmt.Sprintf("TimSortSlice-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("TimSortSliceTypeAssertion-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
@@ -262,7 +262,7 @@ func BenchmarkStructSliceAge(t *testing.B) {
 	}
 }
 
-func BenchmarkStructSliceName(t *testing.B) {
+func BenchmarkStructSliceByName(t *testing.B) {
 	dataCases := []struct {
 		name        string
 		prepareFunc func([]Person)
@@ -278,7 +278,7 @@ func BenchmarkStructSliceName(t *testing.B) {
 			c.prepareFunc(data)
 			name := c.name
 
-			t.Run(fmt.Sprintf("DpsSlice-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("DpsSliceTypeAssertion-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
@@ -290,7 +290,7 @@ func BenchmarkStructSliceName(t *testing.B) {
 				}
 			})
 
-			t.Run(fmt.Sprintf("TimSortSlice-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("TimSortSliceTypeAssertion-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
