@@ -2,6 +2,7 @@ package jsort
 
 import (
 	"fmt"
+	"github.com/openaphid/jsort/internal/sort_slice_dps_ts"
 	"github.com/openaphid/jsort/internal/testdata"
 	"sort"
 	"testing"
@@ -65,6 +66,21 @@ func TestOperationStats(t *testing.T) {
 		name := c.name
 		data := make([]Person, c.size)
 		c.prepareFunc(data)
+
+		{
+			dup := copyPersonSlice(data)
+
+			compareCount := 0
+
+			sort_slice_dps_ts.Sort(dup, func(o1, o2 interface{}) int {
+				compareCount++
+				return o1.(Person).Age - o2.(Person).Age
+			})
+
+			fmt.Printf("DPS(%s-%d):%10d %s\n",
+				name, c.size,
+				compareCount, "Compare")
+		}
 
 		{
 			stat := newOpStat(c.size)
