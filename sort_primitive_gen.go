@@ -130,6 +130,7 @@ $EXPORTS
 	// `sort_slice_dps_ts`, `sort_slice_tim_ts`, `sort_slice_dps_go2`, and `sort_slice_tim_go2` are not exported
 	appendImport("sort_slice_tim_interface")
 	appendLine("// The following APIs are compatible with the ones in the built-in `sort` package")
+	appendLine("// One difference is that all sort functions are stable by using timsort")
 	appendFuncExport("Sort", "sort_slice_tim_interface", "Sort")
 	appendFuncExport("Stable", "sort_slice_tim_interface", "Sort")
 	appendFuncExport("Slice", "sort_slice_tim_interface", "Slice")

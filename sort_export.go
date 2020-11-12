@@ -80,6 +80,7 @@ var Runes = sort_int32.Sort
 var RunesAreSorted = sort_int32.IsSorted
 
 // The following APIs are compatible with the ones in the built-in `sort` package
+// One difference is that all sort functions are stable by using timsort
 var Sort = sort_slice_tim_interface.Sort
 var Stable = sort_slice_tim_interface.Sort
 var Slice = sort_slice_tim_interface.Slice
