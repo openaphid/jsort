@@ -201,7 +201,7 @@ func BenchmarkStructSliceByAge(t *testing.B) {
 			c.prepareFunc(data)
 			name := c.name
 
-			t.Run(fmt.Sprintf("DpsSliceTypeAssertion-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("Unstable-Dps-TypeAssertion-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
@@ -213,7 +213,7 @@ func BenchmarkStructSliceByAge(t *testing.B) {
 				}
 			})
 
-			t.Run(fmt.Sprintf("TimSortSliceTypeAssertion-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("Stable-TimSort-TypeAssertion-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
@@ -225,7 +225,7 @@ func BenchmarkStructSliceByAge(t *testing.B) {
 				}
 			})
 
-			t.Run(fmt.Sprintf("TimSortSliceInterface-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("Stable-TimSort-Interface-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
@@ -235,7 +235,7 @@ func BenchmarkStructSliceByAge(t *testing.B) {
 				}
 			})
 
-			t.Run(fmt.Sprintf("BuiltinSortSlice-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("Unstable-BuiltinSort-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
@@ -247,7 +247,7 @@ func BenchmarkStructSliceByAge(t *testing.B) {
 				}
 			})
 
-			t.Run(fmt.Sprintf("BuiltinSortSliceStable-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("Stable-BuiltinSort-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
@@ -278,7 +278,7 @@ func BenchmarkStructSliceByName(t *testing.B) {
 			c.prepareFunc(data)
 			name := c.name
 
-			t.Run(fmt.Sprintf("DpsSliceTypeAssertion-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("Unstable-Dps-TypeAssertion-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
@@ -290,7 +290,7 @@ func BenchmarkStructSliceByName(t *testing.B) {
 				}
 			})
 
-			t.Run(fmt.Sprintf("TimSortSliceTypeAssertion-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("Stable-TimSort-TypeAssertion-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
@@ -302,7 +302,7 @@ func BenchmarkStructSliceByName(t *testing.B) {
 				}
 			})
 
-			t.Run(fmt.Sprintf("TimSortSliceInterface-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("Stable-TimSort-Interface-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
@@ -312,7 +312,7 @@ func BenchmarkStructSliceByName(t *testing.B) {
 				}
 			})
 
-			t.Run(fmt.Sprintf("BuiltinSortSlice-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("Unstable-BuiltinSort-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
@@ -324,7 +324,7 @@ func BenchmarkStructSliceByName(t *testing.B) {
 				}
 			})
 
-			t.Run(fmt.Sprintf("BuiltinSortSliceStable-%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("Stable-BuiltinSort-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
