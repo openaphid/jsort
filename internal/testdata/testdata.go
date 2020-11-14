@@ -22,7 +22,7 @@ func PrepareRandomAges(a []Person) {
 	rand.Seed(time.Now().Unix())
 	for i, _ := range a {
 		a[i] = Person{
-			Age:  rand.Intn(len(a)),
+			Age:  rand.Int(),
 			Name: fmt.Sprintf("n-%d", i),
 		}
 	}
@@ -33,7 +33,7 @@ func PrepareRandomNames(a []Person) {
 	for i, _ := range a {
 		a[i] = Person{
 			Age:  i,
-			Name: fmt.Sprintf("n-%d", rand.Intn(len(a))),
+			Name: fmt.Sprintf("n-%d", rand.Int()),
 		}
 	}
 }

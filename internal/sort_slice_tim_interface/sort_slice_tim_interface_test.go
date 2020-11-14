@@ -13,25 +13,25 @@ type Person = testdata.Person
 
 var prepare = testdata.PrepareRandomAges
 
-type PersonCompareInterface []Person
+type PersonInterface []Person
 
-func (p PersonCompareInterface) Len() int {
+func (p PersonInterface) Len() int {
 	return len(p)
 }
 
-func (p PersonCompareInterface) Less(i, j int) bool {
+func (p PersonInterface) Less(i, j int) bool {
 	return p[i].Age < p[j].Age
 }
 
-func (p PersonCompareInterface) Swap(i, j int) {
+func (p PersonInterface) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
 }
 
-var _ builtinsort.Interface = (*PersonCompareInterface)(nil)
+var _ builtinsort.Interface = (*PersonInterface)(nil)
 
 func TestByAge(t *testing.T) {
 	for i := 1; i <= 1024*10; i++ {
-		persons := make(PersonCompareInterface, i)
+		persons := make(PersonInterface, i)
 		prepare(persons)
 
 		Sort(persons)
@@ -46,7 +46,7 @@ func TestByAge(t *testing.T) {
 
 func TestShuffledSeq(t *testing.T) {
 	for i := 3; i <= 1024*5; i++ {
-		persons := make(PersonCompareInterface, i)
+		persons := make(PersonInterface, i)
 		testdata.PrepareShuffledSeq(persons)
 
 		Sort(persons)
@@ -69,14 +69,27 @@ func BenchmarkVSSort(t *testing.B) {
 		t.Run(fmt.Sprintf("TimSortInterface-%d", size), func(t *testing.B) {
 			for i := 0; i < t.N; i++ {
 				t.StopTimer()
-				dup := make(PersonCompareInterface, size)
+				dup := make([]Person, size)
 				copy(dup, data)
+
 				t.StartTimer()
-				Sort(dup)
+				Sort(PersonInterface(dup))
 			}
 		})
 
-		t.Run(fmt.Sprintf("TimSort-%d", size), func(t *testing.B) {
+		t.Run(fmt.Sprintf("TimSortInterfaceSlice-%d", size), func(t *testing.B) {
+			for i := 0; i < t.N; i++ {
+				t.StopTimer()
+				dup := make(PersonInterface, size)
+				copy(dup, data)
+				t.StartTimer()
+				Slice(dup, func(i, j int) bool {
+					return dup[i].Age < dup[j].Age
+				})
+			}
+		})
+
+		t.Run(fmt.Sprintf("TimSort-TypeAssertion-%d", size), func(t *testing.B) {
 			for i := 0; i < t.N; i++ {
 				t.StopTimer()
 				dup := make([]Person, size)
@@ -88,7 +101,27 @@ func BenchmarkVSSort(t *testing.B) {
 			}
 		})
 
-		t.Run(fmt.Sprintf("BuiltinSort-%d", size), func(t *testing.B) {
+		t.Run(fmt.Sprintf("BuiltinSortInterface-%d", size), func(t *testing.B) {
+			for i := 0; i < t.N; i++ {
+				t.StopTimer()
+				dup := make([]Person, size)
+				copy(dup, data)
+				t.StartTimer()
+				builtinsort.Sort(PersonInterface(dup))
+			}
+		})
+
+		t.Run(fmt.Sprintf("BuiltinSortInterfaceStable-%d", size), func(t *testing.B) {
+			for i := 0; i < t.N; i++ {
+				t.StopTimer()
+				dup := make([]Person, size)
+				copy(dup, data)
+				t.StartTimer()
+				builtinsort.Stable(PersonInterface(dup))
+			}
+		})
+
+		t.Run(fmt.Sprintf("BuiltinSortSlice-%d", size), func(t *testing.B) {
 			for i := 0; i < t.N; i++ {
 				t.StopTimer()
 				dup := make([]Person, size)
@@ -100,7 +133,7 @@ func BenchmarkVSSort(t *testing.B) {
 			}
 		})
 
-		t.Run(fmt.Sprintf("BuiltinSortStable-%d", size), func(t *testing.B) {
+		t.Run(fmt.Sprintf("BuiltinSortSliceStable-%d", size), func(t *testing.B) {
 			for i := 0; i < t.N; i++ {
 				t.StopTimer()
 				dup := make([]Person, size)
