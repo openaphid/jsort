@@ -316,7 +316,7 @@ func instantiate୦୦binarySort୦sort_slice_tim_go2୮aPerson(a []Person, lo i
 
 //line sort_slice_tim_go2.go2:270
   for left < right {
-			var mid = (left + right) >> 1
+			var mid = int(uint(left+right) >> 1)
 			if c(pivot, a[mid]) < 0 {
 				right = mid
 			} else {
@@ -426,7 +426,7 @@ func instantiate୦୦binarySort୦int(a []int, lo int, hi int, start int, c fun
 
 //line sort_slice_tim_go2.go2:270
   for left < right {
-			var mid = (left + right) >> 1
+			var mid = int(uint(left+right) >> 1)
 			if c(pivot, a[mid]) < 0 {
 				right = mid
 			} else {

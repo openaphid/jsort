@@ -268,7 +268,7 @@ func binarySort[T any](a []T, lo int, hi int, start int, c func(i, j T) int) {
 		 *   pivot <  all in [right, start).
 		 */
 		for left < right {
-			var mid = (left + right) >> 1
+			var mid = int(uint(left+right) >> 1)
 			if c(pivot, a[mid]) < 0 {
 				right = mid
 			} else {

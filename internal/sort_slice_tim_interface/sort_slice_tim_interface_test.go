@@ -45,7 +45,7 @@ func TestByAge(t *testing.T) {
 }
 
 func TestShuffledSeq(t *testing.T) {
-	for i := 3; i <= 1024*5; i++ {
+	for i := 1; i <= 1024*10; i++ {
 		persons := make(PersonInterface, i)
 		testdata.PrepareShuffledSeq(persons)
 

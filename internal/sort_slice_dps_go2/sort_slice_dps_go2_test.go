@@ -565,7 +565,7 @@ func instantiate୦୦sortInternal୦sort_slice_dps_go2୮aPerson(compare func(o
  var seventh = (length >> 3) + (length >> 6) + 1
 
 //line sort_slice_dps_go2.go2:334
- var e3 = (left + right) >> 1
+ var e3 = int(uint(left+right) >> 1)
 					var e2 = e3 - seventh
 					var e1 = e2 - seventh
 					var e4 = e3 + seventh
@@ -878,7 +878,7 @@ func instantiate୦୦sortInternal୦int(compare func(o1, o2 int,) int, a []int,
  var seventh = (length >> 3) + (length >> 6) + 1
 
 //line sort_slice_dps_go2.go2:334
- var e3 = (left + right) >> 1
+ var e3 = int(uint(left+right) >> 1)
 					var e2 = e3 - seventh
 					var e1 = e2 - seventh
 					var e4 = e3 + seventh

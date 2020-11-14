@@ -294,7 +294,7 @@ func binarySort(a []interface{}, lo int, hi int, start int, c CompareFunc) {
 		 *   pivot <  all in [right, start).
 		 */
 		for left < right {
-			var mid = (left + right) >> 1
+			var mid = int(uint(left+right) >> 1)
 			if c(pivot, a[mid]) < 0 {
 				right = mid
 			} else {

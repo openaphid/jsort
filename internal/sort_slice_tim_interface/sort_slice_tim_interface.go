@@ -339,7 +339,7 @@ func binarySort(a []index, lo int, hi int, start int, c sort.Interface) {
 		 *   pivot <  all in [right, start).
 		 */
 		for left < right {
-			var mid = (left + right) >> 1
+			var mid = int(uint(left+right) >> 1)
 			if c.Less(pivot, a[mid]) {
 				right = mid
 			} else {
