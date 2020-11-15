@@ -1,0 +1,282 @@
+package sort_slice_go2
+
+import (
+	"fmt"
+	"math/rand"
+	"sort"
+	"strings"
+	"testing"
+	"time"
+)
+
+func prepareRandomInts(src []int) {
+	rand.Seed(time.Now().Unix())
+	for i := range src {
+		src[i] = rand.Int()
+	}
+}
+
+func prepareXorInts(src []int) {
+	for i := range src {
+		src[i] = i ^ 0x2cc
+	}
+}
+
+func copyInts(src []int) []int {
+	dup := make([]int, len(src))
+	copy(dup, src)
+
+	return dup
+}
+
+type Person struct {
+	Age  int
+	Name string
+}
+
+func (p Person) String() string {
+	return fmt.Sprintf("Person(%d, %s)", p.Age, p.Name)
+}
+
+func PrepareRandomAges(a []Person) {
+	rand.Seed(time.Now().Unix())
+	for i, _ := range a {
+		a[i] = Person{
+			Age:  rand.Int(),
+			Name: fmt.Sprintf("n-%d", i),
+		}
+	}
+}
+
+func PrepareRandomNames(a []Person) {
+	rand.Seed(time.Now().Unix())
+	for i, _ := range a {
+		a[i] = Person{
+			Age:  i,
+			Name: fmt.Sprintf("n-%d", rand.Int()),
+		}
+	}
+}
+
+func PrepareXorAges(a []Person) {
+	for i, _ := range a {
+		a[i] = Person{
+			Age:  i ^ 0x2cc,
+			Name: fmt.Sprintf("n-%d", i),
+		}
+	}
+}
+
+func PrepareXorNames(a []Person) {
+	for i, _ := range a {
+		a[i] = Person{
+			Age:  i,
+			Name: fmt.Sprintf("n-%d", i^0x2cc),
+		}
+	}
+}
+
+func PrepareShuffledSeq(a []Person) {
+	rand.Seed(time.Now().Unix())
+	for i, _ := range a {
+		a[i] = Person{
+			Age:  i,
+			Name: fmt.Sprintf("n-%d", i),
+		}
+	}
+
+	for i, _ := range a {
+		j := rand.Intn(len(a))
+		a[i], a[j] = a[j], a[i]
+	}
+}
+
+func GenBenchmarkSizes(init, multiplier, length int) []int {
+	var sizes = []int{}
+
+	s := init
+
+	for i := 0; i < length; i++ {
+		sizes = append(sizes, s)
+		s *= multiplier
+	}
+
+	return sizes
+}
+
+var benchmarkSizes = GenBenchmarkSizes(256, 16, 3)
+
+type ByNameInterface []Person
+
+func (p ByNameInterface) Len() int {
+	return len(p)
+}
+
+func (p ByNameInterface) Less(i, j int) bool {
+	return p[i].Name < p[j].Name
+}
+
+func (p ByNameInterface) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
+
+var _ sort.Interface = (*ByNameInterface)(nil)
+
+func BenchmarkIntsGo2(t *testing.B) {
+	dataCases := []struct {
+		name        string
+		prepareFunc func([]int)
+	}{
+		{"Random", prepareRandomInts},
+		{"Xor", prepareXorInts},
+	}
+
+	for _, size := range benchmarkSizes {
+		var data = make([]int, size)
+
+		for _, d := range dataCases {
+			d.prepareFunc(data)
+			name := d.name
+
+			t.Run(fmt.Sprintf("Dps-Go2-%s-%d", name, size), func(t *testing.B) {
+				for i := 0; i < t.N; i++ {
+					t.StopTimer()
+					dup := copyInts(data)
+
+					t.StartTimer()
+					DualPivotSort(dup, func(o1, o2 int) int {
+						return o1 - o2
+					})
+				}
+			})
+
+			t.Run(fmt.Sprintf("TimSort-Go2-%s-%d", name, size), func(t *testing.B) {
+				for i := 0; i < t.N; i++ {
+					t.StopTimer()
+					dup := copyInts(data)
+
+					t.StartTimer()
+					Timsort(dup, func(o1, o2 int) int {
+						return o1 - o2
+					})
+				}
+			})
+
+			t.Run(fmt.Sprintf("BuiltinSort-Sort-%s-%d", name, size), func(t *testing.B) {
+				for i := 0; i < t.N; i++ {
+					t.StopTimer()
+					dup := copyInts(data)
+
+					t.StartTimer()
+					sort.Ints(dup)
+				}
+			})
+
+			t.Run(fmt.Sprintf("BuiltinSort-Slice-%s-%d", name, size), func(t *testing.B) {
+				for i := 0; i < t.N; i++ {
+					t.StopTimer()
+					dup := copyInts(data)
+
+					t.StartTimer()
+					sort.Slice(dup, func(i, j int) bool {
+						return dup[i] < dup[j]
+					})
+				}
+			})
+		}
+	}
+}
+
+func copyPersonSlice(src []Person) []Person {
+	dup := make([]Person, len(src))
+	copy(dup, src)
+
+	return dup
+}
+
+func BenchmarkStructSliceByNameGo2(t *testing.B) {
+	dataCases := []struct {
+		name        string
+		prepareFunc func([]Person)
+	}{
+		{"Random", PrepareRandomNames},
+		{"Xor", PrepareXorNames},
+	}
+
+	for _, size := range benchmarkSizes {
+		var data = make([]Person, size)
+
+		for _, c := range dataCases {
+			c.prepareFunc(data)
+			name := c.name
+
+			t.Run(fmt.Sprintf("Unstable-Dps-Go2-%s-%d", name, size), func(t *testing.B) {
+				for i := 0; i < t.N; i++ {
+					t.StopTimer()
+					dup := copyPersonSlice(data)
+
+					t.StartTimer()
+					DualPivotSort(dup, func(o1, o2 Person) int {
+						return strings.Compare(o1.Name, o2.Name)
+					})
+				}
+			})
+
+			t.Run(fmt.Sprintf("Stable-TimSort-Go2-%s-%d", name, size), func(t *testing.B) {
+				for i := 0; i < t.N; i++ {
+					t.StopTimer()
+					dup := copyPersonSlice(data)
+
+					t.StartTimer()
+					Timsort(dup, func(o1, o2 Person) int {
+						return strings.Compare(o1.Name, o2.Name)
+					})
+				}
+			})
+
+			t.Run(fmt.Sprintf("Unstable-BuiltinSort-Sort-%s-%d", name, size), func(t *testing.B) {
+				for i := 0; i < t.N; i++ {
+					t.StopTimer()
+					dup := copyPersonSlice(data)
+
+					t.StartTimer()
+					sort.Sort(ByNameInterface(dup))
+				}
+			})
+
+			t.Run(fmt.Sprintf("Unstable-BuiltinSort-Slice-%s-%d", name, size), func(t *testing.B) {
+				for i := 0; i < t.N; i++ {
+					t.StopTimer()
+					dup := copyPersonSlice(data)
+
+					t.StartTimer()
+					sort.Slice(dup, func(i, j int) bool {
+						return dup[i].Name < dup[j].Name
+					})
+				}
+			})
+
+			t.Run(fmt.Sprintf("Stable-BuiltinSort-Stable-%s-%d", name, size), func(t *testing.B) {
+				for i := 0; i < t.N; i++ {
+					t.StopTimer()
+					dup := copyPersonSlice(data)
+
+					t.StartTimer()
+					sort.Stable(ByNameInterface(dup))
+				}
+			})
+
+			t.Run(fmt.Sprintf("Stable-BuiltinSort-SliceStable-%s-%d", name, size), func(t *testing.B) {
+				for i := 0; i < t.N; i++ {
+					t.StopTimer()
+					dup := copyPersonSlice(data)
+
+					t.StartTimer()
+					sort.SliceStable(dup, func(i, j int) bool {
+						return dup[i].Name < dup[j].Name
+					})
+				}
+			})
+		}
+	}
+}

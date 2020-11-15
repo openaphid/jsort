@@ -1,7 +1,7 @@
-package sort_slice_tim_go2
+package sort_slice_go2
 
-func Sort[T any](a []T, compare func(i, j T) int) {
-	sort(a, 0, len(a), compare, nil, 0, 0)
+func Timsort[T any](a []T, compare func(i, j T) int) {
+	timsort(a, 0, len(a), compare, nil, 0, 0)
 }
 
 func IsSorted[T any](a []T, compare func(i, j T) int) bool {
@@ -174,7 +174,7 @@ func newTimSort[T any](a []T, c func(i, j T) int, work []T, workBase int, workLe
  * @param workLen usable size of work array
  * @since 1.8
  */
-func sort[T any](a []T, lo int, hi int, c func(i, j T) int, work []T, workBase int, workLen int) {
+func timsort[T any](a []T, lo int, hi int, c func(i, j T) int, work []T, workBase int, workLen int) {
 	//assert c != null && a != null && lo >= 0 && lo <= hi && hi <= a.length;
 
 	var nRemaining = hi - lo

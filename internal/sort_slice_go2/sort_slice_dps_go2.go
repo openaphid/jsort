@@ -2,16 +2,18 @@
 
 
 //line sort_slice_dps_go2.go2:1
-package sort_slice_dps_go2
+package sort_slice_go2
 
 //line sort_slice_dps_go2.go2:1
 import (
 //line sort_slice_dps_go2.go2:1
  "fmt"
 //line sort_slice_dps_go2.go2:1
- "log"
-//line sort_slice_dps_go2.go2:1
  "math/rand"
+//line sort_slice_dps_go2.go2:1
+ "sort"
+//line sort_slice_dps_go2.go2:1
+ "strings"
 //line sort_slice_dps_go2.go2:1
  "testing"
 //line sort_slice_dps_go2.go2:1
@@ -34,9 +36,13 @@ type Importable୦ int
 //line sort_slice_dps_go2.go2:18
 var _ = fmt.Errorf
 //line sort_slice_dps_go2.go2:18
-var _ = log.Fatal
-//line sort_slice_dps_go2.go2:18
 var _ = rand.ExpFloat64
+
+//line sort_slice_dps_go2.go2:18
+type _ sort.Float64Slice
+//line sort_slice_dps_go2.go2:18
+type _ strings.Builder
+
 //line sort_slice_dps_go2.go2:18
 var _ = testing.AllocsPerRun
 
