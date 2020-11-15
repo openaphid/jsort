@@ -400,7 +400,7 @@ func BenchmarkStructSliceByName(t *testing.B) {
 				}
 			})
 
-			t.Run(fmt.Sprintf("Stable-BuiltinSort-Stable%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("Stable-BuiltinSort-Stable-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
@@ -410,7 +410,7 @@ func BenchmarkStructSliceByName(t *testing.B) {
 				}
 			})
 
-			t.Run(fmt.Sprintf("Stable-BuiltinSort-SliceStable%s-%d", name, size), func(t *testing.B) {
+			t.Run(fmt.Sprintf("Stable-BuiltinSort-SliceStable-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 					t.StopTimer()
 					dup := copyPersonSlice(data)
