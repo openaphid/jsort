@@ -1,0 +1,21 @@
+size,name,compares/op (random),compares/op (xor)
+256,Unstable-Builtin,1959,1979
+256,Stable-TimSort,1726,878
+256,Unstable-DPS,2798,2170
+256,Stable-Builtin,2604,1868
+1024,Stable-TimSort,8985,3556
+1024,Unstable-DPS,13658,11157
+1024,Unstable-Builtin,10624,10091
+1024,Stable-Builtin,12731,7404
+4096,Stable-Builtin,62072,30561
+4096,Unstable-DPS,58680,54366
+4096,Stable-TimSort,44083,14258
+4096,Unstable-Builtin,49822,48554
+16384,Stable-TimSort,209020,57072
+16384,Stable-Builtin,289833,122683
+16384,Unstable-Builtin,236529,227334
+16384,Unstable-DPS,279328,246403
+65536,Unstable-Builtin,1084178,1039852
+65536,Stable-Builtin,1325725,491485
+65536,Unstable-DPS,1284755,1054036
+65536,Stable-TimSort,966972,228334

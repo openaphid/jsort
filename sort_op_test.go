@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/openaphid/jsort/internal/sort_slice_dps_ts"
 	"github.com/openaphid/jsort/internal/testdata"
+	"io/ioutil"
 	"sort"
+	"strings"
 	"testing"
 )
 
@@ -51,6 +53,11 @@ type operationDataCase struct {
 	prepareFunc func([]Person)
 }
 
+type compareRecordKey struct {
+	algo string
+	size int
+}
+
 func TestOperationStats(t *testing.T) {
 	var dataCases []operationDataCase
 
@@ -62,51 +69,94 @@ func TestOperationStats(t *testing.T) {
 		dataCases = append(dataCases, operationDataCase{"Xor", s, testdata.PrepareXorAges})
 	}
 
+	perNameData := make(map[string]map[compareRecordKey]int)
+	perNameData["Random"] = make(map[compareRecordKey]int)
+	perNameData["Xor"] = make(map[compareRecordKey]int)
+
 	for _, c := range dataCases {
 		name := c.name
 		data := make([]Person, c.size)
-		c.prepareFunc(data)
 
-		{
-			dup := copyPersonSlice(data)
+		compareRecords, _ := perNameData[name]
 
-			compareCount := 0
+		compareCounts := make(map[string]int)
 
-			sort_slice_dps_ts.Sort(dup, func(o1, o2 interface{}) int {
-				compareCount++
-				return o1.(Person).Age - o2.(Person).Age
-			})
+		const loop = 20
 
-			fmt.Printf("DPS(%s-%d):%10d %s\n",
-				name, c.size,
-				compareCount, "Compare")
+		for i := 0; i < loop; i++ {
+			c.prepareFunc(data)
+
+			{
+				dup := copyPersonSlice(data)
+
+				cnt := 0
+				sort_slice_dps_ts.Sort(dup, func(o1, o2 interface{}) int {
+					cnt++
+					return o1.(Person).Age - o2.(Person).Age
+				})
+
+				compareCounts["Unstable-DPS"] += cnt
+			}
+
+			{
+				stat := newOpStat(c.size)
+				copy(stat.data, data)
+
+				Sort(statInterface(*stat))
+
+				compareCounts["Stable-TimSort"] += stat.stats["Less"]
+			}
+
+			{
+				stat := newOpStat(c.size)
+				copy(stat.data, data)
+
+				sort.Sort(statInterface(*stat))
+
+				compareCounts["Unstable-Builtin"] += stat.stats["Less"]
+			}
+
+			{
+				stat := newOpStat(c.size)
+				copy(stat.data, data)
+
+				sort.Stable(statInterface(*stat))
+
+				compareCounts["Stable-Builtin"] += stat.stats["Less"]
+			}
 		}
 
-		{
-			stat := newOpStat(c.size)
-			copy(stat.data, data)
-
-			Sort(statInterface(*stat))
-
-			fmt.Printf("TimSort(%s-%d):%10d %s\t%10d %s\t%10d %s\n",
-				name, c.size,
-				stat.stats["Less"], "Less",
-				// The number of Swap is misleading here as it only counts the swap operation in the final sort after indices are fully sorted
-				stat.stats["Swap"], "Swap(?)",
-				stat.stats["Len"], "Len")
+		for algo, v := range compareCounts {
+			k := compareRecordKey{algo: algo, size: c.size}
+			compareRecords[k] = v / loop
 		}
+	}
 
-		{
-			stat := newOpStat(c.size)
-			copy(stat.data, data)
+	randomData := perNameData["Random"]
+	xorData := perNameData["Xor"]
 
-			sort.Stable(statInterface(*stat))
+	var lines []string
+	lines = append(lines, "size,name,compares/op (random),compares/op (xor)")
 
-			fmt.Printf("Builtin(%s-%d): %10d %s\t%10d %s\t%10d %s\n",
-				name, c.size,
-				stat.stats["Less"], "Less",
-				stat.stats["Swap"], "Swap",
-				stat.stats["Len"], "Len")
-		}
+	var randomDataKeys []compareRecordKey
+	for k, _ := range randomData {
+		randomDataKeys = append(randomDataKeys, k)
+	}
+	Slice(randomDataKeys, func(i, j int) bool {
+		return randomDataKeys[i].size < randomDataKeys[j].size
+	})
+
+	for _, k := range randomDataKeys {
+		v := randomData[k]
+		lines = append(lines, fmt.Sprintf("%d,%s,%d,%d", k.size, k.algo, v, xorData[k]))
+	}
+
+	outputFile := "BenchmarkResult/compares.csv"
+	content := strings.Join(lines, "\n")
+	fmt.Println("Saving to ", outputFile)
+	fmt.Println(content)
+	err := ioutil.WriteFile(outputFile, []byte(content), 0644)
+	if err != nil {
+		t.Fatal(outputFile, err)
 	}
 }
