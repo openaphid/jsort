@@ -11,11 +11,15 @@ import (
 	"strings"
 )
 
+type benchCtx struct {
+	testName string
+	algo     string
+	dataSize int
+}
+
 type Row struct {
-	testName     string
-	algo         string
+	benchCtx
 	dataProvider string
-	dataSize     int
 	value        int
 }
 
@@ -125,43 +129,80 @@ func main() {
 		currentGroup.rows = append(currentGroup.rows, row)
 	}
 
-	keyFunc := func(r Row) string {
-		return fmt.Sprintf("%d|%s|%s", r.dataSize, r.testName, r.algo)
-	}
+	type DataProvider = string
+	type LookupTable = map[DataProvider]map[benchCtx]int
 
-	bytesMap := make(map[string]int)
-	for _, r := range bytesGroup.rows {
-		bytesMap[keyFunc(r)] = r.value
+	buildTableFunc := func(g *Group, testName string) LookupTable {
+		table := make(LookupTable)
+		for _, r := range g.rows {
+			if r.testName != testName {
+				continue
+			}
+
+			data, ok := table[r.dataProvider]
+			if !ok {
+				data = make(map[benchCtx]int)
+				table[r.dataProvider] = data
+			}
+			key := r.benchCtx
+			if _, ok := data[key]; ok {
+				log.Fatal("duplicated data key: ", key)
+			}
+			data[key] = r.value
+		}
+
+		return table
 	}
 
 	for testName, _ := range testNames {
-		for _, dataProvider := range []string{"Random", "Xor"} {
-			{
-				rows := timeGroup.filter(func(r Row) bool {
-					return r.testName == testName && r.dataProvider == dataProvider
-				})
+		providerTimeData := buildTableFunc(timeGroup, testName)
+		providerBytesData := buildTableFunc(bytesGroup, testName)
 
-				outputFile := filepath.Join(dir, fmt.Sprintf("%s-%s.csv", testName, dataProvider))
+		rows := timeGroup.filter(func(r Row) bool { // pick the random rows as a pivot
+			return r.testName == testName && r.dataProvider == "Random"
+		})
 
-				lines := make([]string, len(rows)+1)
-				lines[0] = fmt.Sprintf("datasize,name,ns/op,B/op")
-				for i, r := range rows {
-					bytes, ok := bytesMap[keyFunc(r)]
-					if !ok {
-						log.Fatalf("can't find bytes data for row: %v", r)
-					}
-					lines[i+1] = fmt.Sprintf("%d,%s,%d,%d", r.dataSize, r.algo, r.value, bytes)
+		providers := make([]string, len(providerTimeData))
+		{
+			providers[0] = "Random" // Random data set is the 1st
+			i := 1
+			for k, _ := range providerTimeData {
+				if k == "Random" {
+					continue
 				}
-
-				err := ioutil.WriteFile(outputFile, []byte(strings.Join(lines, "\n")), 0644)
-				if err != nil {
-					log.Fatal(outputFile, err)
-				}
-
-				log.Printf("saved %s\n", outputFile)
-
+				providers[i] = k
+				i++
 			}
 		}
+
+		lines := make([]string, len(rows)+1)
+		lines[0] = fmt.Sprintf("datasize,name")
+		for _, k := range providers {
+			lines[0] = lines[0] + fmt.Sprintf(",ns/op (%s),B/op (%s)", k, k)
+		}
+
+		for i, r := range rows {
+			var b strings.Builder
+			fmt.Fprintf(&b, "%d,%s", r.dataSize, r.algo)
+
+			for _, provider := range providers {
+				bytes, ok := providerBytesData[provider][r.benchCtx]
+				if !ok {
+					log.Fatalf("can't find bytes data for: %v, %s", r.benchCtx, provider)
+				}
+				fmt.Fprintf(&b, ",%d,%d", providerTimeData[provider][r.benchCtx], bytes)
+			}
+			lines[i+1] = b.String()
+		}
+
+		outputFile := filepath.Join(dir, fmt.Sprintf("%s.csv", testName))
+
+		err := ioutil.WriteFile(outputFile, []byte(strings.Join(lines, "\n")), 0644)
+		if err != nil {
+			log.Fatal(outputFile, err)
+		}
+
+		log.Printf("saved %s\n", outputFile)
 	}
 
 }
