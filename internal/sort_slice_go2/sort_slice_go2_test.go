@@ -135,6 +135,59 @@ func (p ByNameInterface) Swap(i, j int) {
 
 var _ sort.Interface = (*ByNameInterface)(nil)
 
+var byAgeFunc = func(i, j Person) int {
+	return i.Age - j.Age
+}
+
+//line sort_slice_go2_test.go2:128
+func TestByAgeDps(t *testing.T) {
+	for i := 1; i <= 1024*10; i++ {
+						persons := make([]Person, i)
+						PrepareRandomAges(persons)
+//line sort_slice_go2_test.go2:131
+  instantiate୦୦DualPivotSort୦sort_slice_go2୮aPerson(persons, byAgeFunc)
+
+//line sort_slice_go2_test.go2:135
+  sorted := instantiate୦୦IsSorted୦sort_slice_go2୮aPerson(persons, byAgeFunc)
+
+		if !sorted {
+			t.Fatalf("should be sorted: %d", i)
+		}
+	}
+}
+
+func TestByAgeTimsort(t *testing.T) {
+	for i := 1; i <= 1024*10; i++ {
+						persons := make([]Person, i)
+						PrepareRandomAges(persons)
+//line sort_slice_go2_test.go2:146
+  instantiate୦୦Timsort୦sort_slice_go2୮aPerson(persons, byAgeFunc)
+
+//line sort_slice_go2_test.go2:150
+  sorted := instantiate୦୦IsSorted୦sort_slice_go2୮aPerson(persons, byAgeFunc)
+
+		if !sorted {
+			t.Fatalf("should be sorted: %d", i)
+		}
+	}
+}
+
+func TestShuffledSeqTimsort(t *testing.T) {
+	for i := 1; i <= 1024*10; i++ {
+						persons := make([]Person, i)
+						PrepareShuffledSeq(persons)
+//line sort_slice_go2_test.go2:161
+  instantiate୦୦Timsort୦sort_slice_go2୮aPerson(persons, byAgeFunc)
+
+//line sort_slice_go2_test.go2:165
+  for j := range persons {
+			if persons[j].Age != j {
+				t.Fatalf("Age(%d) should be %d for test #%d", persons[j].Age, j, i)
+			}
+		}
+	}
+}
+
 func BenchmarkIntsGo2(t *testing.B) {
 	dataCases := []struct {
 		name        string
@@ -157,9 +210,9 @@ func BenchmarkIntsGo2(t *testing.B) {
 									dup := copyInts(data)
 
 									t.StartTimer()
-//line sort_slice_go2_test.go2:146
+//line sort_slice_go2_test.go2:194
      instantiate୦୦DualPivotSort୦int(dup, func(o1, o2 int) int {
-//line sort_slice_go2_test.go2:148
+//line sort_slice_go2_test.go2:196
       return o1 - o2
 					})
 				}
@@ -171,9 +224,9 @@ func BenchmarkIntsGo2(t *testing.B) {
 									dup := copyInts(data)
 
 									t.StartTimer()
-//line sort_slice_go2_test.go2:158
+//line sort_slice_go2_test.go2:206
      instantiate୦୦Timsort୦int(dup, func(o1, o2 int) int {
-//line sort_slice_go2_test.go2:160
+//line sort_slice_go2_test.go2:208
       return o1 - o2
 					})
 				}
@@ -233,9 +286,9 @@ func BenchmarkStructSliceByNameGo2(t *testing.B) {
 									dup := copyPersonSlice(data)
 
 									t.StartTimer()
-//line sort_slice_go2_test.go2:218
+//line sort_slice_go2_test.go2:266
      instantiate୦୦DualPivotSort୦sort_slice_go2୮aPerson(dup, func(o1, o2 Person) int {
-//line sort_slice_go2_test.go2:220
+//line sort_slice_go2_test.go2:268
       return strings.Compare(o1.Name, o2.Name)
 					})
 				}
@@ -247,9 +300,9 @@ func BenchmarkStructSliceByNameGo2(t *testing.B) {
 									dup := copyPersonSlice(data)
 
 									t.StartTimer()
-//line sort_slice_go2_test.go2:230
+//line sort_slice_go2_test.go2:278
      instantiate୦୦Timsort୦sort_slice_go2୮aPerson(dup, func(o1, o2 Person) int {
-//line sort_slice_go2_test.go2:232
+//line sort_slice_go2_test.go2:280
       return strings.Compare(o1.Name, o2.Name)
 					})
 				}
@@ -302,6 +355,28 @@ func BenchmarkStructSliceByNameGo2(t *testing.B) {
 	}
 }
 //line sort_slice_dps_go2.go2:20
+func instantiate୦୦DualPivotSort୦sort_slice_go2୮aPerson(a []Person, compare func(o1, o2 Person,) int) {
+//line sort_slice_dps_go2.go2:20
+ instantiate୦୦dualPivotSort୦sort_slice_go2୮aPerson(compare, a, 0, len(a)-1, nil, 0, 0)
+//line sort_slice_dps_go2.go2:22
+}
+//line sort_slice_tim_go2.go2:7
+func instantiate୦୦IsSorted୦sort_slice_go2୮aPerson(a []Person, compare func(i, j Person,) int) bool {
+	for i := len(a) - 1; i > 0; i-- {
+		if compare(a[i], a[i-1]) < 0 {
+			return false
+		}
+	}
+	return true
+}
+//line sort_slice_tim_go2.go2:3
+func instantiate୦୦Timsort୦sort_slice_go2୮aPerson(a []Person, compare func(i, j Person,) int) {
+//line sort_slice_tim_go2.go2:3
+ instantiate୦୦timsort୦sort_slice_go2୮aPerson(a, 0, len(a), compare, nil, 0, 0)
+//line sort_slice_tim_go2.go2:5
+}
+
+//line sort_slice_dps_go2.go2:20
 func instantiate୦୦DualPivotSort୦int(a []int, compare func(o1, o2 int,) int) {
 //line sort_slice_dps_go2.go2:20
  instantiate୦୦dualPivotSort୦int(compare, a, 0, len(a)-1, nil, 0, 0)
@@ -314,230 +389,6 @@ func instantiate୦୦Timsort୦int(a []int, compare func(i, j int,) int) {
 //line sort_slice_tim_go2.go2:5
 }
 
-//line sort_slice_dps_go2.go2:20
-func instantiate୦୦DualPivotSort୦sort_slice_go2୮aPerson(a []Person, compare func(o1, o2 Person,) int) {
-//line sort_slice_dps_go2.go2:20
- instantiate୦୦dualPivotSort୦sort_slice_go2୮aPerson(compare, a, 0, len(a)-1, nil, 0, 0)
-//line sort_slice_dps_go2.go2:22
-}
-//line sort_slice_tim_go2.go2:3
-func instantiate୦୦Timsort୦sort_slice_go2୮aPerson(a []Person, compare func(i, j Person,) int) {
-//line sort_slice_tim_go2.go2:3
- instantiate୦୦timsort୦sort_slice_go2୮aPerson(a, 0, len(a), compare, nil, 0, 0)
-//line sort_slice_tim_go2.go2:5
-}
-
-//line sort_slice_dps_go2.go2:35
-func instantiate୦୦dualPivotSort୦int(compare func(o1, o2 int,) int, a []int, left int, right int, work []int, workBase int, workLen int) {
-
-	if right-left < quicksortThreshold {
-//line sort_slice_dps_go2.go2:37
-  instantiate୦୦sortInternal୦int(compare, a, left, right, true)
-//line sort_slice_dps_go2.go2:39
-  return
-	}
-
-//line sort_slice_dps_go2.go2:46
- var run = make([]int, maxRunCount+1)
-					var count = 0
-					run[0] = left
-
-//line sort_slice_dps_go2.go2:51
- for k := left; k < right; run[count] = k {
-
-		for k < right && compare(a[k], a[k+1]) == 0 {
-			k++
-		}
-		if k == right {
-			break
-		}
-		if compare(a[k], a[k+1]) < 0 {
-			for {
-				k++
-				if k <= right && compare(a[k-1], a[k]) <= 0 {
-				} else {
-					break
-				}
-			}
-
-		} else if compare(a[k], a[k+1]) > 0 {
-			for {
-				k++
-				if k <= right && compare(a[k-1], a[k]) >= 0 {
-				} else {
-					break
-				}
-			}
-
-			lo := run[count] - 1
-			for hi := k; lo+1 < hi-1; {
-				lo++
-				hi--
-				a[lo], a[hi] = a[hi], a[lo]
-			}
-		}
-
-//line sort_slice_dps_go2.go2:87
-  if run[count] > left && compare(a[run[count]], a[run[count]-1]) >= 0 {
-			count--
-		}
-
-//line sort_slice_dps_go2.go2:95
-  count++
-		if count == maxRunCount {
-//line sort_slice_dps_go2.go2:96
-   instantiate୦୦sortInternal୦int(compare, a, left, right, true)
-//line sort_slice_dps_go2.go2:98
-   return
-		}
-	}
-
-//line sort_slice_dps_go2.go2:106
- if count == 0 {
-
-		return
-	} else if count == 1 && run[count] > right {
-
-//line sort_slice_dps_go2.go2:113
-  return
-	}
-	right++
-	if run[count] < right {
-
-//line sort_slice_dps_go2.go2:121
-  count++
-		run[count] = right
-	}
-
-//line sort_slice_dps_go2.go2:126
- var odd byte = 0
-	for n := 1; ; {
-		n <<= 1
-		if n < count {
-			odd ^= 1
-		} else {
-			break
-		}
-	}
-
-//line sort_slice_dps_go2.go2:137
- var b []int
-	var ao, bo int
-	var blen = right - left
-	if len(work) == 0 || workLen < blen || workBase+blen > len(work) {
-		work = make([]int, blen)
-		workBase = 0
-	}
-	if odd == 0 {
-		copy(work[workBase:], a[left:left+blen])
-
-		b = a
-		bo = 0
-		a = work
-		ao = workBase - left
-	} else {
-		b = work
-		ao = 0
-		bo = workBase - left
-	}
-
-//line sort_slice_dps_go2.go2:158
- for last := 0; count > 1; count = last {
-		last = 0
-		for k := 2; k <= count; k += 2 {
-			var hi = run[k]
-			var mi = run[k-1]
-
-			i := run[k-2]
-			p := i
-			q := mi
-			for ; i < hi; i++ {
-				if q >= hi || p < mi && compare(a[p+ao], a[q+ao]) <= 0 {
-
-					b[i+bo] = a[p+ao]
-					p++
-				} else {
-
-					b[i+bo] = a[q+ao]
-					q++
-				}
-			}
-			last++
-			run[last] = hi
-		}
-		if (count & 1) != 0 {
-			i := right
-			lo := run[count-1]
-			for ; i-1 >= lo; b[i+bo] = a[i+ao] {
-				i--
-			}
-			last++
-			run[last] = right
-		}
-		var t = a
-		a = b
-		b = t
-		var o = ao
-		ao = bo
-		bo = o
-	}
-}
-//line sort_slice_tim_go2.go2:177
-func instantiate୦୦timsort୦int(a []int, lo int, hi int, c func(i, j int,) int, work []int, workBase int, workLen int) {
-
-//line sort_slice_tim_go2.go2:180
- var nRemaining = hi - lo
-	if nRemaining < 2 {
-		return
-	}
-
-//line sort_slice_tim_go2.go2:186
- if nRemaining < MIN_MERGE {
-						var initRunLen = instantiate୦୦countRunAndMakeAscending୦int(a, lo, hi, c)
-//line sort_slice_tim_go2.go2:187
-  instantiate୦୦binarySort୦int(a, lo, hi, lo+initRunLen, c)
-//line sort_slice_tim_go2.go2:189
-  return
-	}
-
-//line sort_slice_tim_go2.go2:197
- var ts = instantiate୦୦newTimSort୦int(a, c, work, workBase, workLen)
-	var minRun = minRunLength(nRemaining)
-	for {
-
-						var runLen = instantiate୦୦countRunAndMakeAscending୦int(a, lo, hi, c)
-
-//line sort_slice_tim_go2.go2:204
-  if runLen < minRun {
-			force := 0
-			if nRemaining <= minRun {
-				force = nRemaining
-			} else {
-				force = minRun
-			}
-//line sort_slice_tim_go2.go2:210
-   instantiate୦୦binarySort୦int(a, lo, lo+force, lo+runLen, c)
-//line sort_slice_tim_go2.go2:212
-   runLen = force
-		}
-
-//line sort_slice_tim_go2.go2:216
-  ts.pushRun(lo, runLen)
-						ts.mergeCollapse()
-
-//line sort_slice_tim_go2.go2:220
-  lo += runLen
-		nRemaining -= runLen
-		if nRemaining != 0 {
-		} else {
-			break
-		}
-	}
-
-//line sort_slice_tim_go2.go2:230
- ts.mergeForceCollapse()
-
-}
 //line sort_slice_dps_go2.go2:35
 func instantiate୦୦dualPivotSort୦sort_slice_go2୮aPerson(compare func(o1, o2 Person,) int, a []Person, left int, right int, work []Person, workBase int, workLen int) {
 
@@ -749,429 +600,217 @@ func instantiate୦୦timsort୦sort_slice_go2୮aPerson(a []Person, lo int, hi 
  ts.mergeForceCollapse()
 
 }
-//line sort_slice_dps_go2.go2:207
-func instantiate୦୦sortInternal୦int(compare func(o1, o2 int,) int, a []int, left int, right int, leftmost bool) {
-					var length = right - left + 1
+//line sort_slice_dps_go2.go2:35
+func instantiate୦୦dualPivotSort୦int(compare func(o1, o2 int,) int, a []int, left int, right int, work []int, workBase int, workLen int) {
 
-//line sort_slice_dps_go2.go2:211
- if length < insertionSortThreshold {
-		if leftmost {
+	if right-left < quicksortThreshold {
+//line sort_slice_dps_go2.go2:37
+  instantiate୦୦sortInternal୦int(compare, a, left, right, true)
+//line sort_slice_dps_go2.go2:39
+  return
+	}
 
-//line sort_slice_dps_go2.go2:218
-   i := left
-			j := i
-			for i < right {
-				var ai = a[i+1]
-				for compare(ai, a[j]) < 0 {
-					a[j+1] = a[j]
-					j--
-					if j+1 == left {
-						break
-					}
-				}
-				a[j+1] = ai
+//line sort_slice_dps_go2.go2:46
+ var run = make([]int, maxRunCount+1)
+					var count = 0
+					run[0] = left
 
-				i++
-				j = i
-			}
-		} else {
+//line sort_slice_dps_go2.go2:51
+ for k := left; k < right; run[count] = k {
 
-//line sort_slice_dps_go2.go2:239
-   for {
-				if left >= right {
-					return
-				}
-
-				left++
-				if compare(a[left], a[left-1]) >= 0 {
-				} else {
-					break
-				}
-			}
-
-//line sort_slice_dps_go2.go2:259
-   k := left
-			for {
-				left++
-				if left <= right {
-
-				} else {
-					break
-				}
-
-				var a1 = a[k]
-				var a2 = a[left]
-
-				if compare(a1, a2) < 0 {
-					a2 = a1
-					a1 = a[left]
-				}
-
-				for {
-					k--
-					if compare(a1, a[k]) < 0 {
-					} else {
-						break
-					}
-					a[k+2] = a[k]
-				}
-				k++
-				a[k+1] = a1
-
-				for {
-					k--
-					if compare(a2, a[k]) < 0 {
-					} else {
-						break
-					}
-					a[k+1] = a[k]
-				}
-				a[k+1] = a2
-				left++
-				k = left
-			}
-			var last = a[right]
-
-			for {
-				right--
-				if compare(last, a[right]) < 0 {
-				} else {
-					break
-				}
-				a[right+1] = a[right]
-			}
-			a[right+1] = last
+		for k < right && compare(a[k], a[k+1]) == 0 {
+			k++
 		}
+		if k == right {
+			break
+		}
+		if compare(a[k], a[k+1]) < 0 {
+			for {
+				k++
+				if k <= right && compare(a[k-1], a[k]) <= 0 {
+				} else {
+					break
+				}
+			}
+
+		} else if compare(a[k], a[k+1]) > 0 {
+			for {
+				k++
+				if k <= right && compare(a[k-1], a[k]) >= 0 {
+				} else {
+					break
+				}
+			}
+
+			lo := run[count] - 1
+			for hi := k; lo+1 < hi-1; {
+				lo++
+				hi--
+				a[lo], a[hi] = a[hi], a[lo]
+			}
+		}
+
+//line sort_slice_dps_go2.go2:87
+  if run[count] > left && compare(a[run[count]], a[run[count]-1]) >= 0 {
+			count--
+		}
+
+//line sort_slice_dps_go2.go2:95
+  count++
+		if count == maxRunCount {
+//line sort_slice_dps_go2.go2:96
+   instantiate୦୦sortInternal୦int(compare, a, left, right, true)
+//line sort_slice_dps_go2.go2:98
+   return
+		}
+	}
+
+//line sort_slice_dps_go2.go2:106
+ if count == 0 {
+
+		return
+	} else if count == 1 && run[count] > right {
+
+//line sort_slice_dps_go2.go2:113
+  return
+	}
+	right++
+	if run[count] < right {
+
+//line sort_slice_dps_go2.go2:121
+  count++
+		run[count] = right
+	}
+
+//line sort_slice_dps_go2.go2:126
+ var odd byte = 0
+	for n := 1; ; {
+		n <<= 1
+		if n < count {
+			odd ^= 1
+		} else {
+			break
+		}
+	}
+
+//line sort_slice_dps_go2.go2:137
+ var b []int
+	var ao, bo int
+	var blen = right - left
+	if len(work) == 0 || workLen < blen || workBase+blen > len(work) {
+		work = make([]int, blen)
+		workBase = 0
+	}
+	if odd == 0 {
+		copy(work[workBase:], a[left:left+blen])
+
+		b = a
+		bo = 0
+		a = work
+		ao = workBase - left
+	} else {
+		b = work
+		ao = 0
+		bo = workBase - left
+	}
+
+//line sort_slice_dps_go2.go2:158
+ for last := 0; count > 1; count = last {
+		last = 0
+		for k := 2; k <= count; k += 2 {
+			var hi = run[k]
+			var mi = run[k-1]
+
+			i := run[k-2]
+			p := i
+			q := mi
+			for ; i < hi; i++ {
+				if q >= hi || p < mi && compare(a[p+ao], a[q+ao]) <= 0 {
+
+					b[i+bo] = a[p+ao]
+					p++
+				} else {
+
+					b[i+bo] = a[q+ao]
+					q++
+				}
+			}
+			last++
+			run[last] = hi
+		}
+		if (count & 1) != 0 {
+			i := right
+			lo := run[count-1]
+			for ; i-1 >= lo; b[i+bo] = a[i+ao] {
+				i--
+			}
+			last++
+			run[last] = right
+		}
+		var t = a
+		a = b
+		b = t
+		var o = ao
+		ao = bo
+		bo = o
+	}
+}
+//line sort_slice_tim_go2.go2:177
+func instantiate୦୦timsort୦int(a []int, lo int, hi int, c func(i, j int,) int, work []int, workBase int, workLen int) {
+
+//line sort_slice_tim_go2.go2:180
+ var nRemaining = hi - lo
+	if nRemaining < 2 {
 		return
 	}
 
-//line sort_slice_dps_go2.go2:315
- var seventh = (length >> 3) + (length >> 6) + 1
-
-//line sort_slice_dps_go2.go2:324
- var e3 = int(uint(left+right) >> 1)
-					var e2 = e3 - seventh
-					var e1 = e2 - seventh
-					var e4 = e3 + seventh
-					var e5 = e4 + seventh
-
-//line sort_slice_dps_go2.go2:331
- if compare(a[e2], a[e1]) < 0 {
-		a[e2], a[e1] = a[e1], a[e2]
+//line sort_slice_tim_go2.go2:186
+ if nRemaining < MIN_MERGE {
+						var initRunLen = instantiate୦୦countRunAndMakeAscending୦int(a, lo, hi, c)
+//line sort_slice_tim_go2.go2:187
+  instantiate୦୦binarySort୦int(a, lo, hi, lo+initRunLen, c)
+//line sort_slice_tim_go2.go2:189
+  return
 	}
 
-	if compare(a[e3], a[e2]) < 0 {
-		var t = a[e3]
-		a[e3], a[e2] = a[e2], a[e3]
-		if compare(t, a[e1]) < 0 {
-			a[e2] = a[e1]
-			a[e1] = t
-		}
-	}
-	if compare(a[e4], a[e3]) < 0 {
-		var t = a[e4]
-		a[e4], a[e3] = a[e3], a[e4]
-		if compare(t, a[e2]) < 0 {
-			a[e3] = a[e2]
-			a[e2] = t
-			if compare(t, a[e1]) < 0 {
-				a[e2] = a[e1]
-				a[e1] = t
+//line sort_slice_tim_go2.go2:197
+ var ts = instantiate୦୦newTimSort୦int(a, c, work, workBase, workLen)
+	var minRun = minRunLength(nRemaining)
+	for {
+
+						var runLen = instantiate୦୦countRunAndMakeAscending୦int(a, lo, hi, c)
+
+//line sort_slice_tim_go2.go2:204
+  if runLen < minRun {
+			force := 0
+			if nRemaining <= minRun {
+				force = nRemaining
+			} else {
+				force = minRun
 			}
+//line sort_slice_tim_go2.go2:210
+   instantiate୦୦binarySort୦int(a, lo, lo+force, lo+runLen, c)
+//line sort_slice_tim_go2.go2:212
+   runLen = force
 		}
-	}
-	if compare(a[e5], a[e4]) < 0 {
-		var t = a[e5]
-		a[e5], a[e4] = a[e4], a[e5]
-		if compare(t, a[e3]) < 0 {
-			a[e4] = a[e3]
-			a[e3] = t
-			if compare(t, a[e2]) < 0 {
-				a[e3] = a[e2]
-				a[e2] = t
-				if compare(t, a[e1]) < 0 {
-					a[e2] = a[e1]
-					a[e1] = t
-				}
-			}
+
+//line sort_slice_tim_go2.go2:216
+  ts.pushRun(lo, runLen)
+						ts.mergeCollapse()
+
+//line sort_slice_tim_go2.go2:220
+  lo += runLen
+		nRemaining -= runLen
+		if nRemaining != 0 {
+		} else {
+			break
 		}
 	}
 
-//line sort_slice_dps_go2.go2:373
- var less = left
-	var great = right
+//line sort_slice_tim_go2.go2:230
+ ts.mergeForceCollapse()
 
-	if compare(a[e1], a[e2]) != 0 && compare(a[e2], a[e3]) != 0 && compare(a[e3], a[e4]) != 0 && compare(a[e4], a[e5]) != 0 {
-
-//line sort_slice_dps_go2.go2:382
-  var pivot1 = a[e2]
-						var pivot2 = a[e4]
-
-//line sort_slice_dps_go2.go2:391
-  a[e2] = a[left]
-						a[e4] = a[right]
-
-//line sort_slice_dps_go2.go2:397
-  for {
-			less++
-			if compare(a[less], pivot1) < 0 {
-			} else {
-				break
-			}
-		}
-		for {
-			great--
-			if compare(a[great], pivot2) > 0 {
-			} else {
-				break
-			}
-		}
-
-//line sort_slice_dps_go2.go2:431
- Outer:
-		for k := less - 1; ; {
-			k++
-			if k <= great {
-			} else {
-				break
-			}
-			var ak = a[k]
-			if compare(ak, pivot1) < 0 {
-								a[k] = a[less]
-
-//line sort_slice_dps_go2.go2:445
-    a[less] = ak
-				less++
-			} else if compare(ak, pivot2) > 0 {
-				for compare(a[great], pivot2) > 0 {
-					great--
-					if great+1 == k {
-						break Outer
-					}
-				}
-				if compare(a[great], pivot1) < 0 {
-					a[k] = a[less]
-					a[less] = a[great]
-					less++
-				} else {
-					a[k] = a[great]
-				}
-
-//line sort_slice_dps_go2.go2:465
-    a[great] = ak
-				great--
-			}
-		}
-
-//line sort_slice_dps_go2.go2:471
-  a[left] = a[less-1]
-						a[less-1] = pivot1
-						a[right] = a[great+1]
-						a[great+1] = pivot2
-//line sort_slice_dps_go2.go2:474
-  instantiate୦୦sortInternal୦int(compare, a, left, less-2, leftmost)
-//line sort_slice_dps_go2.go2:477
-  instantiate୦୦sortInternal୦int(compare, a, great+2, right, false)
-
-//line sort_slice_dps_go2.go2:484
-  if less < e1 && e5 < great {
-
-//line sort_slice_dps_go2.go2:488
-   for compare(a[less], pivot1) == 0 {
-				less++
-			}
-
-			for compare(a[great], pivot2) == 0 {
-				great--
-			}
-
-//line sort_slice_dps_go2.go2:515
-  outer2:
-			for k := less - 1; ; {
-				k++
-				if k <= great {
-				} else {
-					break
-				}
-				var ak = a[k]
-				if compare(ak, pivot1) == 0 {
-					a[k] = a[less]
-					a[less] = ak
-					less++
-				} else if compare(ak, pivot2) == 0 {
-					for compare(a[great], pivot2) == 0 {
-						great--
-						if great+1 == k {
-							break outer2
-						}
-					}
-					if compare(a[great], pivot1) == 0 {
-										a[k] = a[less]
-
-//line sort_slice_dps_go2.go2:544
-      a[less] = pivot1
-						less++
-					} else {
-						a[k] = a[great]
-					}
-					a[great] = ak
-					great--
-				}
-			}
-		}
-//line sort_slice_dps_go2.go2:553
-  instantiate୦୦sortInternal୦int(compare, a, less, great, false)
-
-//line sort_slice_dps_go2.go2:558
- } else {
-
-//line sort_slice_dps_go2.go2:563
-  var pivot = a[e3]
-
-//line sort_slice_dps_go2.go2:585
-  for k := less; k <= great; k++ {
-			if compare(a[k], pivot) == 0 {
-				continue
-			}
-			var ak = a[k]
-			if compare(ak, pivot) < 0 {
-				a[k] = a[less]
-				a[less] = ak
-				less++
-			} else {
-				for compare(a[great], pivot) > 0 {
-					great--
-				}
-				if compare(a[great], pivot) < 0 {
-					a[k] = a[less]
-					a[less] = a[great]
-					less++
-				} else {
-
-//line sort_slice_dps_go2.go2:611
-     a[k] = pivot
-				}
-				a[great] = ak
-				great--
-			}
-		}
-//line sort_slice_dps_go2.go2:616
-  instantiate୦୦sortInternal୦int(compare, a, left, less-1, leftmost)
-//line sort_slice_dps_go2.go2:623
-  instantiate୦୦sortInternal୦int(compare, a, great+1, right, false)
-//line sort_slice_dps_go2.go2:625
- }
 }
-//line sort_slice_tim_go2.go2:330
-func instantiate୦୦countRunAndMakeAscending୦int(a []int, lo int, hi int, c func(i, j int,) int) int {
-
-	var runHi = lo + 1
-	if runHi == hi {
-		return 1
-	}
-
-//line sort_slice_tim_go2.go2:338
- runHi++
-	if c(a[runHi-1], a[lo]) < 0 {
-		for runHi < hi && c(a[runHi], a[runHi-1]) < 0 {
-			runHi++
-		}
-//line sort_slice_tim_go2.go2:342
-  instantiate୦୦reverseRange୦int(a, lo, runHi)
-//line sort_slice_tim_go2.go2:344
- } else {
-		for runHi < hi && c(a[runHi], a[runHi-1]) >= 0 {
-			runHi++
-		}
-	}
-
-	return runHi - lo
-}
-//line sort_slice_tim_go2.go2:252
-func instantiate୦୦binarySort୦int(a []int, lo int, hi int, start int, c func(i, j int,) int) {
-
-	if start == lo {
-		start++
-	}
-
-	for ; start < hi; start++ {
-						var pivot = a[start]
-
-//line sort_slice_tim_go2.go2:262
-  var left = lo
-						var right = start
-
-//line sort_slice_tim_go2.go2:270
-  for left < right {
-			var mid = int(uint(left+right) >> 1)
-			if c(pivot, a[mid]) < 0 {
-				right = mid
-			} else {
-				left = mid + 1
-			}
-		}
-
-//line sort_slice_tim_go2.go2:287
-  var n = start - left
-
-		switch {
-		case n <= 2:
-			if n == 2 {
-				a[left+2] = a[left+1]
-			}
-			if n != 0 {
-				a[left+1] = a[left]
-			}
-		default:
-			copy(a[left+1:], a[left:left+n])
-
-		}
-		a[left] = pivot
-	}
-}
-//line sort_slice_tim_go2.go2:101
-func instantiate୦୦newTimSort୦int(a []int, c func(i, j int,) int, work []int, workBase int, workLen int) *instantiate୦୦TimSort୦int {
-	this := &instantiate୦୦TimSort୦int{
-		a:         a,
-		c:         c,
-		minGallop: MIN_GALLOP,
-	}
-
-//line sort_slice_tim_go2.go2:109
- l := len(a)
-	tlen := 0
-	if l < 2*INITIAL_TMP_STORAGE_LENGTH {
-		tlen = l >> 1
-	} else {
-		tlen = INITIAL_TMP_STORAGE_LENGTH
-	}
-	if len(work) == 0 || workLen < tlen || workBase+tlen > len(work) {
-		this.tmp = make([]int, tlen)
-		this.tmpBase = 0
-		this.tmpLen = tlen
-	} else {
-		this.tmp = work
-		this.tmpBase = workBase
-		this.tmpLen = workLen
-	}
-
-//line sort_slice_tim_go2.go2:140
- stackLen := 0
-	if l < 120 {
-		stackLen = 5
-	} else if l < 1542 {
-		stackLen = 10
-	} else if l < 119151 {
-		stackLen = 24
-	} else {
-		stackLen = 49
-	}
-
-	this.runBase = make([]int, stackLen)
-	this.runLen = make([]int, stackLen)
-	return this
-}
-
 //line sort_slice_dps_go2.go2:207
 func instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare func(o1, o2 Person,) int, a []Person, left int, right int, leftmost bool) {
 					var length = right - left + 1
@@ -1595,439 +1234,429 @@ func instantiate୦୦newTimSort୦sort_slice_go2୮aPerson(a []Person, c func(i
 	return this
 }
 
-//line sort_slice_tim_go2.go2:360
-func instantiate୦୦reverseRange୦int(a []int, lo int, hi int) {
-	hi--
-	for lo < hi {
-		var t = a[lo]
-		a[lo] = a[hi]
-		lo++
-		a[hi] = t
-		hi--
-	}
-}
+//line sort_slice_dps_go2.go2:207
+func instantiate୦୦sortInternal୦int(compare func(o1, o2 int,) int, a []int, left int, right int, leftmost bool) {
+					var length = right - left + 1
 
-//line sort_slice_tim_go2.go2:369
-type instantiate୦୦TimSort୦int struct {
-//line sort_slice_tim_go2.go2:54
- a []int
+//line sort_slice_dps_go2.go2:211
+ if length < insertionSortThreshold {
+		if leftmost {
 
-//line sort_slice_tim_go2.go2:59
- c func(i, j int,) int
-
-//line sort_slice_tim_go2.go2:66
- minGallop int
-
-//line sort_slice_tim_go2.go2:73
- tmp []int
-					tmpBase int
-					tmpLen  int
-
-//line sort_slice_tim_go2.go2:87
- stackSize int
-	runBase []int
-	runLen  []int
-}
-
-//line sort_slice_tim_go2.go2:404
-func (this *instantiate୦୦TimSort୦int,) pushRun(runBase int, runLen int) {
-	this.runBase[this.stackSize] = runBase
-	this.runLen[this.stackSize] = runLen
-	this.stackSize++
-}
-
-//line sort_slice_tim_go2.go2:426
-func (this *instantiate୦୦TimSort୦int,) mergeCollapse() {
-	for this.stackSize > 1 {
-		var n = this.stackSize - 2
-		if n > 0 && this.runLen[n-1] <= this.runLen[n]+this.runLen[n+1] || n > 1 && this.runLen[n-2] <= this.runLen[n]+this.runLen[n-1] {
-			if this.runLen[n-1] < this.runLen[n+1] {
-				n--
-			}
-		} else if n < 0 || this.runLen[n] > this.runLen[n+1] {
-			break
-		}
-		this.mergeAt(n)
-	}
-}
-
-//line sort_slice_tim_go2.go2:444
-func (this *instantiate୦୦TimSort୦int,) mergeForceCollapse() {
-	for this.stackSize > 1 {
-		var n = this.stackSize - 2
-		if n > 0 && this.runLen[n-1] < this.runLen[n+1] {
-			n--
-		}
-		this.mergeAt(n)
-	}
-}
-
-//line sort_slice_tim_go2.go2:461
-func (this *instantiate୦୦TimSort୦int,) mergeAt(i int) {
-
-//line sort_slice_tim_go2.go2:466
- var base1 = this.runBase[i]
-					var len1 = this.runLen[i]
-					var base2 = this.runBase[i+1]
-					var len2 = this.runLen[i+1]
-
-//line sort_slice_tim_go2.go2:478
- this.runLen[i] = len1 + len2
-	if i == this.stackSize-3 {
-		this.runBase[i+1] = this.runBase[i+2]
-		this.runLen[i+1] = this.runLen[i+2]
-	}
-					this.stackSize--
-
-//line sort_slice_tim_go2.go2:489
- var k = instantiate୦୦gallopRight୦int(this.a[base2], this.a, base1, len1, 0, this.c)
-
-	base1 += k
-	len1 -= k
-	if len1 == 0 {
-		return
-	}
-
-//line sort_slice_tim_go2.go2:501
- len2 = instantiate୦୦gallopLeft୦int(this.a[base1+len1-1], this.a, base2, len2, len2-1, this.c)
-
-	if len2 == 0 {
-		return
-	}
-
-//line sort_slice_tim_go2.go2:508
- if len1 <= len2 {
-		this.mergeLo(base1, len1, base2, len2)
-	} else {
-		this.mergeHi(base1, len1, base2, len2)
-	}
-}
-
-//line sort_slice_tim_go2.go2:685
-func (this *instantiate୦୦TimSort୦int,) mergeLo(base1 int, len1 int, base2 int, len2 int) {
-
-//line sort_slice_tim_go2.go2:689
- var a = this.a
-					var tmp []int = this.ensureCapacity(len1)
-					var cursor1 = this.tmpBase
-					var cursor2 = base2
-					var dest = base1
-
-					copy(tmp[cursor1:], a[base1:base1+len1])
-
-//line sort_slice_tim_go2.go2:699
- a[dest] = a[cursor2]
-	dest++
-	cursor2++
-
-	len2--
-	if len2 == 0 {
-		copy(a[dest:], tmp[cursor1:cursor1+len1])
-
-		return
-	}
-	if len1 == 1 {
-		copy(a[dest:], a[cursor2:cursor2+len2])
-
-		a[dest+len2] = tmp[cursor1]
-		return
-	}
-
-	var c = this.c
-	var minGallop = this.minGallop
-outer:
-	for {
-						var count1 = 0
-						var count2 = 0
-
-//line sort_slice_tim_go2.go2:727
-  for {
-
-			if c(a[cursor2], tmp[cursor1]) < 0 {
-				a[dest] = a[cursor2]
-				dest++
-				cursor2++
-
-				count2++
-				count1 = 0
-				len2--
-				if len2 == 0 {
-					break outer
+//line sort_slice_dps_go2.go2:218
+   i := left
+			j := i
+			for i < right {
+				var ai = a[i+1]
+				for compare(ai, a[j]) < 0 {
+					a[j+1] = a[j]
+					j--
+					if j+1 == left {
+						break
+					}
 				}
-			} else {
-				a[dest] = tmp[cursor1]
-				dest++
-				cursor1++
+				a[j+1] = ai
 
-				count1++
-				count2 = 0
-				len1--
-				if len1 == 1 {
-					break outer
-				}
+				i++
+				j = i
 			}
-
-			if (count1 | count2) < minGallop {
-			} else {
-				break
-			}
-		}
-
-//line sort_slice_tim_go2.go2:764
-  for {
-
-			count1 = instantiate୦୦gallopRight୦int(a[cursor2], tmp, cursor1, len1, 0, c)
-			if count1 != 0 {
-				copy(a[dest:], tmp[cursor1:cursor1+count1])
-
-				dest += count1
-				cursor1 += count1
-				len1 -= count1
-				if len1 <= 1 {
-					break outer
-				}
-			}
-			a[dest] = a[cursor2]
-			dest++
-			cursor2++
-
-			len2--
-			if len2 == 0 {
-				break outer
-			}
-
-			count2 = instantiate୦୦gallopLeft୦int(tmp[cursor1], a, cursor2, len2, 0, c)
-			if count2 != 0 {
-				copy(a[dest:], a[cursor2:cursor2+count2])
-
-				dest += count2
-				cursor2 += count2
-				len2 -= count2
-				if len2 == 0 {
-					break outer
-				}
-			}
-			a[dest] = tmp[cursor1]
-			dest++
-			cursor1++
-
-			len1--
-			if len1 == 1 {
-				break outer
-			}
-			minGallop--
-
-			if count1 >= MIN_GALLOP || count2 >= MIN_GALLOP {
-			} else {
-				break
-			}
-		}
-		if minGallop < 0 {
-			minGallop = 0
-		}
-		minGallop += 2
-	}
-	if minGallop < 1 {
-		this.minGallop = 1
-	} else {
-		this.minGallop = minGallop
-	}
-
-	if len1 == 1 {
-
-		copy(a[dest:], a[cursor2:cursor2+len2])
-
-		a[dest+len2] = tmp[cursor1]
-	} else if len1 == 0 {
-		panic("Comparison method violates its general contract!")
-	} else {
-
-//line sort_slice_tim_go2.go2:833
-  copy(a[dest:], tmp[cursor1:cursor1+len1])
-
-	}
-}
-
-//line sort_slice_tim_go2.go2:849
-func (this *instantiate୦୦TimSort୦int,) mergeHi(base1, len1, base2, len2 int) {
-
-//line sort_slice_tim_go2.go2:853
- var a = this.a
-					var tmp []int = this.ensureCapacity(len2)
-					var tmpBase = this.tmpBase
-
-					copy(tmp[tmpBase:], a[base2:base2+len2])
-
-//line sort_slice_tim_go2.go2:860
- var cursor1 = base1 + len1 - 1
-					var cursor2 = tmpBase + len2 - 1
-					var dest = base2 + len2 - 1
-
-//line sort_slice_tim_go2.go2:865
- a[dest] = a[cursor1]
-	dest--
-	cursor1--
-
-	len1--
-	if len1 == 0 {
-		copy(a[dest-(len2-1):], tmp[tmpBase:tmpBase+len2])
-
-		return
-	}
-	if len2 == 1 {
-		dest -= len1
-		cursor1 -= len1
-		copy(a[dest+1:], a[cursor1+1:cursor1+1+len1])
-
-		a[dest] = tmp[cursor2]
-		return
-	}
-
-	var c = this.c
-	var minGallop = this.minGallop
-outer:
-	for true {
-						var count1 = 0
-						var count2 = 0
-
-//line sort_slice_tim_go2.go2:895
-  for {
-
-			if c(tmp[cursor2], a[cursor1]) < 0 {
-				a[dest] = a[cursor1]
-				dest--
-				cursor1--
-
-				count1++
-				count2 = 0
-
-				len1--
-				if len1 == 0 {
-					break outer
-				}
-			} else {
-				a[dest] = tmp[cursor2]
-				dest--
-				cursor2--
-
-				count2++
-				count1 = 0
-
-				len2--
-				if len2 == 1 {
-					break outer
-				}
-			}
-			if (count1 | count2) < minGallop {
-			} else {
-				break
-			}
-		}
-
-//line sort_slice_tim_go2.go2:933
-  for {
-
-			count1 = len1 - instantiate୦୦gallopRight୦int(tmp[cursor2], a, base1, len1, len1-1, c)
-			if count1 != 0 {
-				dest -= count1
-				cursor1 -= count1
-				len1 -= count1
-				copy(a[dest+1:], a[cursor1+1:cursor1+1+count1])
-
-				if len1 == 0 {
-					break outer
-				}
-			}
-			a[dest] = tmp[cursor2]
-			dest--
-			cursor2--
-
-			len2--
-			if len2 == 1 {
-				break outer
-			}
-
-			count2 = len2 - instantiate୦୦gallopLeft୦int(a[cursor1], tmp, tmpBase, len2, len2-1, c)
-			if count2 != 0 {
-				dest -= count2
-				cursor2 -= count2
-				len2 -= count2
-				copy(a[dest+1:], tmp[cursor2+1:cursor2+1+count2])
-
-				if len2 <= 1 {
-					break outer
-				}
-			}
-			a[dest] = a[cursor1]
-			dest--
-			cursor1--
-
-			len1--
-			if len1 == 0 {
-				break outer
-			}
-			minGallop--
-			if count1 >= MIN_GALLOP || count2 >= MIN_GALLOP {
-			} else {
-				break
-			}
-		}
-		if minGallop < 0 {
-			minGallop = 0
-		}
-		minGallop += 2
-	}
-
-//line sort_slice_tim_go2.go2:987
- if minGallop < 1 {
-		this.minGallop = 1
-	} else {
-		this.minGallop = minGallop
-	}
-
-	if len2 == 1 {
-
-		dest -= len1
-		cursor1 -= len1
-		copy(a[dest+1:], a[cursor1+1:cursor1+1+len1])
-
-		a[dest] = tmp[cursor2]
-	} else if len2 == 0 {
-		panic(
-			"Comparison method violates its general contract!")
-	} else {
-
-//line sort_slice_tim_go2.go2:1006
-  copy(a[dest-(len2-1):], tmp[tmpBase:tmpBase+len2])
-
-	}
-}
-
-//line sort_slice_tim_go2.go2:1019
-func (this *instantiate୦୦TimSort୦int,) ensureCapacity(minCapacity int) []int {
-	if this.tmpLen < minCapacity {
-
-//line sort_slice_tim_go2.go2:1023
-  newSize := minCapacity
-		newSize |= newSize >> 1
-		newSize |= newSize >> 2
-		newSize |= newSize >> 4
-		newSize |= newSize >> 8
-		newSize |= newSize >> 16
-		newSize++
-
-		if newSize < 0 {
-			newSize = minCapacity
 		} else {
-			newSize = min(newSize, len(this.a)>>1)
+
+//line sort_slice_dps_go2.go2:239
+   for {
+				if left >= right {
+					return
+				}
+
+				left++
+				if compare(a[left], a[left-1]) >= 0 {
+				} else {
+					break
+				}
+			}
+
+//line sort_slice_dps_go2.go2:259
+   k := left
+			for {
+				left++
+				if left <= right {
+
+				} else {
+					break
+				}
+
+				var a1 = a[k]
+				var a2 = a[left]
+
+				if compare(a1, a2) < 0 {
+					a2 = a1
+					a1 = a[left]
+				}
+
+				for {
+					k--
+					if compare(a1, a[k]) < 0 {
+					} else {
+						break
+					}
+					a[k+2] = a[k]
+				}
+				k++
+				a[k+1] = a1
+
+				for {
+					k--
+					if compare(a2, a[k]) < 0 {
+					} else {
+						break
+					}
+					a[k+1] = a[k]
+				}
+				a[k+1] = a2
+				left++
+				k = left
+			}
+			var last = a[right]
+
+			for {
+				right--
+				if compare(last, a[right]) < 0 {
+				} else {
+					break
+				}
+				a[right+1] = a[right]
+			}
+			a[right+1] = last
+		}
+		return
+	}
+
+//line sort_slice_dps_go2.go2:315
+ var seventh = (length >> 3) + (length >> 6) + 1
+
+//line sort_slice_dps_go2.go2:324
+ var e3 = int(uint(left+right) >> 1)
+					var e2 = e3 - seventh
+					var e1 = e2 - seventh
+					var e4 = e3 + seventh
+					var e5 = e4 + seventh
+
+//line sort_slice_dps_go2.go2:331
+ if compare(a[e2], a[e1]) < 0 {
+		a[e2], a[e1] = a[e1], a[e2]
+	}
+
+	if compare(a[e3], a[e2]) < 0 {
+		var t = a[e3]
+		a[e3], a[e2] = a[e2], a[e3]
+		if compare(t, a[e1]) < 0 {
+			a[e2] = a[e1]
+			a[e1] = t
+		}
+	}
+	if compare(a[e4], a[e3]) < 0 {
+		var t = a[e4]
+		a[e4], a[e3] = a[e3], a[e4]
+		if compare(t, a[e2]) < 0 {
+			a[e3] = a[e2]
+			a[e2] = t
+			if compare(t, a[e1]) < 0 {
+				a[e2] = a[e1]
+				a[e1] = t
+			}
+		}
+	}
+	if compare(a[e5], a[e4]) < 0 {
+		var t = a[e5]
+		a[e5], a[e4] = a[e4], a[e5]
+		if compare(t, a[e3]) < 0 {
+			a[e4] = a[e3]
+			a[e3] = t
+			if compare(t, a[e2]) < 0 {
+				a[e3] = a[e2]
+				a[e2] = t
+				if compare(t, a[e1]) < 0 {
+					a[e2] = a[e1]
+					a[e1] = t
+				}
+			}
+		}
+	}
+
+//line sort_slice_dps_go2.go2:373
+ var less = left
+	var great = right
+
+	if compare(a[e1], a[e2]) != 0 && compare(a[e2], a[e3]) != 0 && compare(a[e3], a[e4]) != 0 && compare(a[e4], a[e5]) != 0 {
+
+//line sort_slice_dps_go2.go2:382
+  var pivot1 = a[e2]
+						var pivot2 = a[e4]
+
+//line sort_slice_dps_go2.go2:391
+  a[e2] = a[left]
+						a[e4] = a[right]
+
+//line sort_slice_dps_go2.go2:397
+  for {
+			less++
+			if compare(a[less], pivot1) < 0 {
+			} else {
+				break
+			}
+		}
+		for {
+			great--
+			if compare(a[great], pivot2) > 0 {
+			} else {
+				break
+			}
 		}
 
-		this.tmp = make([]int, newSize)
-		this.tmpLen = newSize
-		this.tmpBase = 0
-	}
-	return this.tmp
+//line sort_slice_dps_go2.go2:431
+ Outer:
+		for k := less - 1; ; {
+			k++
+			if k <= great {
+			} else {
+				break
+			}
+			var ak = a[k]
+			if compare(ak, pivot1) < 0 {
+								a[k] = a[less]
+
+//line sort_slice_dps_go2.go2:445
+    a[less] = ak
+				less++
+			} else if compare(ak, pivot2) > 0 {
+				for compare(a[great], pivot2) > 0 {
+					great--
+					if great+1 == k {
+						break Outer
+					}
+				}
+				if compare(a[great], pivot1) < 0 {
+					a[k] = a[less]
+					a[less] = a[great]
+					less++
+				} else {
+					a[k] = a[great]
+				}
+
+//line sort_slice_dps_go2.go2:465
+    a[great] = ak
+				great--
+			}
+		}
+
+//line sort_slice_dps_go2.go2:471
+  a[left] = a[less-1]
+						a[less-1] = pivot1
+						a[right] = a[great+1]
+						a[great+1] = pivot2
+//line sort_slice_dps_go2.go2:474
+  instantiate୦୦sortInternal୦int(compare, a, left, less-2, leftmost)
+//line sort_slice_dps_go2.go2:477
+  instantiate୦୦sortInternal୦int(compare, a, great+2, right, false)
+
+//line sort_slice_dps_go2.go2:484
+  if less < e1 && e5 < great {
+
+//line sort_slice_dps_go2.go2:488
+   for compare(a[less], pivot1) == 0 {
+				less++
+			}
+
+			for compare(a[great], pivot2) == 0 {
+				great--
+			}
+
+//line sort_slice_dps_go2.go2:515
+  outer2:
+			for k := less - 1; ; {
+				k++
+				if k <= great {
+				} else {
+					break
+				}
+				var ak = a[k]
+				if compare(ak, pivot1) == 0 {
+					a[k] = a[less]
+					a[less] = ak
+					less++
+				} else if compare(ak, pivot2) == 0 {
+					for compare(a[great], pivot2) == 0 {
+						great--
+						if great+1 == k {
+							break outer2
+						}
+					}
+					if compare(a[great], pivot1) == 0 {
+										a[k] = a[less]
+
+//line sort_slice_dps_go2.go2:544
+      a[less] = pivot1
+						less++
+					} else {
+						a[k] = a[great]
+					}
+					a[great] = ak
+					great--
+				}
+			}
+		}
+//line sort_slice_dps_go2.go2:553
+  instantiate୦୦sortInternal୦int(compare, a, less, great, false)
+
+//line sort_slice_dps_go2.go2:558
+ } else {
+
+//line sort_slice_dps_go2.go2:563
+  var pivot = a[e3]
+
+//line sort_slice_dps_go2.go2:585
+  for k := less; k <= great; k++ {
+			if compare(a[k], pivot) == 0 {
+				continue
+			}
+			var ak = a[k]
+			if compare(ak, pivot) < 0 {
+				a[k] = a[less]
+				a[less] = ak
+				less++
+			} else {
+				for compare(a[great], pivot) > 0 {
+					great--
+				}
+				if compare(a[great], pivot) < 0 {
+					a[k] = a[less]
+					a[less] = a[great]
+					less++
+				} else {
+
+//line sort_slice_dps_go2.go2:611
+     a[k] = pivot
+				}
+				a[great] = ak
+				great--
+			}
+		}
+//line sort_slice_dps_go2.go2:616
+  instantiate୦୦sortInternal୦int(compare, a, left, less-1, leftmost)
+//line sort_slice_dps_go2.go2:623
+  instantiate୦୦sortInternal୦int(compare, a, great+1, right, false)
+//line sort_slice_dps_go2.go2:625
+ }
 }
+//line sort_slice_tim_go2.go2:330
+func instantiate୦୦countRunAndMakeAscending୦int(a []int, lo int, hi int, c func(i, j int,) int) int {
+
+	var runHi = lo + 1
+	if runHi == hi {
+		return 1
+	}
+
+//line sort_slice_tim_go2.go2:338
+ runHi++
+	if c(a[runHi-1], a[lo]) < 0 {
+		for runHi < hi && c(a[runHi], a[runHi-1]) < 0 {
+			runHi++
+		}
+//line sort_slice_tim_go2.go2:342
+  instantiate୦୦reverseRange୦int(a, lo, runHi)
+//line sort_slice_tim_go2.go2:344
+ } else {
+		for runHi < hi && c(a[runHi], a[runHi-1]) >= 0 {
+			runHi++
+		}
+	}
+
+	return runHi - lo
+}
+//line sort_slice_tim_go2.go2:252
+func instantiate୦୦binarySort୦int(a []int, lo int, hi int, start int, c func(i, j int,) int) {
+
+	if start == lo {
+		start++
+	}
+
+	for ; start < hi; start++ {
+						var pivot = a[start]
+
+//line sort_slice_tim_go2.go2:262
+  var left = lo
+						var right = start
+
+//line sort_slice_tim_go2.go2:270
+  for left < right {
+			var mid = int(uint(left+right) >> 1)
+			if c(pivot, a[mid]) < 0 {
+				right = mid
+			} else {
+				left = mid + 1
+			}
+		}
+
+//line sort_slice_tim_go2.go2:287
+  var n = start - left
+
+		switch {
+		case n <= 2:
+			if n == 2 {
+				a[left+2] = a[left+1]
+			}
+			if n != 0 {
+				a[left+1] = a[left]
+			}
+		default:
+			copy(a[left+1:], a[left:left+n])
+
+		}
+		a[left] = pivot
+	}
+}
+//line sort_slice_tim_go2.go2:101
+func instantiate୦୦newTimSort୦int(a []int, c func(i, j int,) int, work []int, workBase int, workLen int) *instantiate୦୦TimSort୦int {
+	this := &instantiate୦୦TimSort୦int{
+		a:         a,
+		c:         c,
+		minGallop: MIN_GALLOP,
+	}
+
+//line sort_slice_tim_go2.go2:109
+ l := len(a)
+	tlen := 0
+	if l < 2*INITIAL_TMP_STORAGE_LENGTH {
+		tlen = l >> 1
+	} else {
+		tlen = INITIAL_TMP_STORAGE_LENGTH
+	}
+	if len(work) == 0 || workLen < tlen || workBase+tlen > len(work) {
+		this.tmp = make([]int, tlen)
+		this.tmpBase = 0
+		this.tmpLen = tlen
+	} else {
+		this.tmp = work
+		this.tmpBase = workBase
+		this.tmpLen = workLen
+	}
+
+//line sort_slice_tim_go2.go2:140
+ stackLen := 0
+	if l < 120 {
+		stackLen = 5
+	} else if l < 1542 {
+		stackLen = 10
+	} else if l < 119151 {
+		stackLen = 24
+	} else {
+		stackLen = 49
+	}
+
+	this.runBase = make([]int, stackLen)
+	this.runLen = make([]int, stackLen)
+	return this
+}
+
 //line sort_slice_tim_go2.go2:360
 func instantiate୦୦reverseRange୦sort_slice_go2୮aPerson(a []Person, lo int, hi int) {
 	hi--
@@ -2461,120 +2090,439 @@ func (this *instantiate୦୦TimSort୦sort_slice_go2୮aPerson,) ensureCapacity
 	}
 	return this.tmp
 }
-//line sort_slice_tim_go2.go2:607
-func instantiate୦୦gallopRight୦int(key int, a []int, base int, len int, hint int, c func(i, j int,) int) int {
-
-//line sort_slice_tim_go2.go2:610
- var ofs = 1
-	var lastOfs = 0
-	if c(key, a[base+hint]) < 0 {
-
-		var maxOfs = hint + 1
-		for ofs < maxOfs && c(key, a[base+hint-ofs]) < 0 {
-			lastOfs = ofs
-			ofs = (ofs << 1) + 1
-			if ofs <= 0 {
-				ofs = maxOfs
-			}
-		}
-		if ofs > maxOfs {
-			ofs = maxOfs
-		}
-
-//line sort_slice_tim_go2.go2:627
-  var tmp = lastOfs
-		lastOfs = hint - ofs
-		ofs = hint - tmp
-	} else {
-
-		var maxOfs = len - hint
-		for ofs < maxOfs && c(key, a[base+hint+ofs]) >= 0 {
-			lastOfs = ofs
-			ofs = (ofs << 1) + 1
-			if ofs <= 0 {
-				ofs = maxOfs
-			}
-		}
-		if ofs > maxOfs {
-			ofs = maxOfs
-		}
-
-//line sort_slice_tim_go2.go2:645
-  lastOfs += hint
-		ofs += hint
+//line sort_slice_tim_go2.go2:360
+func instantiate୦୦reverseRange୦int(a []int, lo int, hi int) {
+	hi--
+	for lo < hi {
+		var t = a[lo]
+		a[lo] = a[hi]
+		lo++
+		a[hi] = t
+		hi--
 	}
-
-//line sort_slice_tim_go2.go2:655
- lastOfs++
-	for lastOfs < ofs {
-		var m = lastOfs + ((ofs - lastOfs) >> 1)
-
-		if c(key, a[base+m]) < 0 {
-			ofs = m
-		} else {
-			lastOfs = m + 1
-		}
-	}
-
-	return ofs
-}
-//line sort_slice_tim_go2.go2:533
-func instantiate୦୦gallopLeft୦int(key int, a []int, base int, len int, hint int, c func(i, j int,) int) int {
-
-	var lastOfs = 0
-	var ofs = 1
-	if c(key, a[base+hint]) > 0 {
-
-		var maxOfs = len - hint
-		for ofs < maxOfs && c(key, a[base+hint+ofs]) > 0 {
-			lastOfs = ofs
-			ofs = (ofs << 1) + 1
-			if ofs <= 0 {
-				ofs = maxOfs
-			}
-		}
-		if ofs > maxOfs {
-			ofs = maxOfs
-		}
-
-//line sort_slice_tim_go2.go2:552
-  lastOfs += hint
-		ofs += hint
-	} else {
-
-		var maxOfs = hint + 1
-		for ofs < maxOfs && c(key, a[base+hint-ofs]) <= 0 {
-			lastOfs = ofs
-			ofs = (ofs << 1) + 1
-			if ofs <= 0 {
-				ofs = maxOfs
-			}
-		}
-		if ofs > maxOfs {
-			ofs = maxOfs
-		}
-
-//line sort_slice_tim_go2.go2:569
-  var tmp = lastOfs
-		lastOfs = hint - ofs
-		ofs = hint - tmp
-	}
-
-//line sort_slice_tim_go2.go2:580
- lastOfs++
-	for lastOfs < ofs {
-		var m = lastOfs + ((ofs - lastOfs) >> 1)
-
-		if c(key, a[base+m]) > 0 {
-			lastOfs = m + 1
-		} else {
-			ofs = m
-		}
-	}
-
-	return ofs
 }
 
+//line sort_slice_tim_go2.go2:369
+type instantiate୦୦TimSort୦int struct {
+//line sort_slice_tim_go2.go2:54
+ a []int
+
+//line sort_slice_tim_go2.go2:59
+ c func(i, j int,) int
+
+//line sort_slice_tim_go2.go2:66
+ minGallop int
+
+//line sort_slice_tim_go2.go2:73
+ tmp []int
+					tmpBase int
+					tmpLen  int
+
+//line sort_slice_tim_go2.go2:87
+ stackSize int
+	runBase []int
+	runLen  []int
+}
+
+//line sort_slice_tim_go2.go2:404
+func (this *instantiate୦୦TimSort୦int,) pushRun(runBase int, runLen int) {
+	this.runBase[this.stackSize] = runBase
+	this.runLen[this.stackSize] = runLen
+	this.stackSize++
+}
+
+//line sort_slice_tim_go2.go2:426
+func (this *instantiate୦୦TimSort୦int,) mergeCollapse() {
+	for this.stackSize > 1 {
+		var n = this.stackSize - 2
+		if n > 0 && this.runLen[n-1] <= this.runLen[n]+this.runLen[n+1] || n > 1 && this.runLen[n-2] <= this.runLen[n]+this.runLen[n-1] {
+			if this.runLen[n-1] < this.runLen[n+1] {
+				n--
+			}
+		} else if n < 0 || this.runLen[n] > this.runLen[n+1] {
+			break
+		}
+		this.mergeAt(n)
+	}
+}
+
+//line sort_slice_tim_go2.go2:444
+func (this *instantiate୦୦TimSort୦int,) mergeForceCollapse() {
+	for this.stackSize > 1 {
+		var n = this.stackSize - 2
+		if n > 0 && this.runLen[n-1] < this.runLen[n+1] {
+			n--
+		}
+		this.mergeAt(n)
+	}
+}
+
+//line sort_slice_tim_go2.go2:461
+func (this *instantiate୦୦TimSort୦int,) mergeAt(i int) {
+
+//line sort_slice_tim_go2.go2:466
+ var base1 = this.runBase[i]
+					var len1 = this.runLen[i]
+					var base2 = this.runBase[i+1]
+					var len2 = this.runLen[i+1]
+
+//line sort_slice_tim_go2.go2:478
+ this.runLen[i] = len1 + len2
+	if i == this.stackSize-3 {
+		this.runBase[i+1] = this.runBase[i+2]
+		this.runLen[i+1] = this.runLen[i+2]
+	}
+					this.stackSize--
+
+//line sort_slice_tim_go2.go2:489
+ var k = instantiate୦୦gallopRight୦int(this.a[base2], this.a, base1, len1, 0, this.c)
+
+	base1 += k
+	len1 -= k
+	if len1 == 0 {
+		return
+	}
+
+//line sort_slice_tim_go2.go2:501
+ len2 = instantiate୦୦gallopLeft୦int(this.a[base1+len1-1], this.a, base2, len2, len2-1, this.c)
+
+	if len2 == 0 {
+		return
+	}
+
+//line sort_slice_tim_go2.go2:508
+ if len1 <= len2 {
+		this.mergeLo(base1, len1, base2, len2)
+	} else {
+		this.mergeHi(base1, len1, base2, len2)
+	}
+}
+
+//line sort_slice_tim_go2.go2:685
+func (this *instantiate୦୦TimSort୦int,) mergeLo(base1 int, len1 int, base2 int, len2 int) {
+
+//line sort_slice_tim_go2.go2:689
+ var a = this.a
+					var tmp []int = this.ensureCapacity(len1)
+					var cursor1 = this.tmpBase
+					var cursor2 = base2
+					var dest = base1
+
+					copy(tmp[cursor1:], a[base1:base1+len1])
+
+//line sort_slice_tim_go2.go2:699
+ a[dest] = a[cursor2]
+	dest++
+	cursor2++
+
+	len2--
+	if len2 == 0 {
+		copy(a[dest:], tmp[cursor1:cursor1+len1])
+
+		return
+	}
+	if len1 == 1 {
+		copy(a[dest:], a[cursor2:cursor2+len2])
+
+		a[dest+len2] = tmp[cursor1]
+		return
+	}
+
+	var c = this.c
+	var minGallop = this.minGallop
+outer:
+	for {
+						var count1 = 0
+						var count2 = 0
+
+//line sort_slice_tim_go2.go2:727
+  for {
+
+			if c(a[cursor2], tmp[cursor1]) < 0 {
+				a[dest] = a[cursor2]
+				dest++
+				cursor2++
+
+				count2++
+				count1 = 0
+				len2--
+				if len2 == 0 {
+					break outer
+				}
+			} else {
+				a[dest] = tmp[cursor1]
+				dest++
+				cursor1++
+
+				count1++
+				count2 = 0
+				len1--
+				if len1 == 1 {
+					break outer
+				}
+			}
+
+			if (count1 | count2) < minGallop {
+			} else {
+				break
+			}
+		}
+
+//line sort_slice_tim_go2.go2:764
+  for {
+
+			count1 = instantiate୦୦gallopRight୦int(a[cursor2], tmp, cursor1, len1, 0, c)
+			if count1 != 0 {
+				copy(a[dest:], tmp[cursor1:cursor1+count1])
+
+				dest += count1
+				cursor1 += count1
+				len1 -= count1
+				if len1 <= 1 {
+					break outer
+				}
+			}
+			a[dest] = a[cursor2]
+			dest++
+			cursor2++
+
+			len2--
+			if len2 == 0 {
+				break outer
+			}
+
+			count2 = instantiate୦୦gallopLeft୦int(tmp[cursor1], a, cursor2, len2, 0, c)
+			if count2 != 0 {
+				copy(a[dest:], a[cursor2:cursor2+count2])
+
+				dest += count2
+				cursor2 += count2
+				len2 -= count2
+				if len2 == 0 {
+					break outer
+				}
+			}
+			a[dest] = tmp[cursor1]
+			dest++
+			cursor1++
+
+			len1--
+			if len1 == 1 {
+				break outer
+			}
+			minGallop--
+
+			if count1 >= MIN_GALLOP || count2 >= MIN_GALLOP {
+			} else {
+				break
+			}
+		}
+		if minGallop < 0 {
+			minGallop = 0
+		}
+		minGallop += 2
+	}
+	if minGallop < 1 {
+		this.minGallop = 1
+	} else {
+		this.minGallop = minGallop
+	}
+
+	if len1 == 1 {
+
+		copy(a[dest:], a[cursor2:cursor2+len2])
+
+		a[dest+len2] = tmp[cursor1]
+	} else if len1 == 0 {
+		panic("Comparison method violates its general contract!")
+	} else {
+
+//line sort_slice_tim_go2.go2:833
+  copy(a[dest:], tmp[cursor1:cursor1+len1])
+
+	}
+}
+
+//line sort_slice_tim_go2.go2:849
+func (this *instantiate୦୦TimSort୦int,) mergeHi(base1, len1, base2, len2 int) {
+
+//line sort_slice_tim_go2.go2:853
+ var a = this.a
+					var tmp []int = this.ensureCapacity(len2)
+					var tmpBase = this.tmpBase
+
+					copy(tmp[tmpBase:], a[base2:base2+len2])
+
+//line sort_slice_tim_go2.go2:860
+ var cursor1 = base1 + len1 - 1
+					var cursor2 = tmpBase + len2 - 1
+					var dest = base2 + len2 - 1
+
+//line sort_slice_tim_go2.go2:865
+ a[dest] = a[cursor1]
+	dest--
+	cursor1--
+
+	len1--
+	if len1 == 0 {
+		copy(a[dest-(len2-1):], tmp[tmpBase:tmpBase+len2])
+
+		return
+	}
+	if len2 == 1 {
+		dest -= len1
+		cursor1 -= len1
+		copy(a[dest+1:], a[cursor1+1:cursor1+1+len1])
+
+		a[dest] = tmp[cursor2]
+		return
+	}
+
+	var c = this.c
+	var minGallop = this.minGallop
+outer:
+	for true {
+						var count1 = 0
+						var count2 = 0
+
+//line sort_slice_tim_go2.go2:895
+  for {
+
+			if c(tmp[cursor2], a[cursor1]) < 0 {
+				a[dest] = a[cursor1]
+				dest--
+				cursor1--
+
+				count1++
+				count2 = 0
+
+				len1--
+				if len1 == 0 {
+					break outer
+				}
+			} else {
+				a[dest] = tmp[cursor2]
+				dest--
+				cursor2--
+
+				count2++
+				count1 = 0
+
+				len2--
+				if len2 == 1 {
+					break outer
+				}
+			}
+			if (count1 | count2) < minGallop {
+			} else {
+				break
+			}
+		}
+
+//line sort_slice_tim_go2.go2:933
+  for {
+
+			count1 = len1 - instantiate୦୦gallopRight୦int(tmp[cursor2], a, base1, len1, len1-1, c)
+			if count1 != 0 {
+				dest -= count1
+				cursor1 -= count1
+				len1 -= count1
+				copy(a[dest+1:], a[cursor1+1:cursor1+1+count1])
+
+				if len1 == 0 {
+					break outer
+				}
+			}
+			a[dest] = tmp[cursor2]
+			dest--
+			cursor2--
+
+			len2--
+			if len2 == 1 {
+				break outer
+			}
+
+			count2 = len2 - instantiate୦୦gallopLeft୦int(a[cursor1], tmp, tmpBase, len2, len2-1, c)
+			if count2 != 0 {
+				dest -= count2
+				cursor2 -= count2
+				len2 -= count2
+				copy(a[dest+1:], tmp[cursor2+1:cursor2+1+count2])
+
+				if len2 <= 1 {
+					break outer
+				}
+			}
+			a[dest] = a[cursor1]
+			dest--
+			cursor1--
+
+			len1--
+			if len1 == 0 {
+				break outer
+			}
+			minGallop--
+			if count1 >= MIN_GALLOP || count2 >= MIN_GALLOP {
+			} else {
+				break
+			}
+		}
+		if minGallop < 0 {
+			minGallop = 0
+		}
+		minGallop += 2
+	}
+
+//line sort_slice_tim_go2.go2:987
+ if minGallop < 1 {
+		this.minGallop = 1
+	} else {
+		this.minGallop = minGallop
+	}
+
+	if len2 == 1 {
+
+		dest -= len1
+		cursor1 -= len1
+		copy(a[dest+1:], a[cursor1+1:cursor1+1+len1])
+
+		a[dest] = tmp[cursor2]
+	} else if len2 == 0 {
+		panic(
+			"Comparison method violates its general contract!")
+	} else {
+
+//line sort_slice_tim_go2.go2:1006
+  copy(a[dest-(len2-1):], tmp[tmpBase:tmpBase+len2])
+
+	}
+}
+
+//line sort_slice_tim_go2.go2:1019
+func (this *instantiate୦୦TimSort୦int,) ensureCapacity(minCapacity int) []int {
+	if this.tmpLen < minCapacity {
+
+//line sort_slice_tim_go2.go2:1023
+  newSize := minCapacity
+		newSize |= newSize >> 1
+		newSize |= newSize >> 2
+		newSize |= newSize >> 4
+		newSize |= newSize >> 8
+		newSize |= newSize >> 16
+		newSize++
+
+		if newSize < 0 {
+			newSize = minCapacity
+		} else {
+			newSize = min(newSize, len(this.a)>>1)
+		}
+
+		this.tmp = make([]int, newSize)
+		this.tmpLen = newSize
+		this.tmpBase = 0
+	}
+	return this.tmp
+}
 //line sort_slice_tim_go2.go2:607
 func instantiate୦୦gallopRight୦sort_slice_go2୮aPerson(key Person, a []Person, base int, len int, hint int, c func(i, j Person,) int) int {
 
@@ -2634,6 +2582,120 @@ func instantiate୦୦gallopRight୦sort_slice_go2୮aPerson(key Person, a []Per
 }
 //line sort_slice_tim_go2.go2:533
 func instantiate୦୦gallopLeft୦sort_slice_go2୮aPerson(key Person, a []Person, base int, len int, hint int, c func(i, j Person,) int) int {
+
+	var lastOfs = 0
+	var ofs = 1
+	if c(key, a[base+hint]) > 0 {
+
+		var maxOfs = len - hint
+		for ofs < maxOfs && c(key, a[base+hint+ofs]) > 0 {
+			lastOfs = ofs
+			ofs = (ofs << 1) + 1
+			if ofs <= 0 {
+				ofs = maxOfs
+			}
+		}
+		if ofs > maxOfs {
+			ofs = maxOfs
+		}
+
+//line sort_slice_tim_go2.go2:552
+  lastOfs += hint
+		ofs += hint
+	} else {
+
+		var maxOfs = hint + 1
+		for ofs < maxOfs && c(key, a[base+hint-ofs]) <= 0 {
+			lastOfs = ofs
+			ofs = (ofs << 1) + 1
+			if ofs <= 0 {
+				ofs = maxOfs
+			}
+		}
+		if ofs > maxOfs {
+			ofs = maxOfs
+		}
+
+//line sort_slice_tim_go2.go2:569
+  var tmp = lastOfs
+		lastOfs = hint - ofs
+		ofs = hint - tmp
+	}
+
+//line sort_slice_tim_go2.go2:580
+ lastOfs++
+	for lastOfs < ofs {
+		var m = lastOfs + ((ofs - lastOfs) >> 1)
+
+		if c(key, a[base+m]) > 0 {
+			lastOfs = m + 1
+		} else {
+			ofs = m
+		}
+	}
+
+	return ofs
+}
+
+//line sort_slice_tim_go2.go2:607
+func instantiate୦୦gallopRight୦int(key int, a []int, base int, len int, hint int, c func(i, j int,) int) int {
+
+//line sort_slice_tim_go2.go2:610
+ var ofs = 1
+	var lastOfs = 0
+	if c(key, a[base+hint]) < 0 {
+
+		var maxOfs = hint + 1
+		for ofs < maxOfs && c(key, a[base+hint-ofs]) < 0 {
+			lastOfs = ofs
+			ofs = (ofs << 1) + 1
+			if ofs <= 0 {
+				ofs = maxOfs
+			}
+		}
+		if ofs > maxOfs {
+			ofs = maxOfs
+		}
+
+//line sort_slice_tim_go2.go2:627
+  var tmp = lastOfs
+		lastOfs = hint - ofs
+		ofs = hint - tmp
+	} else {
+
+		var maxOfs = len - hint
+		for ofs < maxOfs && c(key, a[base+hint+ofs]) >= 0 {
+			lastOfs = ofs
+			ofs = (ofs << 1) + 1
+			if ofs <= 0 {
+				ofs = maxOfs
+			}
+		}
+		if ofs > maxOfs {
+			ofs = maxOfs
+		}
+
+//line sort_slice_tim_go2.go2:645
+  lastOfs += hint
+		ofs += hint
+	}
+
+//line sort_slice_tim_go2.go2:655
+ lastOfs++
+	for lastOfs < ofs {
+		var m = lastOfs + ((ofs - lastOfs) >> 1)
+
+		if c(key, a[base+m]) < 0 {
+			ofs = m
+		} else {
+			lastOfs = m + 1
+		}
+	}
+
+	return ofs
+}
+//line sort_slice_tim_go2.go2:533
+func instantiate୦୦gallopLeft୦int(key int, a []int, base int, len int, hint int, c func(i, j int,) int) int {
 
 	var lastOfs = 0
 	var ofs = 1

@@ -4,10 +4,35 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math/rand"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
 )
+
+// Ints
+
+func PrepareRandomInts(src []int) {
+	rand.Seed(time.Now().Unix())
+	for i := range src {
+		src[i] = rand.Int()
+	}
+}
+
+func PrepareXorInts(src []int) {
+	for i := range src {
+		src[i] = i ^ 0x2cc
+	}
+}
+
+func CopyInts(src []int) []int {
+	dup := make([]int, len(src))
+	copy(dup, src)
+
+	return dup
+}
+
+// struct Person
 
 type Person struct {
 	Age  int
@@ -16,6 +41,13 @@ type Person struct {
 
 func (p Person) String() string {
 	return fmt.Sprintf("Person(%d, %s)", p.Age, p.Name)
+}
+
+func CopyPersonSlice(src []Person) []Person {
+	dup := make([]Person, len(src))
+	copy(dup, src)
+
+	return dup
 }
 
 func PrepareRandomAges(a []Person) {
@@ -70,6 +102,40 @@ func PrepareShuffledSeq(a []Person) {
 		a[i], a[j] = a[j], a[i]
 	}
 }
+
+// sort.Interface
+
+type ByAgeInterface []Person
+
+func (p ByAgeInterface) Len() int {
+	return len(p)
+}
+
+func (p ByAgeInterface) Less(i, j int) bool {
+	return p[i].Age < p[j].Age
+}
+
+func (p ByAgeInterface) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
+
+var _ sort.Interface = (*ByAgeInterface)(nil)
+
+type ByNameInterface []Person
+
+func (p ByNameInterface) Len() int {
+	return len(p)
+}
+
+func (p ByNameInterface) Less(i, j int) bool {
+	return p[i].Name < p[j].Name
+}
+
+func (p ByNameInterface) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
+
+var _ sort.Interface = (*ByNameInterface)(nil)
 
 func DumpData(a []Person) {
 	ages := make([]string, len(a))

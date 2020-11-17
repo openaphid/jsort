@@ -122,6 +122,54 @@ func (p ByNameInterface) Swap(i, j int) {
 
 var _ sort.Interface = (*ByNameInterface)(nil)
 
+var byAgeFunc = func(i, j Person) int {
+    return i.Age - j.Age
+}
+func TestByAgeDps(t *testing.T) {
+	for i := 1; i <= 1024*10; i++ {
+		persons := make([]Person, i)
+		PrepareRandomAges(persons)
+
+		DualPivotSort(persons, byAgeFunc)
+
+		sorted := IsSorted(persons, byAgeFunc)
+
+		if !sorted {
+			t.Fatalf("should be sorted: %d", i)
+		}
+	}
+}
+
+func TestByAgeTimsort(t *testing.T) {
+	for i := 1; i <= 1024*10; i++ {
+		persons := make([]Person, i)
+		PrepareRandomAges(persons)
+
+		Timsort(persons, byAgeFunc)
+
+		sorted := IsSorted(persons, byAgeFunc)
+
+		if !sorted {
+			t.Fatalf("should be sorted: %d", i)
+		}
+	}
+}
+
+func TestShuffledSeqTimsort(t *testing.T) {
+	for i := 1; i <= 1024*10; i++ {
+		persons := make([]Person, i)
+		PrepareShuffledSeq(persons)
+
+		Timsort(persons, byAgeFunc)
+
+		for j := range persons {
+			if persons[j].Age != j {
+				t.Fatalf("Age(%d) should be %d for test #%d", persons[j].Age, j, i)
+			}
+		}
+	}
+}
+
 func BenchmarkIntsGo2(t *testing.B) {
 	dataCases := []struct {
 		name        string

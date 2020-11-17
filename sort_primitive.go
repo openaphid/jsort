@@ -232,9 +232,7 @@ func sortInternal(a []primitive, left int, right int, leftmost bool) {
 			 * optimized for server VM, is used in case of
 			 * the leftmost part.
 			 */
-			i := left
-			j := i
-			for i < right {
+			for i, j := left, left; i < right; {
 				var ai = a[i+1]
 				for ai < a[j] {
 					a[j+1] = a[j]

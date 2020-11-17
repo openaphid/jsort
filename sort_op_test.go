@@ -87,7 +87,7 @@ func TestOperationStats(t *testing.T) {
 			c.prepareFunc(data)
 
 			{
-				dup := copyPersonSlice(data)
+				dup := testdata.CopyPersonSlice(data)
 
 				cnt := 0
 				sort_slice_dps_ts.Sort(dup, func(o1, o2 interface{}) int {
