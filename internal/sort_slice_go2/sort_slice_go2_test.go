@@ -51,7 +51,7 @@ func (p Person) String() string {
 	return fmt.Sprintf("Person(%d, %s)", p.Age, p.Name)
 }
 
-func PrepareRandomAges(a []Person) {
+func prepareRandomAges(a []Person) {
 	rand.Seed(time.Now().Unix())
 	for i, _ := range a {
 		a[i] = Person{
@@ -61,7 +61,7 @@ func PrepareRandomAges(a []Person) {
 	}
 }
 
-func PrepareRandomNames(a []Person) {
+func prepareRandomNames(a []Person) {
 	rand.Seed(time.Now().Unix())
 	for i, _ := range a {
 		a[i] = Person{
@@ -71,7 +71,7 @@ func PrepareRandomNames(a []Person) {
 	}
 }
 
-func PrepareXorAges(a []Person) {
+func prepareXorAges(a []Person) {
 	for i, _ := range a {
 		a[i] = Person{
 			Age:  i ^ 0x2cc,
@@ -80,7 +80,7 @@ func PrepareXorAges(a []Person) {
 	}
 }
 
-func PrepareXorNames(a []Person) {
+func prepareXorNames(a []Person) {
 	for i, _ := range a {
 		a[i] = Person{
 			Age:  i,
@@ -89,7 +89,7 @@ func PrepareXorNames(a []Person) {
 	}
 }
 
-func PrepareShuffledSeq(a []Person) {
+func prepareShuffledSeq(a []Person) {
 	rand.Seed(time.Now().Unix())
 	for i, _ := range a {
 		a[i] = Person{
@@ -104,7 +104,7 @@ func PrepareShuffledSeq(a []Person) {
 	}
 }
 
-func GenBenchmarkSizes(init, multiplier, length int) []int {
+func genBenchmarkSizes(init, multiplier, length int) []int {
 	var sizes = []int{}
 
 	s := init
@@ -117,7 +117,7 @@ func GenBenchmarkSizes(init, multiplier, length int) []int {
 	return sizes
 }
 
-var benchmarkSizes = GenBenchmarkSizes(256, 16, 3)
+var benchmarkSizes = genBenchmarkSizes(256, 16, 3)
 
 type ByNameInterface []Person
 
@@ -140,15 +140,17 @@ var byAgeFunc = func(i, j Person) int {
 }
 
 //line sort_slice_go2_test.go2:128
-func TestByAgeDps(t *testing.T) {
+func TestRandomInts(t *testing.T) {
 	for i := 1; i <= 1024*10; i++ {
-						persons := make([]Person, i)
-						PrepareRandomAges(persons)
+						data := make([]int, i)
+						prepareRandomInts(data)
 //line sort_slice_go2_test.go2:131
-  instantiate୦୦DualPivotSort୦sort_slice_go2୮aPerson(persons, byAgeFunc)
+  instantiate୦୦DualPivotSort୦int(data)
 
 //line sort_slice_go2_test.go2:135
-  sorted := instantiate୦୦IsSorted୦sort_slice_go2୮aPerson(persons, byAgeFunc)
+  sorted := instantiate୦୦IsSorted୦int(data, func(i, j int) int {
+			return i - j
+		})
 
 		if !sorted {
 			t.Fatalf("should be sorted: %d", i)
@@ -159,11 +161,11 @@ func TestByAgeDps(t *testing.T) {
 func TestByAgeTimsort(t *testing.T) {
 	for i := 1; i <= 1024*10; i++ {
 						persons := make([]Person, i)
-						PrepareRandomAges(persons)
-//line sort_slice_go2_test.go2:146
+						prepareRandomAges(persons)
+//line sort_slice_go2_test.go2:148
   instantiate୦୦Timsort୦sort_slice_go2୮aPerson(persons, byAgeFunc)
 
-//line sort_slice_go2_test.go2:150
+//line sort_slice_go2_test.go2:152
   sorted := instantiate୦୦IsSorted୦sort_slice_go2୮aPerson(persons, byAgeFunc)
 
 		if !sorted {
@@ -175,11 +177,11 @@ func TestByAgeTimsort(t *testing.T) {
 func TestShuffledSeqTimsort(t *testing.T) {
 	for i := 1; i <= 1024*10; i++ {
 						persons := make([]Person, i)
-						PrepareShuffledSeq(persons)
-//line sort_slice_go2_test.go2:161
+						prepareShuffledSeq(persons)
+//line sort_slice_go2_test.go2:163
   instantiate୦୦Timsort୦sort_slice_go2୮aPerson(persons, byAgeFunc)
 
-//line sort_slice_go2_test.go2:165
+//line sort_slice_go2_test.go2:167
   for j := range persons {
 			if persons[j].Age != j {
 				t.Fatalf("Age(%d) should be %d for test #%d", persons[j].Age, j, i)
@@ -210,12 +212,10 @@ func BenchmarkIntsGo2(t *testing.B) {
 									dup := copyInts(data)
 
 									t.StartTimer()
-//line sort_slice_go2_test.go2:194
-     instantiate୦୦DualPivotSort୦int(dup, func(o1, o2 int) int {
 //line sort_slice_go2_test.go2:196
-      return o1 - o2
-					})
-				}
+     instantiate୦୦DualPivotSort୦int(dup)
+//line sort_slice_go2_test.go2:198
+    }
 			})
 
 			t.Run(fmt.Sprintf("TimSort-Go2-%s-%d", name, size), func(t *testing.B) {
@@ -269,8 +269,8 @@ func BenchmarkStructSliceByNameGo2(t *testing.B) {
 		name        string
 		prepareFunc func([]Person)
 	}{
-		{"Random", PrepareRandomNames},
-		{"Xor", PrepareXorNames},
+		{"Random", prepareRandomNames},
+		{"Xor", prepareXorNames},
 	}
 
 	for _, size := range benchmarkSizes {
@@ -280,29 +280,15 @@ func BenchmarkStructSliceByNameGo2(t *testing.B) {
 			c.prepareFunc(data)
 			name := c.name
 
-			t.Run(fmt.Sprintf("Unstable-Dps-Go2-%s-%d", name, size), func(t *testing.B) {
-				for i := 0; i < t.N; i++ {
-									t.StopTimer()
-									dup := copyPersonSlice(data)
-
-									t.StartTimer()
-//line sort_slice_go2_test.go2:266
-     instantiate୦୦DualPivotSort୦sort_slice_go2୮aPerson(dup, func(o1, o2 Person) int {
-//line sort_slice_go2_test.go2:268
-      return strings.Compare(o1.Name, o2.Name)
-					})
-				}
-			})
-
 			t.Run(fmt.Sprintf("Stable-TimSort-Go2-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {
 									t.StopTimer()
 									dup := copyPersonSlice(data)
 
 									t.StartTimer()
-//line sort_slice_go2_test.go2:278
+//line sort_slice_go2_test.go2:266
      instantiate୦୦Timsort୦sort_slice_go2୮aPerson(dup, func(o1, o2 Person) int {
-//line sort_slice_go2_test.go2:280
+//line sort_slice_go2_test.go2:268
       return strings.Compare(o1.Name, o2.Name)
 					})
 				}
@@ -354,14 +340,14 @@ func BenchmarkStructSliceByNameGo2(t *testing.B) {
 		}
 	}
 }
-//line sort_slice_dps_go2.go2:20
-func instantiate୦୦DualPivotSort୦sort_slice_go2୮aPerson(a []Person, compare func(o1, o2 Person,) int) {
-//line sort_slice_dps_go2.go2:20
- instantiate୦୦dualPivotSort୦sort_slice_go2୮aPerson(compare, a, 0, len(a)-1, nil, 0, 0)
-//line sort_slice_dps_go2.go2:22
+//line sort_slice_dps_go2.go2:27
+func instantiate୦୦DualPivotSort୦int(a []int,) {
+//line sort_slice_dps_go2.go2:27
+ instantiate୦୦dualPivotSort୦int(a, 0, len(a)-1, nil, 0, 0)
+//line sort_slice_dps_go2.go2:29
 }
 //line sort_slice_tim_go2.go2:7
-func instantiate୦୦IsSorted୦sort_slice_go2୮aPerson(a []Person, compare func(i, j Person,) int) bool {
+func instantiate୦୦IsSorted୦int(a []int, compare func(i, j int,) int) bool {
 	for i := len(a) - 1; i > 0; i-- {
 		if compare(a[i], a[i-1]) < 0 {
 			return false
@@ -376,11 +362,13 @@ func instantiate୦୦Timsort୦sort_slice_go2୮aPerson(a []Person, compare fun
 //line sort_slice_tim_go2.go2:5
 }
 
-//line sort_slice_dps_go2.go2:20
-func instantiate୦୦DualPivotSort୦int(a []int, compare func(o1, o2 int,) int) {
-//line sort_slice_dps_go2.go2:20
- instantiate୦୦dualPivotSort୦int(compare, a, 0, len(a)-1, nil, 0, 0)
-//line sort_slice_dps_go2.go2:22
+func instantiate୦୦IsSorted୦sort_slice_go2୮aPerson(a []Person, compare func(i, j Person,) int) bool {
+	for i := len(a) - 1; i > 0; i-- {
+		if compare(a[i], a[i-1]) < 0 {
+			return false
+		}
+	}
+	return true
 }
 //line sort_slice_tim_go2.go2:3
 func instantiate୦୦Timsort୦int(a []int, compare func(i, j int,) int) {
@@ -389,43 +377,43 @@ func instantiate୦୦Timsort୦int(a []int, compare func(i, j int,) int) {
 //line sort_slice_tim_go2.go2:5
 }
 
-//line sort_slice_dps_go2.go2:35
-func instantiate୦୦dualPivotSort୦sort_slice_go2୮aPerson(compare func(o1, o2 Person,) int, a []Person, left int, right int, work []Person, workBase int, workLen int) {
+//line sort_slice_dps_go2.go2:42
+func instantiate୦୦dualPivotSort୦int(a []int, left int, right int, work []int, workBase int, workLen int) {
 
 	if right-left < quicksortThreshold {
-//line sort_slice_dps_go2.go2:37
-  instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare, a, left, right, true)
-//line sort_slice_dps_go2.go2:39
+//line sort_slice_dps_go2.go2:44
+  instantiate୦୦sortInternal୦int(a, left, right, true)
+//line sort_slice_dps_go2.go2:46
   return
 	}
 
-//line sort_slice_dps_go2.go2:46
+//line sort_slice_dps_go2.go2:53
  var run = make([]int, maxRunCount+1)
 					var count = 0
 					run[0] = left
 
-//line sort_slice_dps_go2.go2:51
+//line sort_slice_dps_go2.go2:58
  for k := left; k < right; run[count] = k {
 
-		for k < right && compare(a[k], a[k+1]) == 0 {
+		for k < right && a[k] == a[k+1] {
 			k++
 		}
 		if k == right {
 			break
 		}
-		if compare(a[k], a[k+1]) < 0 {
+		if a[k] < a[k+1] {
 			for {
 				k++
-				if k <= right && compare(a[k-1], a[k]) <= 0 {
+				if k <= right && a[k-1] <= a[k] {
 				} else {
 					break
 				}
 			}
 
-		} else if compare(a[k], a[k+1]) > 0 {
+		} else if a[k] > a[k+1] {
 			for {
 				k++
-				if k <= right && compare(a[k-1], a[k]) >= 0 {
+				if k <= right && a[k-1] >= a[k] {
 				} else {
 					break
 				}
@@ -439,39 +427,39 @@ func instantiate୦୦dualPivotSort୦sort_slice_go2୮aPerson(compare func(o1, 
 			}
 		}
 
-//line sort_slice_dps_go2.go2:87
-  if run[count] > left && compare(a[run[count]], a[run[count]-1]) >= 0 {
+//line sort_slice_dps_go2.go2:94
+  if run[count] > left && a[run[count]] >= a[run[count]-1] {
 			count--
 		}
 
-//line sort_slice_dps_go2.go2:95
+//line sort_slice_dps_go2.go2:102
   count++
 		if count == maxRunCount {
-//line sort_slice_dps_go2.go2:96
-   instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare, a, left, right, true)
-//line sort_slice_dps_go2.go2:98
+//line sort_slice_dps_go2.go2:103
+   instantiate୦୦sortInternal୦int(a, left, right, true)
+//line sort_slice_dps_go2.go2:105
    return
 		}
 	}
 
-//line sort_slice_dps_go2.go2:106
+//line sort_slice_dps_go2.go2:113
  if count == 0 {
 
 		return
 	} else if count == 1 && run[count] > right {
 
-//line sort_slice_dps_go2.go2:113
+//line sort_slice_dps_go2.go2:120
   return
 	}
 	right++
 	if run[count] < right {
 
-//line sort_slice_dps_go2.go2:121
+//line sort_slice_dps_go2.go2:128
   count++
 		run[count] = right
 	}
 
-//line sort_slice_dps_go2.go2:126
+//line sort_slice_dps_go2.go2:133
  var odd byte = 0
 	for n := 1; ; {
 		n <<= 1
@@ -482,12 +470,12 @@ func instantiate୦୦dualPivotSort୦sort_slice_go2୮aPerson(compare func(o1, 
 		}
 	}
 
-//line sort_slice_dps_go2.go2:137
- var b []Person
+//line sort_slice_dps_go2.go2:144
+ var b []int
 	var ao, bo int
 	var blen = right - left
 	if len(work) == 0 || workLen < blen || workBase+blen > len(work) {
-		work = make([]Person, blen)
+		work = make([]int, blen)
 		workBase = 0
 	}
 	if odd == 0 {
@@ -503,7 +491,7 @@ func instantiate୦୦dualPivotSort୦sort_slice_go2୮aPerson(compare func(o1, 
 		bo = workBase - left
 	}
 
-//line sort_slice_dps_go2.go2:158
+//line sort_slice_dps_go2.go2:165
  for last := 0; count > 1; count = last {
 		last = 0
 		for k := 2; k <= count; k += 2 {
@@ -514,7 +502,7 @@ func instantiate୦୦dualPivotSort୦sort_slice_go2୮aPerson(compare func(o1, 
 			p := i
 			q := mi
 			for ; i < hi; i++ {
-				if q >= hi || p < mi && compare(a[p+ao], a[q+ao]) <= 0 {
+				if q >= hi || p < mi && a[p+ao] <= a[q+ao] {
 
 					b[i+bo] = a[p+ao]
 					p++
@@ -600,161 +588,6 @@ func instantiate୦୦timsort୦sort_slice_go2୮aPerson(a []Person, lo int, hi 
  ts.mergeForceCollapse()
 
 }
-//line sort_slice_dps_go2.go2:35
-func instantiate୦୦dualPivotSort୦int(compare func(o1, o2 int,) int, a []int, left int, right int, work []int, workBase int, workLen int) {
-
-	if right-left < quicksortThreshold {
-//line sort_slice_dps_go2.go2:37
-  instantiate୦୦sortInternal୦int(compare, a, left, right, true)
-//line sort_slice_dps_go2.go2:39
-  return
-	}
-
-//line sort_slice_dps_go2.go2:46
- var run = make([]int, maxRunCount+1)
-					var count = 0
-					run[0] = left
-
-//line sort_slice_dps_go2.go2:51
- for k := left; k < right; run[count] = k {
-
-		for k < right && compare(a[k], a[k+1]) == 0 {
-			k++
-		}
-		if k == right {
-			break
-		}
-		if compare(a[k], a[k+1]) < 0 {
-			for {
-				k++
-				if k <= right && compare(a[k-1], a[k]) <= 0 {
-				} else {
-					break
-				}
-			}
-
-		} else if compare(a[k], a[k+1]) > 0 {
-			for {
-				k++
-				if k <= right && compare(a[k-1], a[k]) >= 0 {
-				} else {
-					break
-				}
-			}
-
-			lo := run[count] - 1
-			for hi := k; lo+1 < hi-1; {
-				lo++
-				hi--
-				a[lo], a[hi] = a[hi], a[lo]
-			}
-		}
-
-//line sort_slice_dps_go2.go2:87
-  if run[count] > left && compare(a[run[count]], a[run[count]-1]) >= 0 {
-			count--
-		}
-
-//line sort_slice_dps_go2.go2:95
-  count++
-		if count == maxRunCount {
-//line sort_slice_dps_go2.go2:96
-   instantiate୦୦sortInternal୦int(compare, a, left, right, true)
-//line sort_slice_dps_go2.go2:98
-   return
-		}
-	}
-
-//line sort_slice_dps_go2.go2:106
- if count == 0 {
-
-		return
-	} else if count == 1 && run[count] > right {
-
-//line sort_slice_dps_go2.go2:113
-  return
-	}
-	right++
-	if run[count] < right {
-
-//line sort_slice_dps_go2.go2:121
-  count++
-		run[count] = right
-	}
-
-//line sort_slice_dps_go2.go2:126
- var odd byte = 0
-	for n := 1; ; {
-		n <<= 1
-		if n < count {
-			odd ^= 1
-		} else {
-			break
-		}
-	}
-
-//line sort_slice_dps_go2.go2:137
- var b []int
-	var ao, bo int
-	var blen = right - left
-	if len(work) == 0 || workLen < blen || workBase+blen > len(work) {
-		work = make([]int, blen)
-		workBase = 0
-	}
-	if odd == 0 {
-		copy(work[workBase:], a[left:left+blen])
-
-		b = a
-		bo = 0
-		a = work
-		ao = workBase - left
-	} else {
-		b = work
-		ao = 0
-		bo = workBase - left
-	}
-
-//line sort_slice_dps_go2.go2:158
- for last := 0; count > 1; count = last {
-		last = 0
-		for k := 2; k <= count; k += 2 {
-			var hi = run[k]
-			var mi = run[k-1]
-
-			i := run[k-2]
-			p := i
-			q := mi
-			for ; i < hi; i++ {
-				if q >= hi || p < mi && compare(a[p+ao], a[q+ao]) <= 0 {
-
-					b[i+bo] = a[p+ao]
-					p++
-				} else {
-
-					b[i+bo] = a[q+ao]
-					q++
-				}
-			}
-			last++
-			run[last] = hi
-		}
-		if (count & 1) != 0 {
-			i := right
-			lo := run[count-1]
-			for ; i-1 >= lo; b[i+bo] = a[i+ao] {
-				i--
-			}
-			last++
-			run[last] = right
-		}
-		var t = a
-		a = b
-		b = t
-		var o = ao
-		ao = bo
-		bo = o
-	}
-}
 //line sort_slice_tim_go2.go2:177
 func instantiate୦୦timsort୦int(a []int, lo int, hi int, c func(i, j int,) int, work []int, workBase int, workLen int) {
 
@@ -811,20 +644,20 @@ func instantiate୦୦timsort୦int(a []int, lo int, hi int, c func(i, j int,) i
  ts.mergeForceCollapse()
 
 }
-//line sort_slice_dps_go2.go2:207
-func instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare func(o1, o2 Person,) int, a []Person, left int, right int, leftmost bool) {
+//line sort_slice_dps_go2.go2:214
+func instantiate୦୦sortInternal୦int(a []int, left int, right int, leftmost bool) {
 					var length = right - left + 1
 
-//line sort_slice_dps_go2.go2:211
+//line sort_slice_dps_go2.go2:218
  if length < insertionSortThreshold {
 		if leftmost {
 
-//line sort_slice_dps_go2.go2:218
+//line sort_slice_dps_go2.go2:225
    i := left
 			j := i
 			for i < right {
 				var ai = a[i+1]
-				for compare(ai, a[j]) < 0 {
+				for ai < a[j] {
 					a[j+1] = a[j]
 					j--
 					if j+1 == left {
@@ -838,20 +671,20 @@ func instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare func(o1, o
 			}
 		} else {
 
-//line sort_slice_dps_go2.go2:239
+//line sort_slice_dps_go2.go2:246
    for {
 				if left >= right {
 					return
 				}
 
 				left++
-				if compare(a[left], a[left-1]) >= 0 {
+				if a[left] >= a[left-1] {
 				} else {
 					break
 				}
 			}
 
-//line sort_slice_dps_go2.go2:259
+//line sort_slice_dps_go2.go2:266
    k := left
 			for {
 				left++
@@ -864,14 +697,14 @@ func instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare func(o1, o
 				var a1 = a[k]
 				var a2 = a[left]
 
-				if compare(a1, a2) < 0 {
+				if a1 < a2 {
 					a2 = a1
 					a1 = a[left]
 				}
 
 				for {
 					k--
-					if compare(a1, a[k]) < 0 {
+					if a1 < a[k] {
 					} else {
 						break
 					}
@@ -882,7 +715,7 @@ func instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare func(o1, o
 
 				for {
 					k--
-					if compare(a2, a[k]) < 0 {
+					if a2 < a[k] {
 					} else {
 						break
 					}
@@ -896,7 +729,7 @@ func instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare func(o1, o
 
 			for {
 				right--
-				if compare(last, a[right]) < 0 {
+				if last < a[right] {
 				} else {
 					break
 				}
@@ -907,51 +740,51 @@ func instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare func(o1, o
 		return
 	}
 
-//line sort_slice_dps_go2.go2:315
+//line sort_slice_dps_go2.go2:322
  var seventh = (length >> 3) + (length >> 6) + 1
 
-//line sort_slice_dps_go2.go2:324
+//line sort_slice_dps_go2.go2:331
  var e3 = int(uint(left+right) >> 1)
 					var e2 = e3 - seventh
 					var e1 = e2 - seventh
 					var e4 = e3 + seventh
 					var e5 = e4 + seventh
 
-//line sort_slice_dps_go2.go2:331
- if compare(a[e2], a[e1]) < 0 {
+//line sort_slice_dps_go2.go2:338
+ if a[e2] < a[e1] {
 		a[e2], a[e1] = a[e1], a[e2]
 	}
 
-	if compare(a[e3], a[e2]) < 0 {
+	if a[e3] < a[e2] {
 		var t = a[e3]
 		a[e3], a[e2] = a[e2], a[e3]
-		if compare(t, a[e1]) < 0 {
+		if t < a[e1] {
 			a[e2] = a[e1]
 			a[e1] = t
 		}
 	}
-	if compare(a[e4], a[e3]) < 0 {
+	if a[e4] < a[e3] {
 		var t = a[e4]
 		a[e4], a[e3] = a[e3], a[e4]
-		if compare(t, a[e2]) < 0 {
+		if t < a[e2] {
 			a[e3] = a[e2]
 			a[e2] = t
-			if compare(t, a[e1]) < 0 {
+			if t < a[e1] {
 				a[e2] = a[e1]
 				a[e1] = t
 			}
 		}
 	}
-	if compare(a[e5], a[e4]) < 0 {
+	if a[e5] < a[e4] {
 		var t = a[e5]
 		a[e5], a[e4] = a[e4], a[e5]
-		if compare(t, a[e3]) < 0 {
+		if t < a[e3] {
 			a[e4] = a[e3]
 			a[e3] = t
-			if compare(t, a[e2]) < 0 {
+			if t < a[e2] {
 				a[e3] = a[e2]
 				a[e2] = t
-				if compare(t, a[e1]) < 0 {
+				if t < a[e1] {
 					a[e2] = a[e1]
 					a[e1] = t
 				}
@@ -959,37 +792,37 @@ func instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare func(o1, o
 		}
 	}
 
-//line sort_slice_dps_go2.go2:373
+//line sort_slice_dps_go2.go2:380
  var less = left
 	var great = right
 
-	if compare(a[e1], a[e2]) != 0 && compare(a[e2], a[e3]) != 0 && compare(a[e3], a[e4]) != 0 && compare(a[e4], a[e5]) != 0 {
+	if a[e1] != a[e2] && a[e2] != a[e3] && a[e3] != a[e4] && a[e4] != a[e5] {
 
-//line sort_slice_dps_go2.go2:382
+//line sort_slice_dps_go2.go2:389
   var pivot1 = a[e2]
 						var pivot2 = a[e4]
 
-//line sort_slice_dps_go2.go2:391
+//line sort_slice_dps_go2.go2:398
   a[e2] = a[left]
 						a[e4] = a[right]
 
-//line sort_slice_dps_go2.go2:397
+//line sort_slice_dps_go2.go2:404
   for {
 			less++
-			if compare(a[less], pivot1) < 0 {
+			if a[less] < pivot1 {
 			} else {
 				break
 			}
 		}
 		for {
 			great--
-			if compare(a[great], pivot2) > 0 {
+			if a[great] > pivot2 {
 			} else {
 				break
 			}
 		}
 
-//line sort_slice_dps_go2.go2:431
+//line sort_slice_dps_go2.go2:438
  Outer:
 		for k := less - 1; ; {
 			k++
@@ -998,20 +831,20 @@ func instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare func(o1, o
 				break
 			}
 			var ak = a[k]
-			if compare(ak, pivot1) < 0 {
+			if ak < pivot1 {
 								a[k] = a[less]
 
-//line sort_slice_dps_go2.go2:445
+//line sort_slice_dps_go2.go2:452
     a[less] = ak
 				less++
-			} else if compare(ak, pivot2) > 0 {
-				for compare(a[great], pivot2) > 0 {
+			} else if ak > pivot2 {
+				for a[great] > pivot2 {
 					great--
 					if great+1 == k {
 						break Outer
 					}
 				}
-				if compare(a[great], pivot1) < 0 {
+				if a[great] < pivot1 {
 					a[k] = a[less]
 					a[less] = a[great]
 					less++
@@ -1019,35 +852,35 @@ func instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare func(o1, o
 					a[k] = a[great]
 				}
 
-//line sort_slice_dps_go2.go2:465
+//line sort_slice_dps_go2.go2:472
     a[great] = ak
 				great--
 			}
 		}
 
-//line sort_slice_dps_go2.go2:471
+//line sort_slice_dps_go2.go2:478
   a[left] = a[less-1]
 						a[less-1] = pivot1
 						a[right] = a[great+1]
 						a[great+1] = pivot2
-//line sort_slice_dps_go2.go2:474
-  instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare, a, left, less-2, leftmost)
-//line sort_slice_dps_go2.go2:477
-  instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare, a, great+2, right, false)
-
+//line sort_slice_dps_go2.go2:481
+  instantiate୦୦sortInternal୦int(a, left, less-2, leftmost)
 //line sort_slice_dps_go2.go2:484
+  instantiate୦୦sortInternal୦int(a, great+2, right, false)
+
+//line sort_slice_dps_go2.go2:491
   if less < e1 && e5 < great {
 
-//line sort_slice_dps_go2.go2:488
-   for compare(a[less], pivot1) == 0 {
+//line sort_slice_dps_go2.go2:495
+   for a[less] == pivot1 {
 				less++
 			}
 
-			for compare(a[great], pivot2) == 0 {
+			for a[great] == pivot2 {
 				great--
 			}
 
-//line sort_slice_dps_go2.go2:515
+//line sort_slice_dps_go2.go2:522
   outer2:
 			for k := less - 1; ; {
 				k++
@@ -1056,21 +889,21 @@ func instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare func(o1, o
 					break
 				}
 				var ak = a[k]
-				if compare(ak, pivot1) == 0 {
+				if ak == pivot1 {
 					a[k] = a[less]
 					a[less] = ak
 					less++
-				} else if compare(ak, pivot2) == 0 {
-					for compare(a[great], pivot2) == 0 {
+				} else if ak == pivot2 {
+					for a[great] == pivot2 {
 						great--
 						if great+1 == k {
 							break outer2
 						}
 					}
-					if compare(a[great], pivot1) == 0 {
+					if a[great] == pivot1 {
 										a[k] = a[less]
 
-//line sort_slice_dps_go2.go2:544
+//line sort_slice_dps_go2.go2:551
       a[less] = pivot1
 						less++
 					} else {
@@ -1081,47 +914,47 @@ func instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare func(o1, o
 				}
 			}
 		}
-//line sort_slice_dps_go2.go2:553
-  instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare, a, less, great, false)
+//line sort_slice_dps_go2.go2:560
+  instantiate୦୦sortInternal୦int(a, less, great, false)
 
-//line sort_slice_dps_go2.go2:558
+//line sort_slice_dps_go2.go2:565
  } else {
 
-//line sort_slice_dps_go2.go2:563
+//line sort_slice_dps_go2.go2:570
   var pivot = a[e3]
 
-//line sort_slice_dps_go2.go2:585
+//line sort_slice_dps_go2.go2:592
   for k := less; k <= great; k++ {
-			if compare(a[k], pivot) == 0 {
+			if a[k] == pivot {
 				continue
 			}
 			var ak = a[k]
-			if compare(ak, pivot) < 0 {
+			if ak < pivot {
 				a[k] = a[less]
 				a[less] = ak
 				less++
 			} else {
-				for compare(a[great], pivot) > 0 {
+				for a[great] > pivot {
 					great--
 				}
-				if compare(a[great], pivot) < 0 {
+				if a[great] < pivot {
 					a[k] = a[less]
 					a[less] = a[great]
 					less++
 				} else {
 
-//line sort_slice_dps_go2.go2:611
+//line sort_slice_dps_go2.go2:618
      a[k] = pivot
 				}
 				a[great] = ak
 				great--
 			}
 		}
-//line sort_slice_dps_go2.go2:616
-  instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare, a, left, less-1, leftmost)
 //line sort_slice_dps_go2.go2:623
-  instantiate୦୦sortInternal୦sort_slice_go2୮aPerson(compare, a, great+1, right, false)
-//line sort_slice_dps_go2.go2:625
+  instantiate୦୦sortInternal୦int(a, left, less-1, leftmost)
+//line sort_slice_dps_go2.go2:630
+  instantiate୦୦sortInternal୦int(a, great+1, right, false)
+//line sort_slice_dps_go2.go2:632
  }
 }
 //line sort_slice_tim_go2.go2:330
@@ -1234,319 +1067,6 @@ func instantiate୦୦newTimSort୦sort_slice_go2୮aPerson(a []Person, c func(i
 	return this
 }
 
-//line sort_slice_dps_go2.go2:207
-func instantiate୦୦sortInternal୦int(compare func(o1, o2 int,) int, a []int, left int, right int, leftmost bool) {
-					var length = right - left + 1
-
-//line sort_slice_dps_go2.go2:211
- if length < insertionSortThreshold {
-		if leftmost {
-
-//line sort_slice_dps_go2.go2:218
-   i := left
-			j := i
-			for i < right {
-				var ai = a[i+1]
-				for compare(ai, a[j]) < 0 {
-					a[j+1] = a[j]
-					j--
-					if j+1 == left {
-						break
-					}
-				}
-				a[j+1] = ai
-
-				i++
-				j = i
-			}
-		} else {
-
-//line sort_slice_dps_go2.go2:239
-   for {
-				if left >= right {
-					return
-				}
-
-				left++
-				if compare(a[left], a[left-1]) >= 0 {
-				} else {
-					break
-				}
-			}
-
-//line sort_slice_dps_go2.go2:259
-   k := left
-			for {
-				left++
-				if left <= right {
-
-				} else {
-					break
-				}
-
-				var a1 = a[k]
-				var a2 = a[left]
-
-				if compare(a1, a2) < 0 {
-					a2 = a1
-					a1 = a[left]
-				}
-
-				for {
-					k--
-					if compare(a1, a[k]) < 0 {
-					} else {
-						break
-					}
-					a[k+2] = a[k]
-				}
-				k++
-				a[k+1] = a1
-
-				for {
-					k--
-					if compare(a2, a[k]) < 0 {
-					} else {
-						break
-					}
-					a[k+1] = a[k]
-				}
-				a[k+1] = a2
-				left++
-				k = left
-			}
-			var last = a[right]
-
-			for {
-				right--
-				if compare(last, a[right]) < 0 {
-				} else {
-					break
-				}
-				a[right+1] = a[right]
-			}
-			a[right+1] = last
-		}
-		return
-	}
-
-//line sort_slice_dps_go2.go2:315
- var seventh = (length >> 3) + (length >> 6) + 1
-
-//line sort_slice_dps_go2.go2:324
- var e3 = int(uint(left+right) >> 1)
-					var e2 = e3 - seventh
-					var e1 = e2 - seventh
-					var e4 = e3 + seventh
-					var e5 = e4 + seventh
-
-//line sort_slice_dps_go2.go2:331
- if compare(a[e2], a[e1]) < 0 {
-		a[e2], a[e1] = a[e1], a[e2]
-	}
-
-	if compare(a[e3], a[e2]) < 0 {
-		var t = a[e3]
-		a[e3], a[e2] = a[e2], a[e3]
-		if compare(t, a[e1]) < 0 {
-			a[e2] = a[e1]
-			a[e1] = t
-		}
-	}
-	if compare(a[e4], a[e3]) < 0 {
-		var t = a[e4]
-		a[e4], a[e3] = a[e3], a[e4]
-		if compare(t, a[e2]) < 0 {
-			a[e3] = a[e2]
-			a[e2] = t
-			if compare(t, a[e1]) < 0 {
-				a[e2] = a[e1]
-				a[e1] = t
-			}
-		}
-	}
-	if compare(a[e5], a[e4]) < 0 {
-		var t = a[e5]
-		a[e5], a[e4] = a[e4], a[e5]
-		if compare(t, a[e3]) < 0 {
-			a[e4] = a[e3]
-			a[e3] = t
-			if compare(t, a[e2]) < 0 {
-				a[e3] = a[e2]
-				a[e2] = t
-				if compare(t, a[e1]) < 0 {
-					a[e2] = a[e1]
-					a[e1] = t
-				}
-			}
-		}
-	}
-
-//line sort_slice_dps_go2.go2:373
- var less = left
-	var great = right
-
-	if compare(a[e1], a[e2]) != 0 && compare(a[e2], a[e3]) != 0 && compare(a[e3], a[e4]) != 0 && compare(a[e4], a[e5]) != 0 {
-
-//line sort_slice_dps_go2.go2:382
-  var pivot1 = a[e2]
-						var pivot2 = a[e4]
-
-//line sort_slice_dps_go2.go2:391
-  a[e2] = a[left]
-						a[e4] = a[right]
-
-//line sort_slice_dps_go2.go2:397
-  for {
-			less++
-			if compare(a[less], pivot1) < 0 {
-			} else {
-				break
-			}
-		}
-		for {
-			great--
-			if compare(a[great], pivot2) > 0 {
-			} else {
-				break
-			}
-		}
-
-//line sort_slice_dps_go2.go2:431
- Outer:
-		for k := less - 1; ; {
-			k++
-			if k <= great {
-			} else {
-				break
-			}
-			var ak = a[k]
-			if compare(ak, pivot1) < 0 {
-								a[k] = a[less]
-
-//line sort_slice_dps_go2.go2:445
-    a[less] = ak
-				less++
-			} else if compare(ak, pivot2) > 0 {
-				for compare(a[great], pivot2) > 0 {
-					great--
-					if great+1 == k {
-						break Outer
-					}
-				}
-				if compare(a[great], pivot1) < 0 {
-					a[k] = a[less]
-					a[less] = a[great]
-					less++
-				} else {
-					a[k] = a[great]
-				}
-
-//line sort_slice_dps_go2.go2:465
-    a[great] = ak
-				great--
-			}
-		}
-
-//line sort_slice_dps_go2.go2:471
-  a[left] = a[less-1]
-						a[less-1] = pivot1
-						a[right] = a[great+1]
-						a[great+1] = pivot2
-//line sort_slice_dps_go2.go2:474
-  instantiate୦୦sortInternal୦int(compare, a, left, less-2, leftmost)
-//line sort_slice_dps_go2.go2:477
-  instantiate୦୦sortInternal୦int(compare, a, great+2, right, false)
-
-//line sort_slice_dps_go2.go2:484
-  if less < e1 && e5 < great {
-
-//line sort_slice_dps_go2.go2:488
-   for compare(a[less], pivot1) == 0 {
-				less++
-			}
-
-			for compare(a[great], pivot2) == 0 {
-				great--
-			}
-
-//line sort_slice_dps_go2.go2:515
-  outer2:
-			for k := less - 1; ; {
-				k++
-				if k <= great {
-				} else {
-					break
-				}
-				var ak = a[k]
-				if compare(ak, pivot1) == 0 {
-					a[k] = a[less]
-					a[less] = ak
-					less++
-				} else if compare(ak, pivot2) == 0 {
-					for compare(a[great], pivot2) == 0 {
-						great--
-						if great+1 == k {
-							break outer2
-						}
-					}
-					if compare(a[great], pivot1) == 0 {
-										a[k] = a[less]
-
-//line sort_slice_dps_go2.go2:544
-      a[less] = pivot1
-						less++
-					} else {
-						a[k] = a[great]
-					}
-					a[great] = ak
-					great--
-				}
-			}
-		}
-//line sort_slice_dps_go2.go2:553
-  instantiate୦୦sortInternal୦int(compare, a, less, great, false)
-
-//line sort_slice_dps_go2.go2:558
- } else {
-
-//line sort_slice_dps_go2.go2:563
-  var pivot = a[e3]
-
-//line sort_slice_dps_go2.go2:585
-  for k := less; k <= great; k++ {
-			if compare(a[k], pivot) == 0 {
-				continue
-			}
-			var ak = a[k]
-			if compare(ak, pivot) < 0 {
-				a[k] = a[less]
-				a[less] = ak
-				less++
-			} else {
-				for compare(a[great], pivot) > 0 {
-					great--
-				}
-				if compare(a[great], pivot) < 0 {
-					a[k] = a[less]
-					a[less] = a[great]
-					less++
-				} else {
-
-//line sort_slice_dps_go2.go2:611
-     a[k] = pivot
-				}
-				a[great] = ak
-				great--
-			}
-		}
-//line sort_slice_dps_go2.go2:616
-  instantiate୦୦sortInternal୦int(compare, a, left, less-1, leftmost)
-//line sort_slice_dps_go2.go2:623
-  instantiate୦୦sortInternal୦int(compare, a, great+1, right, false)
-//line sort_slice_dps_go2.go2:625
- }
-}
 //line sort_slice_tim_go2.go2:330
 func instantiate୦୦countRunAndMakeAscending୦int(a []int, lo int, hi int, c func(i, j int,) int) int {
 

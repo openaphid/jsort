@@ -38,7 +38,7 @@ func (p Person) String() string {
 	return fmt.Sprintf("Person(%d, %s)", p.Age, p.Name)
 }
 
-func PrepareRandomAges(a []Person) {
+func prepareRandomAges(a []Person) {
 	rand.Seed(time.Now().Unix())
 	for i, _ := range a {
 		a[i] = Person{
@@ -48,7 +48,7 @@ func PrepareRandomAges(a []Person) {
 	}
 }
 
-func PrepareRandomNames(a []Person) {
+func prepareRandomNames(a []Person) {
 	rand.Seed(time.Now().Unix())
 	for i, _ := range a {
 		a[i] = Person{
@@ -58,7 +58,7 @@ func PrepareRandomNames(a []Person) {
 	}
 }
 
-func PrepareXorAges(a []Person) {
+func prepareXorAges(a []Person) {
 	for i, _ := range a {
 		a[i] = Person{
 			Age:  i ^ 0x2cc,
@@ -67,7 +67,7 @@ func PrepareXorAges(a []Person) {
 	}
 }
 
-func PrepareXorNames(a []Person) {
+func prepareXorNames(a []Person) {
 	for i, _ := range a {
 		a[i] = Person{
 			Age:  i,
@@ -76,7 +76,7 @@ func PrepareXorNames(a []Person) {
 	}
 }
 
-func PrepareShuffledSeq(a []Person) {
+func prepareShuffledSeq(a []Person) {
 	rand.Seed(time.Now().Unix())
 	for i, _ := range a {
 		a[i] = Person{
@@ -91,7 +91,7 @@ func PrepareShuffledSeq(a []Person) {
 	}
 }
 
-func GenBenchmarkSizes(init, multiplier, length int) []int {
+func genBenchmarkSizes(init, multiplier, length int) []int {
 	var sizes = []int{}
 
 	s := init
@@ -104,7 +104,7 @@ func GenBenchmarkSizes(init, multiplier, length int) []int {
 	return sizes
 }
 
-var benchmarkSizes = GenBenchmarkSizes(256, 16, 3)
+var benchmarkSizes = genBenchmarkSizes(256, 16, 3)
 
 type ByNameInterface []Person
 
@@ -125,14 +125,16 @@ var _ sort.Interface = (*ByNameInterface)(nil)
 var byAgeFunc = func(i, j Person) int {
     return i.Age - j.Age
 }
-func TestByAgeDps(t *testing.T) {
+func TestRandomInts(t *testing.T) {
 	for i := 1; i <= 1024*10; i++ {
-		persons := make([]Person, i)
-		PrepareRandomAges(persons)
+		data := make([]int, i)
+		prepareRandomInts(data)
 
-		DualPivotSort(persons, byAgeFunc)
+		DualPivotSort(data)
 
-		sorted := IsSorted(persons, byAgeFunc)
+		sorted := IsSorted(data, func(i, j int) int {
+		    return i - j
+		})
 
 		if !sorted {
 			t.Fatalf("should be sorted: %d", i)
@@ -143,7 +145,7 @@ func TestByAgeDps(t *testing.T) {
 func TestByAgeTimsort(t *testing.T) {
 	for i := 1; i <= 1024*10; i++ {
 		persons := make([]Person, i)
-		PrepareRandomAges(persons)
+		prepareRandomAges(persons)
 
 		Timsort(persons, byAgeFunc)
 
@@ -158,7 +160,7 @@ func TestByAgeTimsort(t *testing.T) {
 func TestShuffledSeqTimsort(t *testing.T) {
 	for i := 1; i <= 1024*10; i++ {
 		persons := make([]Person, i)
-		PrepareShuffledSeq(persons)
+		prepareShuffledSeq(persons)
 
 		Timsort(persons, byAgeFunc)
 
@@ -192,9 +194,7 @@ func BenchmarkIntsGo2(t *testing.B) {
 					dup := copyInts(data)
 
 					t.StartTimer()
-					DualPivotSort(dup, func(o1, o2 int) int {
-						return o1 - o2
-					})
+					DualPivotSort(dup)
 				}
 			})
 
@@ -247,8 +247,8 @@ func BenchmarkStructSliceByNameGo2(t *testing.B) {
 		name        string
 		prepareFunc func([]Person)
 	}{
-		{"Random", PrepareRandomNames},
-		{"Xor", PrepareXorNames},
+		{"Random", prepareRandomNames},
+		{"Xor", prepareXorNames},
 	}
 
 	for _, size := range benchmarkSizes {
@@ -257,18 +257,6 @@ func BenchmarkStructSliceByNameGo2(t *testing.B) {
 		for _, c := range dataCases {
 			c.prepareFunc(data)
 			name := c.name
-
-			t.Run(fmt.Sprintf("Unstable-Dps-Go2-%s-%d", name, size), func(t *testing.B) {
-				for i := 0; i < t.N; i++ {
-					t.StopTimer()
-					dup := copyPersonSlice(data)
-
-					t.StartTimer()
-					DualPivotSort(dup, func(o1, o2 Person) int {
-						return strings.Compare(o1.Name, o2.Name)
-					})
-				}
-			})
 
 			t.Run(fmt.Sprintf("Stable-TimSort-Go2-%s-%d", name, size), func(t *testing.B) {
 				for i := 0; i < t.N; i++ {

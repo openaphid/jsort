@@ -17,8 +17,15 @@ const quicksortThreshold = 286
  */
 const insertionSortThreshold = 47
 
-func DualPivotSort[T any](a []T, compare func(o1, o2 T) int) {
-	dualPivotSort(compare, a, 0, len(a)-1, nil, 0, 0)
+type Primitive interface {
+    type int, int8, int16, int32, int64,
+      uint, uint8, uint16, uint32, uint64, uintptr,
+      float32, float64,
+      string
+}
+
+func DualPivotSort[T Primitive](a []T) {
+	dualPivotSort(a, 0, len(a)-1, nil, 0, 0)
 }
 
 /**
@@ -32,10 +39,10 @@ func DualPivotSort[T any](a []T, compare func(o1, o2 T) int) {
  * @param workBase origin of usable space in work array
  * @param workLen usable size of work array
  */
-func dualPivotSort[T any](compare func(o1, o2 T) int, a []T, left int, right int, work []T, workBase int, workLen int) {
+func dualPivotSort[T Primitive](a []T, left int, right int, work []T, workBase int, workLen int) {
 	// Use Quicksort on small arrays
 	if right-left < quicksortThreshold {
-		sortInternal(compare, a, left, right, true)
+		sortInternal(a, left, right, true)
 		return
 	}
 
@@ -50,25 +57,25 @@ func dualPivotSort[T any](compare func(o1, o2 T) int, a []T, left int, right int
 	// Check if the array is nearly sorted
 	for k := left; k < right; run[count] = k {
 		// Equal items in the beginning of the sequence
-		for k < right && compare(a[k], a[k+1]) == 0 {
+		for k < right && a[k] == a[k+1] {
 			k++
 		}
 		if k == right {
 			break
 		} // Sequence finishes with equal items
-		if compare(a[k], a[k+1]) < 0 { // ascending
+		if a[k] < a[k+1] { // ascending
 			for {
 				k++
-				if k <= right && compare(a[k-1], a[k]) <= 0 {
+				if k <= right && a[k-1] <= a[k] {
 				} else {
 					break
 				}
 			}
 
-		} else if compare(a[k], a[k+1]) > 0 { // descending
+		} else if a[k] > a[k+1] { // descending
 			for {
 				k++
-				if k <= right && compare(a[k-1], a[k]) >= 0 {
+				if k <= right && a[k-1] >= a[k] {
 				} else {
 					break
 				}
@@ -84,7 +91,7 @@ func dualPivotSort[T any](compare func(o1, o2 T) int, a []T, left int, right int
 
 		// Merge a transformed descending sequence followed by an
 		// ascending sequence
-		if run[count] > left && compare(a[run[count]], a[run[count]-1]) >= 0 {
+		if run[count] > left && a[run[count]] >= a[run[count]-1] {
 			count--
 		}
 
@@ -94,7 +101,7 @@ func dualPivotSort[T any](compare func(o1, o2 T) int, a []T, left int, right int
 		 */
 		count++
 		if count == maxRunCount {
-			sortInternal(compare, a, left, right, true)
+			sortInternal(a, left, right, true)
 			return
 		}
 	}
@@ -165,7 +172,7 @@ func dualPivotSort[T any](compare func(o1, o2 T) int, a []T, left int, right int
 			p := i
 			q := mi
 			for ; i < hi; i++ {
-				if q >= hi || p < mi && compare(a[p+ao], a[q+ao]) <= 0 {
+				if q >= hi || p < mi && a[p+ao] <= a[q+ao] {
 					//b[i + bo] = a[p++ + ao];
 					b[i+bo] = a[p+ao]
 					p++
@@ -204,7 +211,7 @@ func dualPivotSort[T any](compare func(o1, o2 T) int, a []T, left int, right int
  * @param right the index of the last element, inclusive, to be sorted
  * @param leftmost indicates if this part is the leftmost in the range
  */
-func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int, leftmost bool) {
+func sortInternal[T  Primitive](a []T, left int, right int, leftmost bool) {
 	var length = right - left + 1
 
 	// Use insertion sort on tiny arrays
@@ -219,7 +226,7 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 			j := i
 			for i < right {
 				var ai = a[i+1]
-				for compare(ai, a[j]) < 0 {
+				for ai < a[j] {
 					a[j+1] = a[j]
 					j--
 					if j+1 == left {
@@ -242,7 +249,7 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 				}
 
 				left++
-				if compare(a[left], a[left-1]) >= 0 {
+				if a[left] >= a[left-1] {
 				} else {
 					break
 				}
@@ -268,14 +275,14 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 				var a1 = a[k]
 				var a2 = a[left]
 
-				if compare(a1, a2) < 0 {
+				if a1 < a2 {
 					a2 = a1
 					a1 = a[left]
 				}
 
 				for {
 					k--
-					if compare(a1, a[k]) < 0 {
+					if a1 < a[k] {
 					} else {
 						break
 					}
@@ -286,7 +293,7 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 
 				for {
 					k--
-					if compare(a2, a[k]) < 0 {
+					if a2 < a[k] {
 					} else {
 						break
 					}
@@ -300,7 +307,7 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 
 			for {
 				right--
-				if compare(last, a[right]) < 0 {
+				if last < a[right] {
 				} else {
 					break
 				}
@@ -328,40 +335,40 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 	var e5 = e4 + seventh
 
 	// Sort these elements using insertion sort
-	if compare(a[e2], a[e1]) < 0 {
+	if a[e2] < a[e1] {
 		a[e2], a[e1] = a[e1], a[e2]
 	}
 
-	if compare(a[e3], a[e2]) < 0 {
+	if a[e3] < a[e2] {
 		var t = a[e3]
 		a[e3], a[e2] = a[e2], a[e3]
-		if compare(t, a[e1]) < 0 {
+		if t < a[e1] {
 			a[e2] = a[e1]
 			a[e1] = t
 		}
 	}
-	if compare(a[e4], a[e3]) < 0 {
+	if a[e4] < a[e3] {
 		var t = a[e4]
 		a[e4], a[e3] = a[e3], a[e4]
-		if compare(t, a[e2]) < 0 {
+		if t < a[e2] {
 			a[e3] = a[e2]
 			a[e2] = t
-			if compare(t, a[e1]) < 0 {
+			if t < a[e1] {
 				a[e2] = a[e1]
 				a[e1] = t
 			}
 		}
 	}
-	if compare(a[e5], a[e4]) < 0 {
+	if a[e5] < a[e4] {
 		var t = a[e5]
 		a[e5], a[e4] = a[e4], a[e5]
-		if compare(t, a[e3]) < 0 {
+		if t < a[e3] {
 			a[e4] = a[e3]
 			a[e3] = t
-			if compare(t, a[e2]) < 0 {
+			if t < a[e2] {
 				a[e3] = a[e2]
 				a[e2] = t
-				if compare(t, a[e1]) < 0 {
+				if t < a[e1] {
 					a[e2] = a[e1]
 					a[e1] = t
 				}
@@ -373,7 +380,7 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 	var less = left   // The index of the first element of center part
 	var great = right // The index before the first element of right part
 
-	if compare(a[e1], a[e2]) != 0 && compare(a[e2], a[e3]) != 0 && compare(a[e3], a[e4]) != 0 && compare(a[e4], a[e5]) != 0 {
+	if a[e1] != a[e2] && a[e2] != a[e3] && a[e3] != a[e4] && a[e4] != a[e5] {
 		/*
 		 * Use the second and fourth of the five sorted elements as pivots.
 		 * These values are inexpensive approximations of the first and
@@ -396,14 +403,14 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 		 */
 		for {
 			less++
-			if compare(a[less], pivot1) < 0 {
+			if a[less] < pivot1 {
 			} else {
 				break
 			}
 		}
 		for {
 			great--
-			if compare(a[great], pivot2) > 0 {
+			if a[great] > pivot2 {
 			} else {
 				break
 			}
@@ -436,7 +443,7 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 				break
 			}
 			var ak = a[k]
-			if compare(ak, pivot1) < 0 { // Move a[k] to left part
+			if ak < pivot1 { // Move a[k] to left part
 				a[k] = a[less]
 				/*
 				 * Here and below we use "a[i] = b; i++;" instead
@@ -444,14 +451,14 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 				 */
 				a[less] = ak
 				less++
-			} else if compare(ak, pivot2) > 0 { // Move a[k] to right part
-				for compare(a[great], pivot2) > 0 {
+			} else if ak > pivot2 { // Move a[k] to right part
+				for a[great] > pivot2 {
 					great--
 					if great+1 == k {
 						break Outer
 					}
 				}
-				if compare(a[great], pivot1) < 0 { // a[great] <= pivot2
+				if a[great] < pivot1 { // a[great] <= pivot2
 					a[k] = a[less]
 					a[less] = a[great]
 					less++
@@ -474,8 +481,8 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 		a[great+1] = pivot2
 
 		// Sort left and right parts recursively, excluding known pivots
-		sortInternal(compare, a, left, less-2, leftmost)
-		sortInternal(compare, a, great+2, right, false)
+		sortInternal(a, left, less-2, leftmost)
+		sortInternal(a, great+2, right, false)
 
 		/*
 		 * If center part is too large (comprises > 4/7 of the array),
@@ -485,11 +492,11 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 			/*
 			 * Skip elements, which are equal to pivot values.
 			 */
-			for compare(a[less], pivot1) == 0 {
+			for a[less] == pivot1 {
 				less++
 			}
 
-			for compare(a[great], pivot2) == 0 {
+			for a[great] == pivot2 {
 				great--
 			}
 
@@ -520,18 +527,18 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 					break
 				}
 				var ak = a[k]
-				if compare(ak, pivot1) == 0 { // Move a[k] to left part
+				if ak == pivot1 { // Move a[k] to left part
 					a[k] = a[less]
 					a[less] = ak
 					less++
-				} else if compare(ak, pivot2) == 0 { // Move a[k] to right part
-					for compare(a[great], pivot2) == 0 {
+				} else if ak == pivot2 { // Move a[k] to right part
+					for a[great] == pivot2 {
 						great--
 						if great+1 == k {
 							break outer2
 						}
 					}
-					if compare(a[great], pivot1) == 0 { // a[great] < pivot2
+					if a[great] == pivot1 { // a[great] < pivot2
 						a[k] = a[less]
 						/*
 						 * Even though a[great] equals to pivot1, the
@@ -553,7 +560,7 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 		}
 
 		// Sort center part recursively
-		sortInternal(compare, a, less, great, false)
+		sortInternal(a, less, great, false)
 
 	} else { // Partitioning with one pivot
 		/*
@@ -583,19 +590,19 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 		 * Pointer k is the first index of ?-part.
 		 */
 		for k := less; k <= great; k++ {
-			if compare(a[k], pivot) == 0 {
+			if a[k] == pivot {
 				continue
 			}
 			var ak = a[k]
-			if compare(ak, pivot) < 0 { // Move a[k] to left part
+			if ak < pivot { // Move a[k] to left part
 				a[k] = a[less]
 				a[less] = ak
 				less++
 			} else { // a[k] > pivot - Move a[k] to right part
-				for compare(a[great], pivot) > 0 {
+				for a[great] > pivot {
 					great--
 				}
-				if compare(a[great], pivot) < 0 { // a[great] <= pivot
+				if a[great] < pivot { // a[great] <= pivot
 					a[k] = a[less]
 					a[less] = a[great]
 					less++
@@ -620,7 +627,7 @@ func sortInternal[T any](compare func(o1, o2 T) int, a []T, left int, right int,
 		 * All elements from center part are equal
 		 * and, therefore, already sorted.
 		 */
-		sortInternal(compare, a, left, less-1, leftmost)
-		sortInternal(compare, a, great+1, right, false)
+		sortInternal(a, left, less-1, leftmost)
+		sortInternal(a, great+1, right, false)
 	}
 }
