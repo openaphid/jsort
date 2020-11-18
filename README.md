@@ -64,4 +64,15 @@ jsort.Int64s(data)
 
 There is a benchmark section in the [blog post](https://hubo.dev/2020-11-15-porting-dual-pivot-sort-and-timsort-from-java-to-go/). Basically speaking, the timsort APIs can be 2-5x times faster than Go's `sort.Stable` in the cost of extra space. The dual-pivot APIs can be 3-5x times faster than `sort.Sort` without extra space.
 
+You can run the benchmarks on your own machine:
+
+```bash
+# the main benchmarks
+make bench benchstat
+
+# the experimental Go2 generics benchmark
+make go2_bench go2_benchstat
+
+```
+
 ![Benchmark: Sort By Name](https://hubo.dev/assets/datawrapper/datawrapper-sort-by-name.png)
